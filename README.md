@@ -17,13 +17,14 @@ You play as a crow washed from the Everglades into the city of Miami by a hurric
 
 New traversal abilities open up previously unreachable areas, in classic metroidvania fashion.
 
-## Playable Demo: Districts 1 and 2
+## Playable Demo: Districts 1 to 3
 
-`Development/` now contains a full mobile-friendly demo built with vanilla HTML5 canvas and ES modules (no dependencies, no build step).
-You play a hurricane-blown crow collecting Shinies and unlocking movement abilities across two districts.
+`Development/` contains a full mobile-friendly demo built with vanilla HTML5 canvas and ES modules (no dependencies, no build step).
+You play a hurricane-blown crow collecting Shinies and unlocking movement abilities across three districts, rendered with a dynamic lightmap, bloom, and per-district color grading (`src/fx.js`).
 
 - **District 1 - Ocean Drive Rooftops**: beach to beacon across the neon rooftops, ending at THE ROOST.
 - **District 2 - Brickell Ascent**: one tall map in three strata (storm drains, downtown streets, skyline), each hiding the skill needed to climb into the next, ending at the EVERGLADES sign on EL FARO's crown.
+- **District 3 - Wynwood Walls**: a dawn hub-and-wings map through the gallery district, ending at THE FLOCK mural atop the MUSEO.
 
 ### Run it
 
@@ -54,6 +55,10 @@ To play on your phone, open http://YOUR-PC-IP:8123 on the same wifi.
   - Beak Break (drains): swooping smashes cracked brick bulkheads, and one seals the only shaft up to the street.
   - Line Launch (streets): landing on a slack cable slingshots you upward, and a cable chain is the only way to the rooftops.
   - Thermal Soar (skyline): thermals between the towers only lift you once learned, and the summit needs them.
+- District 3 adds one new skill per wing:
+  - Roll (gallery row): press the dash button on the ground to tumble through low shutter gaps.
+  - Paint Grip (container alley): hold into a painted mural wall to climb it.
+  - Talon Hook (rooftops): touch a hanging crane hook to latch on, then jump to launch across the sky.
 
 ### Adding a level
 
