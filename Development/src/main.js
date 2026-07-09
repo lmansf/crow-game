@@ -115,7 +115,7 @@ const game = {
   },
 
   tickFade(dt) {
-    if (this.fadeT <= 0) return;
+    if (this.fadeT <= 0 || this.mode !== 'play') return;
     this.fadeT -= dt;
     if (this.exitPending && this.fadeT <= 0.35) {
       const ex = this.exitPending;
@@ -129,6 +129,8 @@ const game = {
   quitToMenu() {
     this.mode = 'menu';
     this.paused = false;
+    this.fadeT = 0;
+    this.exitPending = null;
     audio.setPaused(false);
     input.locked = false;
     input.clear();

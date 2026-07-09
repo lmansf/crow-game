@@ -2410,7 +2410,7 @@ function drawTimedHazard(ctx, h, t) {
       ctx.fill();
       ctx.globalCompositeOperation = 'source-over';
       for (let i = 0; i < 3; i++) {
-        particles.trail(bx + (Math.random() - 0.5) * h.w * 0.8, by - Math.random() * fh, `hsla(${30 + Math.random() * 30}, 95%, 68%, 0.9)`);
+        particles.trail(bx + (Math.random() - 0.5) * h.w * 0.8, by - Math.random() * fh, `hsla(${Math.round(30 + Math.random() * 30)}, 95%, 68%, 0.9)`);
       }
     } else if (st.charge > 0.4) {
       // fizzing telegraph before the eruption
