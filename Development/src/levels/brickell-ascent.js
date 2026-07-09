@@ -232,6 +232,7 @@ export default {
     { x: 300, y: 3060, text: 'the flood dropped you here' },
     { x: 850, y: 2920, text: 'hop the pipes' },
     { x: 2190, y: 2960, text: 'cracked bricks block the way' },
+    { x: 2190, y: 2992, text: 'search above the pipes for a way through' },
     { x: 2805, y: 2500, text: 'kick between the walls to climb', kb: 'kick between the walls to climb' },
     { x: 2550, y: 2320, text: 'downtown: the way home is up' },
     { x: 1840, y: 2330, text: 'climb the parking garage' },

@@ -195,9 +195,12 @@ export class Player {
     for (const s of level.solids) {
       if (s.broken) continue;
       if (overlap(rr, s)) {
-        if (s.breakable && this.dashing > 0 && this.abilities.break) {
-          level.smash(s, game);
-          continue; // keep swooping straight through the rubble
+        if (s.breakable && this.dashing > 0) {
+          if (this.abilities.break) {
+            level.smash(s, game);
+            continue; // keep swooping straight through the rubble
+          }
+          game.onBlockedBreakable();
         }
         const penRight = rr.x + rr.w - s.x;      // push left by this much
         const penLeft = s.x + s.w - rr.x;        // push right by this much

@@ -56,6 +56,7 @@ const game = {
     this.runTime = 0;
     this.outroT = 0;
     this.freeze = 0;
+    this.breakableHinted = false;
     this.mode = 'play';
     this.paused = false;
     input.locked = false;
@@ -91,6 +92,12 @@ const game = {
   onAbility(ability) {
     this.ui.setAbility(ability);
     this.ui.abilityToast(ability);
+  },
+
+  onBlockedBreakable() {
+    if (this.breakableHinted) return;
+    this.breakableHinted = true;
+    this.ui.toast('CRACKED BRICKS', 'too tough for beak and talon alone - a skill somewhere nearby can smash them');
   },
 
   onRespawn() {
