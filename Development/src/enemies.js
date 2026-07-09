@@ -41,8 +41,9 @@ export class Enemies {
       }
       if (e.type === 'gull') this.updateGull(e, dt, player, t);
 
-      // the crow's swoop drops a critter in one hit
-      if (player.dashing > 0 && Math.abs(player.x - e.x) < 42 && Math.abs(player.y - e.y) < 34) {
+      // the crow's swoop drops a critter in one hit (a dead crow's frozen
+      // dash timer must not keep killing during the death animation)
+      if (player.dead <= 0 && player.dashing > 0 && Math.abs(player.x - e.x) < 42 && Math.abs(player.y - e.y) < 34) {
         e.dead = true;
         e.respawnT = RESPAWN;
         audio.smash();

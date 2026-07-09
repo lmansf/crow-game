@@ -117,6 +117,7 @@ const T = {
     for (const c of cg.level.timedHazards) {
       if (!h || Math.abs(c.x - hx) < Math.abs(h.x - hx)) h = c;
     }
+    if (!h) return 'no-hazard';
     let sawDeadly = false;
     for (let i = 0; i < 2000; i++) {
       this.st(1);

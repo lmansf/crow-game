@@ -93,6 +93,7 @@ const game = {
       ...data.pickups.map((p) => p.ability),
       ...(data.boss ? [data.boss.drops] : []),
       ...(this.player.abilities.raygun ? ['raygun'] : []),
+      ...(this.player.abilities.flight ? ['flight'] : []),
     ])];
     this.ui.buildAbilitySlots(abilityOrder, this.player.abilities);
     if (opts.entry) {
@@ -139,6 +140,7 @@ const game = {
 
   togglePause(force) {
     if (this.mode !== 'play') return;
+    if (this.fadeT > 0) return; // no pausing mid door-transition
     this.paused = force !== undefined ? force : !this.paused;
     audio.setPaused(this.paused);
     audio.glide(false);
