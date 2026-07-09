@@ -85,6 +85,34 @@ export default {
     { x: 5600, y: 1385, type: 'cafecito' },
   ],
 
+  // room 1's locals: escaped pinata imps trot the paseo
+  enemies: [
+    { type: 'imp', x: 7150, y: 1985, range: 130 },
+    { type: 'imp', x: 6500, y: 1985, range: 110 },
+  ],
+
+  // room 2: hall B's conga combo bars its west door
+  puzzle: {
+    switches: [
+      { x: 5350, y: 1960, hue: 8 },
+      { x: 5480, y: 1840, hue: 185 },
+      { x: 5780, y: 1750, hue: 45 },
+    ],
+    order: [2, 0, 1],
+    display: { x: 5290, y: 1620 },
+    door: { x: 5200, y: 1830, w: 50, h: 170 },
+  },
+
+  // room 3: PINATA TORO has the plaza pit and the Wire Grind
+  boss: {
+    type: 'pinatabull',
+    pattern: 'charge',
+    x: 4000,
+    y: 1962,
+    arena: { x0: 3700, x1: 5100, top: 1400, floor: 2000 },
+    drops: 'grind',
+  },
+
   buildings: [
     { x: 7420, w: 180, h: 240, style: 'block', hue: 8, sign: 'AREPAS' },
     { x: 150, w: 350, h: 420, style: 'block', hue: 150, sign: 'CUBAOCHO' },
@@ -120,6 +148,9 @@ export default {
     { x: 2200, y: 1100, w: 200, h: 60, kind: 'steel' },
     // flytower east wall with the stage door open below
     { x: 2340, y: 1160, w: 60, h: 640, kind: 'steel' },
+    // the azotea garden: a rooftop patio floating over the paseo,
+    // reached only by riding the return light lines home
+    { x: 7100, y: 1160, w: 300, h: 26, kind: 'steel' },
   ],
 
   platforms: [
@@ -141,6 +172,10 @@ export default {
     { x1: 4080, y1: 1480, x2: 3720, y2: 1560 },
     { x1: 3560, y1: 1560, x2: 3100, y2: 1640 },
     { x1: 3020, y1: 1620, x2: 2620, y2: 1700 },
+    // the return line home: hop off the arch's east side to catch it,
+    // ride high over the mercado roofs to the azotea garden
+    { x1: 5300, y1: 1150, x2: 6100, y2: 1230 },
+    { x1: 6200, y1: 1100, x2: 7000, y2: 1180 },
   ],
 
   // pinatas hang from the party lines: latch and launch
@@ -177,7 +212,6 @@ export default {
   timedHazards: [
     { type: 'sparkler', x: 7150, y: 1830, w: 44, h: 170, period: 3, offset: 0 },
     { type: 'sparkler', x: 5560, y: 1830, w: 44, h: 170, period: 3, offset: 1.2 },
-    { type: 'sparkler', x: 4230, y: 1840, w: 40, h: 160, period: 2.6, offset: 0.6 },
     { type: 'sparkler', x: 2900, y: 1840, w: 44, h: 160, period: 3.2, offset: 0.4 },
   ],
 
@@ -189,7 +223,7 @@ export default {
   ],
 
   pickups: [
-    { x: 5160, y: 1250, ability: 'grind' },
+    // grind now falls from PINATA TORO
   ],
 
   checkpoints: [
@@ -257,9 +291,19 @@ export default {
     [1890, 1380],
     // theater roof finale
     ...arc(1300, 1050, 1700, 1050, 4, 50),
+    // the return line home
+    ...diag(5350, 1120, 6050, 1200, 3),
+    ...diag(6250, 1070, 6950, 1150, 3),
+    // the azotea garden
+    ...line(7140, 1120, 7360, 4),
+    ...arc(7150, 1060, 7350, 1060, 3, 40),
   ],
 
   decor: [
+    // azotea garden dressing
+    { type: 'lantern', x: 7110, y: 1100, w: 280 },
+    { type: 'palm', x: 7180, y: 1160, h: 70, lean: 0.3 },
+    { type: 'rooster', x: 7330, y: 1160 },
     { type: 'lantern', x: 7040, y: 1740, w: 360 },
     { type: 'lantern', x: 6250, y: 1290, w: 700 },
     { type: 'lantern', x: 5260, y: 1240, w: 780 },
@@ -280,7 +324,11 @@ export default {
 
   hints: [
     { x: 7300, y: 1900, text: 'the festival never sleeps' },
+    { x: 7220, y: 1830, text: 'a garden waits above the party: the light lines run home' },
+    { x: 6600, y: 1770, text: 'loose pinatas bite. swoop them into candy' },
     { x: 7150, y: 1760, text: 'sparklers bite when they bloom' },
+    { x: 5500, y: 1920, text: 'the conga board keeps the combo' },
+    { x: 4400, y: 1770, text: 'the plaza rumbles. something papier-mache is furious' },
     { x: 6800, y: 1900, text: 'pinatas hang from the party lines' },
     { x: 6150, y: 1920, text: 'a stalled cart: far too low to walk' },
     { x: 5160, y: 1180, text: 'the light lines hum with festival power' },

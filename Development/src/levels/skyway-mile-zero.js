@@ -98,6 +98,35 @@ export default {
     { x: 1500, y: 1785, type: 'token' },
   ],
 
+  // room 1's locals: storm crabs work the towpath
+  enemies: [
+    { type: 'crab', x: 700, y: 2385, range: 140 },
+    { type: 'crab', x: 1250, y: 2385, range: 120 },
+  ],
+
+  // room 2: the lock-gate combo, where both routes converge
+  puzzle: {
+    switches: [
+      { x: 2900, y: 2360, hue: 185 },
+      { x: 2650, y: 2300, hue: 45 },
+      { x: 3370, y: 2360, hue: 320 },
+    ],
+    order: [0, 2, 1],
+    display: { x: 3420, y: 2150 },
+    door: { x: 3450, y: 1000, w: 50, h: 1400, kind: 'concrete' },
+  },
+
+  // room 3: THE KING CRAB scuttles the pit under the eastbound deck,
+  // and the Tailwind is his to lose
+  boss: {
+    type: 'kingcrab',
+    pattern: 'charge',
+    x: 4000,
+    y: 2368,
+    arena: { x0: 3550, x1: 4350, top: 1700, floor: 2400 },
+    drops: 'wind',
+  },
+
   // Stiltsville shacks standing out in the flood
   landmarks: [
     { type: 'stilthouse', x: 2050, y: 2410, scale: 0.75 },
@@ -123,6 +152,9 @@ export default {
     { x: 6800, y: 1150, w: 500, h: 40, kind: 'concrete' },
     // MILE 0 arch platform
     { x: 7580, y: 1100, w: 220, h: 40, kind: 'concrete' },
+    // the osprey's old nest, high on the toll gantry: ride the
+    // westbound wind home to reach it
+    { x: 960, y: 1050, w: 170, h: 22, kind: 'steel' },
   ],
 
   platforms: [
@@ -162,6 +194,9 @@ export default {
     // cannot glide anywhere inside them
     { x: 5900, y: 900, w: 900, h: 1450, dir: 1 },
     { x: 7300, y: 900, w: 280, h: 1450, dir: 1 },
+    // the return wind: a westbound river high over the decks, from the
+    // mast all the way home to the toll gantry
+    { x: 1400, y: 950, w: 2900, h: 220, dir: -1 },
   ],
 
   hooks: [
@@ -187,7 +222,7 @@ export default {
   ],
 
   pickups: [
-    { x: 4530, y: 880, ability: 'wind' },
+    // wind now falls from THE KING CRAB
   ],
 
   checkpoints: [
@@ -240,6 +275,10 @@ export default {
     ...line(6950, 1100, 7250, 3),
     ...diag(7350, 1250, 7530, 1190, 2),
     ...arc(7600, 1050, 7780, 1050, 3, 40),
+    // the westbound wind home, and the nest
+    ...line(3900, 1040, 1700, 5),
+    ...line(990, 1010, 1100, 3),
+    [1045, 950],
   ],
 
   decor: [
@@ -271,8 +310,12 @@ export default {
 
   hints: [
     { x: 500, y: 2300, text: 'the storm caught up: climb the gantry' },
+    { x: 850, y: 2330, text: 'storm crabs snip. hop them or swoop them' },
+    { x: 900, y: 1740, text: 'an old nest crowns the gantry, out of reach in this wind' },
     { x: 1075, y: 1730, text: 'toll arms never rise for birds' },
     { x: 1800, y: 2320, text: 'flood water: one splash and it takes you' },
+    { x: 3300, y: 2100, text: 'the lock gate keeps a combo' },
+    { x: 3700, y: 2320, text: 'the pit ahead clicks and scuttles. loudly' },
     { x: 4380, y: 1740, text: 'the osprey rides the mast' },
     { x: 4620, y: 1120, text: 'ride what tries to push you back' },
     { x: 5480, y: 1740, text: 'truck exhaust rises hot' },

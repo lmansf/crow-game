@@ -39,12 +39,16 @@ The complete screen's NEXT button follows the same path.
 
 ### The three-room structure
 
-District 1 now demonstrates the full metroidvania loop that the remaining districts will adopt:
+Every district runs the same metroidvania loop: a short intro room with the district's unique critter and a visible tease of a locked reward, a sequence-puzzle chamber, a boss arena guarding the district's signature skill, and a return line that spends the new skill on the teased reward.
 
-- **Room 1 (intro)**: a short opening that introduces the district's unique creature (vice gulls that telegraph and dive-bomb; a swoop drops them) and visibly teases a locked reward - a sealed penthouse vault floating high over the beach.
-- **Room 2 (puzzle)**: the neon combo chamber in EL CUERVO's courtyard - a display board flashes a color order, and touching the pads in that order slides open the storm shutter blocking the fire escapes. A wrong pad resets the sequence.
-- **Room 3 (boss)**: the Gull King, a giant of the local species, walls you into LUNA REY's rooftop. Dodge the telegraphed dives (the landing spot is marked - a hop clears the strike), then stomp him from above while he is down. Three stomps win the Swoop, which falls from his talons.
-- **The way back**: a swoop-gap billboard corridor runs from the boss roof all the way back to the beach, ending at the teased vault - enterable only with the ability you just won.
+- **Room 1 (critters)**: vice gulls (D1), drain rats (D2), sunning iguanas (D3), pinata imps (D4), storm crabs (D5), and cottonmouth snakes (D6).
+  Each telegraphs before it strikes, and a swoop drops any of them.
+- **Room 2 (puzzles)**: a display board flashes a color order, and touching the pads in that order opens the way - the neon combo chamber (D1), the junction box (D2), the workshop door panel (D3), the conga board (D4), the lock gate (D5), and the cairn stones (D6).
+  A wrong pad resets the sequence.
+- **Room 3 (bosses)**: a giant of the local species walls you in.
+  The Gull King dive-bombs a marked landing spot; the Rat King, El Iguanodon, the Pinata Toro, the King Crab, and the Ancient Snapper rear up and charge until they crash into an arena wall.
+  Dodge the telegraphed attack, then stomp the stunned giant from above; three stomps drop the skill it guards.
+- **The way back**: each skill opens a themed return line to the reward teased near the district's entrance - the penthouse vault over the beach (Swoop), the bricked stash alcove above the drain door (Beak Break), the stash off MUSEO's shoulder (Talon Hook), the rooftop azotea at the end of the festival light lines (Wire Grind), the osprey's old nest on the toll gantry ridden home on the westbound wind (Tailwind), and the heron roost across the cypress crowns (True Flight).
 
 ### An easter egg
 
@@ -77,19 +81,19 @@ To play on your phone, open http://YOUR-PC-IP:8123 on the same wifi.
 ### Abilities (metroidvania unlocks)
 
 - Hop and Talon Grip (wall slide + wall kick) are innate.
-- District 1 pickups: Wing Flap (double jump), Glide, and Swoop (dash).
+- District 1: Wing Flap (double jump) and Glide are pickups; Swoop (dash) falls from the Gull King.
 - District 2 starts with those three carried over and adds one new skill per stratum:
-  - Beak Break (drains): swooping smashes cracked brick bulkheads, and one seals the only shaft up to the street.
+  - Beak Break (drains, won from the Rat King): swooping smashes cracked brick bulkheads, and one seals the only shaft up to the street.
   - Line Launch (streets): landing on a slack cable slingshots you upward, and a cable chain is the only way to the rooftops.
   - Thermal Soar (skyline): thermals between the towers only lift you once learned, and the summit needs them.
 - District 3 adds one new skill per wing:
   - Roll (gallery row): press the dash button on the ground to tumble through low shutter gaps.
   - Paint Grip (container alley): hold into a painted mural wall to climb it.
-  - Talon Hook (rooftops): touch a hanging crane hook to latch on, then jump to launch across the sky.
-- The final act carries the full kit forward and grants one signature skill per district:
-  - Wire Grind (District 4): land on a festival light line to slide it, jump to hop between lines.
-  - Tailwind (District 5): glide inside a gust field to ride it as a wind highway.
-  - True Flight (District 6): hold jump in the air for sustained wingbeats while stamina lasts; stamina refills on any perch. After the credits, Flight stays unlocked in every district.
+  - Talon Hook (rooftops, won from El Iguanodon): touch a hanging crane hook to latch on, then jump to launch across the sky.
+- The final act carries the full kit forward, and each district's boss guards its signature skill:
+  - Wire Grind (District 4, the Pinata Toro): land on a festival light line to slide it, jump to hop between lines.
+  - Tailwind (District 5, the King Crab): glide inside a gust field to ride it as a wind highway.
+  - True Flight (District 6, the Ancient Snapper): hold jump in the air for sustained wingbeats while stamina lasts; stamina refills on any perch. After the credits, Flight stays unlocked in every district.
 
 ### Adding a level
 

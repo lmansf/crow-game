@@ -1,21 +1,37 @@
 // District bosses: a giant of the local critter guarding the new skill.
-// Data: boss: { type: 'gullking', x, y, arena: { x0, x1, top, floor },
-//               drops: 'swoop' }
-// The fight is a movement duel: dodge the telegraphed dive, then stomp
-// the stunned bird from above. Three stomps and the skill is yours.
+// Data: boss: { type, x, y, arena: { x0, x1, top, floor }, drops,
+//               pattern: 'dive' | 'charge' }
+// Every fight is a movement duel with the same verb: dodge the
+// telegraphed attack, then stomp the stunned beast from above.
+// Three stomps and the skill is yours.
+//
+// 'dive' (fliers): perch -> aim -> dive at your last position -> stun.
+// 'charge' (grounders): lurk -> rear up -> charge to the far wall ->
+// crash -> stun. Hop over the charge; the box is tight on purpose.
 
 import { audio } from './audio.js';
 import { particles } from './particles.js';
+
+const BODY_H = {
+  gullking: 26,
+  ratking: 34,
+  iguanodon: 30,
+  pinatabull: 38,
+  kingcrab: 32,
+  snapper: 34,
+};
 
 export class Boss {
   constructor(data, level) {
     this.data = data;
     this.level = level;
     this.type = data.type;
+    this.pattern = data.pattern || 'dive';
     this.homeX = data.x;
     this.homeY = data.y;
     this.arena = data.arena;
     this.drops = data.drops;
+    this.bodyH = BODY_H[data.type] || 30;
     // arena walls exist from the start but stay phased out until triggered
     this.walls = [
       { x: data.arena.x0 - 46, y: data.arena.top, w: 46, h: data.arena.floor - data.arena.top, kind: 'steel', off: true },
@@ -40,7 +56,20 @@ export class Boss {
   }
 
   rage() {
-    return 1 + (3 - this.hp) * 0.25; // faster with every feather lost
+    return 1 + (3 - this.hp) * 0.25; // faster with every hit taken
+  }
+
+  taunt(game) {
+    const lines = {
+      gullking: ['THE GULL KING', 'dodge the dive, then strike from above'],
+      ratking: ['THE RAT KING', 'leap the charge, then strike from above'],
+      iguanodon: ['EL IGUANODON', 'leap the lunge, then strike from above'],
+      pinatabull: ['PINATA TORO', 'leap the charge, then strike from above'],
+      kingcrab: ['THE KING CRAB', 'leap the scuttle, then strike from above'],
+      snapper: ['THE ANCIENT SNAPPER', 'leap the charge, then strike its shell'],
+    };
+    const [title, sub] = lines[this.type] || ['THE BEAST', 'strike from above'];
+    game.ui.toast(title, sub);
   }
 
   update(dt, player, game, t) {
@@ -50,8 +79,8 @@ export class Boss {
     const a = this.arena;
 
     if (this.state === 'idle') {
-      // perched and waiting: trigger when the crow sets foot in the arena
-      this.y = this.homeY + Math.sin(t * 1.3) * 3;
+      // waiting: trigger when the crow sets foot in the arena
+      if (this.pattern === 'dive') this.y = this.homeY + Math.sin(t * 1.3) * 3;
       if (player.dead <= 0 && player.grounded &&
           player.x > a.x0 + 40 && player.x < a.x1 - 40 && player.y > a.top && player.y < a.floor + 40) {
         this.state = 'perch';
@@ -60,11 +89,50 @@ export class Boss {
         audio.squawk();
         audio.smash();
         game.camera?.shake(8, 0.4);
-        game.ui.toast('THE GULL KING', 'dodge the dive, then strike from above');
+        this.taunt(game);
       }
       return;
     }
 
+    if (this.pattern === 'dive') this.updateDive(dt, player, game, t, a);
+    else this.updateCharge(dt, player, game, t, a);
+
+    // ---- the crow vs the beast ----
+    if (player.dead > 0) return;
+    const dx = player.x - this.x;
+    const dy = player.y - this.y;
+    if (this.state === 'stun') {
+      // stomp: land on its head while it is down
+      if (player.vy > 80 && Math.abs(dx) < 42 && dy > -66 && dy < -10 && this.hitT <= 0) {
+        this.hp--;
+        this.hitT = 0.6;
+        player.vy = -700;
+        player.usedFlap = false;
+        player.dashReady = true;
+        audio.bossHit();
+        game.hitstop(0.1);
+        game.camera?.shake(9, 0.3);
+        particles.feathers(this.x, this.y - 20, 10, 0);
+        particles.burst(this.x, this.y - 20, { count: 14, color: '#f0ece0', speed: 240, life: 0.5, size: 2.4 });
+        if (this.hp <= 0) this.die(game);
+        else {
+          this.state = this.pattern === 'dive' ? 'climb' : 'perch';
+          this.stateT = 0;
+        }
+      }
+    } else if (this.deadlyNow() && player.invuln <= 0) {
+      if (Math.abs(dx) < 36 && Math.abs(dy) < 28) player.die(game);
+    }
+  }
+
+  deadlyNow() {
+    if (this.pattern === 'dive') {
+      return this.state === 'aim' || this.state === 'dive' || this.state === 'perch';
+    }
+    return this.state === 'charge'; // grounders only hurt mid-rush
+  }
+
+  updateDive(dt, player, game, t, a) {
     if (this.state === 'perch') {
       this.x += (this.homeX - this.x) * Math.min(1, 3 * dt);
       this.y += (this.homeY - this.y) * Math.min(1, 3 * dt);
@@ -75,7 +143,6 @@ export class Boss {
         audio.squawk();
       }
     } else if (this.state === 'aim') {
-      // tracks the crow, shaking harder as the dive loads
       this.facing = player.x >= this.x ? 1 : -1;
       this.x += Math.sin(t * 26) * this.stateT * 2.4;
       if (this.stateT > 1.1 / this.rage()) {
@@ -102,7 +169,6 @@ export class Boss {
         particles.dust(this.x, a.floor, 12);
       }
     } else if (this.state === 'stun') {
-      // face-down in the roof gravel: a generous stomp window
       if (this.stateT > 2.6) {
         this.state = 'climb';
         this.stateT = 0;
@@ -115,34 +181,45 @@ export class Boss {
         this.stateT = 0;
       }
     }
+  }
 
-    // ---- the crow vs the king ----
-    if (player.dead > 0) return;
-    const dx = player.x - this.x;
-    const dy = player.y - this.y;
-    if (this.state === 'stun') {
-      // stomp: land on its head while it is down
-      if (player.vy > 80 && Math.abs(dx) < 42 && dy > -66 && dy < -10 && this.hitT <= 0) {
-        this.hp--;
-        this.hitT = 0.6;
-        player.vy = -700;
-        player.usedFlap = false;
-        player.dashReady = true;
-        audio.bossHit();
-        game.hitstop(0.1);
-        game.camera?.shake(9, 0.3);
-        particles.feathers(this.x, this.y - 20, 10, 0);
-        particles.burst(this.x, this.y - 20, { count: 14, color: '#f0ece0', speed: 240, life: 0.5, size: 2.4 });
-        if (this.hp <= 0) this.die(game);
-        else {
-          this.state = 'climb';
-          this.stateT = 0;
-        }
+  updateCharge(dt, player, game, t, a) {
+    this.y = a.floor - this.bodyH; // grounders never leave the floor
+    if (this.state === 'perch') {
+      // lurking, catching its breath where it stands
+      this.facing = player.x >= this.x ? 1 : -1;
+      if (this.stateT > 1.0 / this.rage()) {
+        this.state = 'aim';
+        this.stateT = 0;
+        audio.squawk();
       }
-    } else if ((this.state === 'aim' || this.state === 'dive' || this.state === 'perch') && player.invuln <= 0) {
-      // the king only hurts while hunting; his groggy flight home is safe.
-      // A hop clears the strike: the box is tight on purpose.
-      if (Math.abs(dx) < 36 && Math.abs(dy) < 28) player.die(game);
+    } else if (this.state === 'aim') {
+      // rears up, shaking harder as the rush loads
+      this.facing = player.x >= this.x ? 1 : -1;
+      this.x += Math.sin(t * 30) * this.stateT * 2;
+      if (this.stateT > 0.9 / this.rage()) {
+        this.state = 'charge';
+        this.stateT = 0;
+        this.vx = this.facing * 560 * this.rage();
+        audio.dash();
+      }
+    } else if (this.state === 'charge') {
+      this.x += this.vx * dt;
+      if (Math.random() < 0.4) particles.dust(this.x - this.facing * 20, a.floor, 2);
+      if (this.x <= a.x0 + 70 || this.x >= a.x1 - 70) {
+        // full crash into the arena wall
+        this.x = Math.max(a.x0 + 70, Math.min(a.x1 - 70, this.x));
+        this.state = 'stun';
+        this.stateT = 0;
+        audio.smash();
+        game.camera?.shake(8, 0.35);
+        particles.dust(this.x + this.facing * 24, a.floor, 14);
+      }
+    } else if (this.state === 'stun') {
+      if (this.stateT > 2.6) {
+        this.state = 'perch';
+        this.stateT = 0;
+      }
     }
   }
 
@@ -156,15 +233,15 @@ export class Boss {
     for (let i = 0; i < 3; i++) {
       particles.burst(this.x, this.y, { count: 16, color: ['#f0ece0', '#ffd166', '#ff4fa3'][i], speed: 300, life: 0.8, size: 2.6 });
     }
-    // the prize falls where the king fell
+    // the prize falls where the beast fell
     this.level.pickups.push({ x: this.x, y: this.y - 60, ability: this.drops, got: false, phase: 0 });
   }
 
   draw(ctx, t) {
     if (this.state === 'dead') return;
     const e = this;
-    // impact marker: where the dive will land
-    if (e.state === 'dive' && e.diveTx) {
+    // impact marker for dives
+    if (this.pattern === 'dive' && e.state === 'dive' && e.diveTx) {
       const pulse = 0.5 + Math.sin(t * 16) * 0.3;
       ctx.strokeStyle = `rgba(232,60,75,${pulse})`;
       ctx.lineWidth = 3;
@@ -175,82 +252,39 @@ export class Boss {
       ctx.ellipse(e.diveTx, this.arena.floor - 3, 14, 3.5, 0, 0, Math.PI * 2);
       ctx.stroke();
     }
-    const S = 3.1; // a giant of his kind
+    // charge dust line telegraph
+    if (this.pattern === 'charge' && e.state === 'aim' && e.stateT > 0.4) {
+      ctx.strokeStyle = `rgba(232,60,75,${0.3 + Math.sin(t * 14) * 0.15})`;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([10, 8]);
+      ctx.beginPath();
+      ctx.moveTo(e.x + e.facing * 30, this.arena.floor - 10);
+      ctx.lineTo(e.facing > 0 ? this.arena.x1 - 60 : this.arena.x0 + 60, this.arena.floor - 10);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
     ctx.save();
     ctx.translate(e.x, e.y);
-    // shadow of consequence
-    if (e.state === 'dive' || e.state === 'climb') {
+    // shadow for airborne moments
+    if (this.pattern === 'dive' && (e.state === 'dive' || e.state === 'climb')) {
       ctx.fillStyle = 'rgba(0,0,0,0.25)';
       ctx.beginPath();
       ctx.ellipse(0, this.arena.floor - e.y - 4, 40, 7, 0, 0, Math.PI * 2);
       ctx.fill();
     }
-    ctx.scale(e.facing * S, S);
     if (e.hitT > 0 && Math.sin(t * 50) > 0) ctx.globalAlpha = 0.55;
     const stunned = e.state === 'stun';
-    if (stunned) ctx.rotate(0.5);
-    const flap = e.state === 'dive' ? -0.6 : stunned ? 0.9 : Math.sin(t * (e.state === 'aim' ? 20 : 7)) * 0.7;
-    // wings
-    ctx.strokeStyle = '#e0dac8';
-    ctx.lineWidth = 5.5;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(-2, -2);
-    ctx.quadraticCurveTo(-11, -6 - flap * 9, -22, -4 - flap * 15);
-    ctx.moveTo(2, -2);
-    ctx.quadraticCurveTo(9, -6 - flap * 9, 18, -4 - flap * 13);
-    ctx.stroke();
-    ctx.strokeStyle = '#7a7262';
-    ctx.lineWidth = 3.8;
-    ctx.beginPath();
-    ctx.moveTo(-22, -4 - flap * 15);
-    ctx.lineTo(-29, -2 - flap * 17);
-    ctx.stroke();
-    // body
-    const g = ctx.createLinearGradient(0, -9, 0, 9);
-    g.addColorStop(0, '#f4f0e4');
-    g.addColorStop(1, '#a8a292');
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 14, 9, 0.05, 0, Math.PI * 2);
-    ctx.fill();
-    // battle scars
-    ctx.strokeStyle = 'rgba(122,114,98,0.6)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(-6, 2);
-    ctx.lineTo(-1, 5);
-    ctx.moveTo(3, -4);
-    ctx.lineTo(7, -1);
-    ctx.stroke();
-    // head, beak, crown
-    ctx.fillStyle = '#f4f0e4';
-    ctx.beginPath();
-    ctx.arc(11, -6, 6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#e8a13c';
-    ctx.beginPath();
-    ctx.moveTo(15.5, -7.5);
-    ctx.lineTo(24, -4.5);
-    ctx.lineTo(15.5, -2.5);
-    ctx.fill();
-    ctx.fillStyle = '#ffd166';
-    ctx.beginPath();
-    ctx.moveTo(7.5, -11);
-    ctx.lineTo(8.5, -15);
-    ctx.lineTo(10.5, -12);
-    ctx.lineTo(12.5, -15.5);
-    ctx.lineTo(14, -11.5);
-    ctx.closePath();
-    ctx.fill();
-    // eye
-    ctx.fillStyle = e.state === 'aim' || e.state === 'dive' ? '#e83c4b' : '#191325';
-    ctx.beginPath();
-    ctx.arc(12, -6.5, 2, 0, Math.PI * 2);
-    ctx.fill();
+    switch (this.type) {
+      case 'ratking': drawRatKing(ctx, e, t, stunned); break;
+      case 'iguanodon': drawIguanodon(ctx, e, t, stunned); break;
+      case 'pinatabull': drawPinataBull(ctx, e, t, stunned); break;
+      case 'kingcrab': drawKingCrab(ctx, e, t, stunned); break;
+      case 'snapper': drawSnapper(ctx, e, t, stunned); break;
+      default: drawGullKing(ctx, e, t, stunned);
+    }
     ctx.restore();
 
-    // stun stars and health feathers
+    // stun stars and health pips
     if (stunned) {
       for (let i = 0; i < 3; i++) {
         const a = t * 3 + i * 2.1;
@@ -277,4 +311,370 @@ export class Boss {
       ctx.globalAlpha = 1;
     }
   }
+}
+
+// ------------------------------------------------ the royal gallery
+
+function drawGullKing(ctx, e, t, stunned) {
+  const S = 3.1;
+  ctx.scale(e.facing * S, S);
+  if (stunned) ctx.rotate(0.5);
+  const flap = e.state === 'dive' ? -0.6 : stunned ? 0.9 : Math.sin(t * (e.state === 'aim' ? 20 : 7)) * 0.7;
+  ctx.strokeStyle = '#e0dac8';
+  ctx.lineWidth = 5.5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-2, -2);
+  ctx.quadraticCurveTo(-11, -6 - flap * 9, -22, -4 - flap * 15);
+  ctx.moveTo(2, -2);
+  ctx.quadraticCurveTo(9, -6 - flap * 9, 18, -4 - flap * 13);
+  ctx.stroke();
+  ctx.strokeStyle = '#7a7262';
+  ctx.lineWidth = 3.8;
+  ctx.beginPath();
+  ctx.moveTo(-22, -4 - flap * 15);
+  ctx.lineTo(-29, -2 - flap * 17);
+  ctx.stroke();
+  const g = ctx.createLinearGradient(0, -9, 0, 9);
+  g.addColorStop(0, '#f4f0e4');
+  g.addColorStop(1, '#a8a292');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 14, 9, 0.05, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(122,114,98,0.6)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-6, 2);
+  ctx.lineTo(-1, 5);
+  ctx.moveTo(3, -4);
+  ctx.lineTo(7, -1);
+  ctx.stroke();
+  ctx.fillStyle = '#f4f0e4';
+  ctx.beginPath();
+  ctx.arc(11, -6, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e8a13c';
+  ctx.beginPath();
+  ctx.moveTo(15.5, -7.5);
+  ctx.lineTo(24, -4.5);
+  ctx.lineTo(15.5, -2.5);
+  ctx.fill();
+  crown(ctx, 7.5, -11);
+  ctx.fillStyle = e.state === 'aim' || e.state === 'dive' ? '#e83c4b' : '#191325';
+  ctx.beginPath();
+  ctx.arc(12, -6.5, 2, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function crown(ctx, x, y) {
+  ctx.fillStyle = '#ffd166';
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + 1, y - 4);
+  ctx.lineTo(x + 3, y - 1);
+  ctx.lineTo(x + 5, y - 4.5);
+  ctx.lineTo(x + 6.5, y - 0.5);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawRatKing(ctx, e, t, stunned) {
+  const S = 3.2;
+  ctx.scale(e.facing * S, S);
+  if (stunned) ctx.rotate(-0.35);
+  const rear = e.state === 'aim' ? -0.3 : 0;
+  ctx.rotate(rear);
+  const scurry = Math.sin(t * (e.state === 'charge' ? 36 : 14)) * 1.6;
+  // ragged tail
+  ctx.strokeStyle = '#8d7f92';
+  ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  ctx.moveTo(-11, 2);
+  ctx.quadraticCurveTo(-22, 5 - scurry, -30, -3 + scurry);
+  ctx.stroke();
+  // body
+  const g = ctx.createLinearGradient(0, -9, 0, 8);
+  g.addColorStop(0, '#6a5f70');
+  g.addColorStop(1, '#3c3444');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 13.5, 8.5, 0.08, 0, Math.PI * 2);
+  ctx.fill();
+  // mangy scars
+  ctx.strokeStyle = 'rgba(20,14,24,0.5)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-6, -4);
+  ctx.lineTo(-2, -1);
+  ctx.moveTo(2, 3);
+  ctx.lineTo(6, 5);
+  ctx.stroke();
+  // head, notched ear, snout with teeth
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(11, -3, 6.4, 5, 0.25, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#8d7f92';
+  ctx.beginPath();
+  ctx.moveTo(5, -8);
+  ctx.lineTo(7, -12);
+  ctx.lineTo(9, -8.5);
+  ctx.lineTo(8, -7);
+  ctx.fill();
+  ctx.fillStyle = '#f0ece0';
+  ctx.beginPath();
+  ctx.moveTo(15, -1);
+  ctx.lineTo(16, 2);
+  ctx.lineTo(17.5, -0.5);
+  ctx.fill();
+  crown(ctx, 5, -10.5);
+  ctx.fillStyle = e.state === 'charge' || e.state === 'aim' ? '#e83c4b' : '#191325';
+  ctx.beginPath();
+  ctx.arc(12.5, -4.6, 1.7, 0, Math.PI * 2);
+  ctx.fill();
+  // skittering feet
+  ctx.strokeStyle = '#3c3444';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-5, 8);
+  ctx.lineTo(-5 + scurry, 11);
+  ctx.moveTo(6, 8);
+  ctx.lineTo(6 - scurry, 11);
+  ctx.stroke();
+}
+
+function drawIguanodon(ctx, e, t, stunned) {
+  const S = 3.2;
+  ctx.scale(e.facing * S, S);
+  if (stunned) ctx.rotate(-0.3);
+  const rear = e.state === 'aim' ? -0.35 : 0;
+  ctx.rotate(rear);
+  // great striped tail
+  ctx.strokeStyle = '#3e6e3a';
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(-11, 0);
+  ctx.quadraticCurveTo(-24, -3 + Math.sin(t * 2) * 3, -34, 5);
+  ctx.stroke();
+  ctx.strokeStyle = '#2a4c28';
+  ctx.lineWidth = 5;
+  ctx.setLineDash([3, 4]);
+  ctx.beginPath();
+  ctx.moveTo(-11, 0);
+  ctx.quadraticCurveTo(-24, -3 + Math.sin(t * 2) * 3, -34, 5);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // body
+  const g = ctx.createLinearGradient(0, -9, 0, 9);
+  g.addColorStop(0, '#5e9e50');
+  g.addColorStop(1, '#2c5228');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 14.5, 7.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // tall spines
+  ctx.fillStyle = '#8ec26e';
+  for (let i = -2; i <= 2; i++) {
+    ctx.beginPath();
+    ctx.moveTo(i * 5.4 - 2.4, -6);
+    ctx.lineTo(i * 5.4, -13);
+    ctx.lineTo(i * 5.4 + 2.4, -6);
+    ctx.fill();
+  }
+  // head with grand dewlap
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(13.5, -2.5, 6.6, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e8a13c';
+  ctx.beginPath();
+  ctx.moveTo(10.5, 2);
+  ctx.quadraticCurveTo(13.5, 12, 17.5, 2);
+  ctx.fill();
+  crown(ctx, 10, -8.5);
+  ctx.fillStyle = e.state === 'charge' || e.state === 'aim' ? '#e83c4b' : '#191325';
+  ctx.beginPath();
+  ctx.arc(15, -4, 1.7, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawPinataBull(ctx, e, t, stunned) {
+  const S = 3.4;
+  ctx.scale(e.facing * S, S);
+  if (stunned) ctx.rotate(0.4);
+  const rear = e.state === 'aim' ? -0.25 : 0;
+  ctx.rotate(rear);
+  // fringed body in festival bands
+  const stripes = ['#ff4fa3', '#ffd166', '#35e0e0', '#a4f26b'];
+  for (let i = 0; i < 4; i++) {
+    ctx.fillStyle = stripes[i];
+    ctx.beginPath();
+    ctx.ellipse(0, -6 + i * 3.4, 14 - i * 1.2, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // sturdy legs
+  ctx.strokeStyle = '#c9366f';
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  const step = e.state === 'charge' ? Math.sin(t * 30) * 4 : 0;
+  ctx.beginPath();
+  ctx.moveTo(-7, 6);
+  ctx.lineTo(-7 + step, 13);
+  ctx.moveTo(7, 6);
+  ctx.lineTo(7 - step, 13);
+  ctx.stroke();
+  // bull head with paper horns
+  ctx.fillStyle = '#ff8ab5';
+  ctx.beginPath();
+  ctx.ellipse(12.5, -8, 6.5, 5, 0.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#f4f0ff';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(9, -12);
+  ctx.quadraticCurveTo(7, -18, 11, -19);
+  ctx.moveTo(15, -12.5);
+  ctx.quadraticCurveTo(17, -18, 13.5, -19.5);
+  ctx.stroke();
+  // snorting snout
+  ctx.fillStyle = '#c9366f';
+  ctx.beginPath();
+  ctx.ellipse(17.5, -6, 3.4, 2.6, 0.2, 0, Math.PI * 2);
+  ctx.fill();
+  if (e.state === 'aim' && Math.sin(t * 12) > 0) {
+    particles.trail(e.x + e.facing * 60, e.y - 14, 'rgba(255,209,102,0.6)');
+  }
+  // googly eye
+  ctx.fillStyle = '#f4f0ff';
+  ctx.beginPath();
+  ctx.arc(12, -9.5, 2.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = e.state === 'charge' ? '#e83c4b' : '#191325';
+  ctx.beginPath();
+  ctx.arc(12.8, -9, 1.2, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawKingCrab(ctx, e, t, stunned) {
+  const S = 3.2;
+  ctx.scale(e.facing * S, S);
+  if (stunned) ctx.rotate(0.35);
+  const clawUp = e.state === 'aim' || e.state === 'charge';
+  // legs
+  ctx.strokeStyle = '#b8503a';
+  ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round';
+  const skit = Math.sin(t * (e.state === 'charge' ? 30 : 12)) * 2.4;
+  ctx.beginPath();
+  for (const s of [-1, 1]) {
+    ctx.moveTo(s * 7, 3);
+    ctx.lineTo(s * 15, 8 + skit * s);
+    ctx.moveTo(s * 9, 4);
+    ctx.lineTo(s * 18, 10 - skit * s);
+  }
+  ctx.stroke();
+  // barnacled shell
+  const g = ctx.createLinearGradient(0, -10, 0, 8);
+  g.addColorStop(0, '#e86a4d');
+  g.addColorStop(1, '#93321f');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(0, -2, 13, 9, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(240,236,224,0.5)';
+  for (const [bx, by] of [[-5, -6], [3, -8], [7, -3]]) {
+    ctx.beginPath();
+    ctx.arc(bx, by, 1.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // royal claws
+  ctx.fillStyle = '#e86a4d';
+  for (const s of [-1, 1]) {
+    const cy = clawUp ? -15 : -7;
+    ctx.beginPath();
+    ctx.ellipse(s * 13, cy, 5.4, 4.2, s * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#5e1f12';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(s * 16, cy - 3);
+    ctx.lineTo(s * 18.5, cy);
+    ctx.stroke();
+  }
+  crown(ctx, -3.4, -10.5);
+  // eyestalks
+  ctx.strokeStyle = '#5e1f12';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-3, -9);
+  ctx.lineTo(-4.4, -14);
+  ctx.moveTo(3, -9);
+  ctx.lineTo(4.4, -14);
+  ctx.stroke();
+  ctx.fillStyle = clawUp ? '#e83c4b' : '#191325';
+  ctx.beginPath();
+  ctx.arc(-4.6, -15, 1.8, 0, Math.PI * 2);
+  ctx.arc(4.6, -15, 1.8, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawSnapper(ctx, e, t, stunned) {
+  const S = 3.4;
+  ctx.scale(e.facing * S, S);
+  if (stunned) {
+    // flipped onto its shell, legs paddling the air
+    ctx.rotate(Math.PI);
+    ctx.translate(0, 4);
+  }
+  // legs
+  ctx.strokeStyle = '#4a5c38';
+  ctx.lineWidth = 3.4;
+  ctx.lineCap = 'round';
+  const pad = stunned ? Math.sin(t * 10) * 3 : (e.state === 'charge' ? Math.sin(t * 24) * 3 : 0);
+  ctx.beginPath();
+  ctx.moveTo(-8, 6);
+  ctx.lineTo(-10 + pad, 11);
+  ctx.moveTo(7, 6);
+  ctx.lineTo(9 - pad, 11);
+  ctx.stroke();
+  // ancient shell with moss
+  const g = ctx.createLinearGradient(0, -11, 0, 8);
+  g.addColorStop(0, '#5a6e44');
+  g.addColorStop(1, '#33402a');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(0, -2, 14, 9.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // scute plates
+  ctx.strokeStyle = 'rgba(20,26,16,0.6)';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  for (let i = -1; i <= 1; i++) {
+    ctx.moveTo(i * 7, -10);
+    ctx.lineTo(i * 7, 6);
+  }
+  ctx.moveTo(-12, -3);
+  ctx.lineTo(12, -3);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(90,140,70,0.4)';
+  ctx.beginPath();
+  ctx.ellipse(-6, -8, 4, 2.4, 0.3, 0, Math.PI * 2);
+  ctx.fill();
+  // beaked head
+  ctx.fillStyle = '#6a7c50';
+  ctx.beginPath();
+  ctx.ellipse(14, -2, 6, 4.6, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#33402a';
+  ctx.beginPath();
+  ctx.moveTo(18, -4);
+  ctx.lineTo(22, -1.5);
+  ctx.lineTo(18, 1);
+  ctx.fill();
+  crown(ctx, 11, -6.5);
+  ctx.fillStyle = e.state === 'charge' || e.state === 'aim' ? '#e83c4b' : '#191325';
+  ctx.beginPath();
+  ctx.arc(15, -3.6, 1.7, 0, Math.PI * 2);
+  ctx.fill();
 }

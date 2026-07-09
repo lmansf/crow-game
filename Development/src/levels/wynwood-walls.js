@@ -77,6 +77,35 @@ export default {
     { x: 5200, y: 1285, type: 'record' },
   ],
 
+  // room 1's locals: iguanas bask on the warm hub asphalt
+  enemies: [
+    { type: 'iguana', x: 2680, y: 2188, range: 0 },
+    { type: 'iguana', x: 3320, y: 2188, range: 0 },
+  ],
+
+  // room 2: the workshop won't open its east door without the combo
+  puzzle: {
+    switches: [
+      { x: 3450, y: 2160, hue: 320 },
+      { x: 3780, y: 2060, hue: 45 },
+      { x: 3700, y: 2160, hue: 185 },
+    ],
+    order: [1, 2, 0],
+    display: { x: 4100, y: 1900 },
+    door: { x: 4160, y: 2050, w: 40, h: 150 },
+  },
+
+  // room 3: EL IGUANODON suns himself on the workshop roof,
+  // and the Talon Hook is under his belly
+  boss: {
+    type: 'iguanodon',
+    pattern: 'charge',
+    x: 3900,
+    y: 1670,
+    arena: { x0: 3440, x1: 4160, top: 1300, floor: 1700 },
+    drops: 'hook',
+  },
+
   // mega-map doors at both street ends
   entries: {
     west: { x: 250, y: 2170 },
@@ -110,6 +139,9 @@ export default {
     { x: 4260, y: 2060, w: 120, h: 140, kind: 'container', hue: 200 },
     { x: 4400, y: 1920, w: 120, h: 280, kind: 'container', hue: 330 },
     { x: 4540, y: 1780, w: 120, h: 420, kind: 'container', hue: 150 },
+    // the teased stash off MUSEO's shoulder: only the hook chain,
+    // the museo climb, and a hop off its east edge get you here
+    { x: 1420, y: 1400, w: 180, h: 22, kind: 'steel' },
   ],
 
   platforms: [
@@ -149,7 +181,7 @@ export default {
   pickups: [
     { x: 1850, y: 1815, ability: 'roll' },
     { x: 4600, y: 1730, ability: 'grip' },
-    { x: 3520, y: 1645, ability: 'hook' },
+    // hook now falls from EL IGUANODON
   ],
 
   checkpoints: [
@@ -198,6 +230,9 @@ export default {
     ...arc(900, 1055, 1260, 1055, 5, 60),
     // museo street front
     ...line(300, 2140, 700, 3),
+    // the shoulder stash
+    ...line(1450, 1360, 1570, 3),
+    ...arc(1440, 1310, 1580, 1310, 3, 40),
   ],
 
   decor: [
@@ -219,8 +254,11 @@ export default {
     { x: 2450, y: 2040, text: 'the gallery is open: climb the shelves' },
     { x: 1750, y: 2120, text: 'a crawl space: far too low to walk' },
     { x: 3520, y: 2120, text: 'the workshop shutter is stuck half-open' },
+    { x: 3800, y: 2020, text: 'the door panel wants its combo' },
     { x: 4450, y: 2050, text: 'stack by stack' },
     { x: 4780, y: 2090, text: 'painted walls remember talons' },
-    { x: 3760, y: 1640, text: 'crane hooks hang over the courtyard' },
+    { x: 3760, y: 1640, text: 'something sunbathes on the workshop roof. it is not small' },
+    { x: 2900, y: 2120, text: 'iguanas bite when crowded. give them room or a swoop' },
+    { x: 2000, y: 1690, text: 'a stash hangs off MUSEO\'s shoulder, for wings that fly the hooks' },
   ],
 };

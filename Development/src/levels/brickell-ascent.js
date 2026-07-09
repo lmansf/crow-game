@@ -76,7 +76,9 @@ export default {
     beamdown: { x: 340, y: 1120 },
   },
   exits: [
-    { x: 118, y: 3070, w: 56, h: 140, to: 'hall-drain', entry: 'east', label: 'OCEAN DRIVE', dir: -1 },
+    // hugs the cap, tucked in the nook under the stash alcove, so only a
+    // deliberate walk-in trips it
+    { x: 118, y: 3080, w: 26, h: 120, to: 'hall-drain', entry: 'east', label: 'OCEAN DRIVE', dir: -1 },
     { x: 3250, y: 210, w: 60, h: 140, to: 'hall-glideway', entry: 'west', label: 'THE GLIDE-WAY', dir: 1 },
     // the top of the green beam: not a door, an abduction
     { x: 160, y: -60, w: 120, h: 160, to: 'ufo', entry: 'beam', hidden: true },
@@ -91,6 +93,34 @@ export default {
     { x: 1650, y: 2825, type: 'duck' },
     { x: 2150, y: 1285, type: 'dish' },
   ],
+
+  // room 1's locals: the drain rats own the dark
+  enemies: [
+    { type: 'rat', x: 600, y: 3188, range: 150 },
+    { type: 'rat', x: 950, y: 3188, range: 100 },
+  ],
+
+  // room 2: the junction-box combo seals the drain early
+  puzzle: {
+    switches: [
+      { x: 435, y: 3040, hue: 185 },
+      { x: 700, y: 3040, hue: 45 },
+      { x: 560, y: 3160, hue: 320 },
+    ],
+    order: [2, 0, 1],
+    display: { x: 1030, y: 2800 },
+    door: { x: 1000, y: 2520, w: 60, h: 680 },
+  },
+
+  // room 3: the Rat King rules the gallery, hoarding the Beak Break
+  boss: {
+    type: 'ratking',
+    pattern: 'charge',
+    x: 2100,
+    y: 3166,
+    arena: { x0: 1240, x1: 2240, top: 2520, floor: 3200 },
+    drops: 'break',
+  },
 
   // real downtown silhouettes behind the playable towers
   landmarks: [
@@ -115,6 +145,11 @@ export default {
     { x: 1050, y: 2960, w: 160, h: 240, kind: 'brick' },                     // pillar
     { x: 1580, y: 2840, w: 280, h: 80, kind: 'brick' },                      // gallery
     { x: 2280, y: 2520, w: 90, h: 680, kind: 'brick', breakable: true },     // bulkhead to the shaft
+    // the teased stash: an alcove up in the west wall, its mouth bricked
+    // shut until Beak Break. the floor below stays open so the drain door
+    // and the west entry never seal
+    { x: 310, y: 2700, w: 70, h: 320, kind: 'brick', breakable: true },   // alcove mouth
+    { x: 120, y: 3020, w: 190, h: 26, kind: 'brick' },                    // alcove floor
     // shaft walls hang from the street slab, flush with the manhole edges,
     // leaving a low passage along the floor into (and past) the shaft
     { x: 2690, y: 2520, w: 70, h: 400, kind: 'brick' },                      // shaft wall left
@@ -177,7 +212,7 @@ export default {
   ],
 
   pickups: [
-    { x: 1720, y: 2790, ability: 'break' },
+    // break now falls from the Rat King's hoard
     { x: 1840, y: 1865, ability: 'launch' },
     { x: 1650, y: 615, ability: 'soar' },
   ],
@@ -194,6 +229,9 @@ export default {
   goal: { x: 3110, y: 350, text: 'EVERGLADES' },
 
   shinies: [
+    // the teased stash alcove behind the cracked bricks
+    ...line(160, 2990, 280, 3),
+    [220, 2890],
     // drains
     ...line(380, 3150, 900, 4),
     [430, 3040], [890, 2950], [1370, 2860],
@@ -232,6 +270,7 @@ export default {
       lights: [
         { x: 290, y: 2620, r: 160 },   // grate light over the spawn
         { x: 290, y: 2800, r: 110 },
+        { x: 215, y: 2960, r: 120 },   // stash alcove glow behind the bricks
         { x: 700, y: 3160, r: 100 },
         { x: 1470, y: 3130, r: 130 },  // gallery perch
         { x: 1720, y: 2860, r: 140 },
@@ -262,8 +301,11 @@ export default {
   ],
 
   hints: [
-    { x: 300, y: 3060, text: 'the flood dropped you here' },
+    { x: 300, y: 3130, text: 'the flood dropped you here' },
+    { x: 430, y: 2980, text: 'cracked bricks overhead: something glitters behind' },
+    { x: 560, y: 3120, text: 'the junction box wants its combo' },
     { x: 850, y: 2920, text: 'hop the pipes' },
+    { x: 1700, y: 2760, text: 'something enormous scratches in the gallery dark' },
     { x: 2190, y: 2960, text: 'cracked bricks block the way' },
     { x: 2190, y: 2992, text: 'search above the pipes for a way through' },
     { x: 2805, y: 2500, text: 'kick between the walls to climb', kb: 'kick between the walls to climb' },

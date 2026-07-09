@@ -107,6 +107,35 @@ export default {
     { x: 7350, y: 2485, type: 'shell' },
   ],
 
+  // room 1's locals: cottonmouths coil on the first hummocks
+  enemies: [
+    { type: 'snake', x: 850, y: 2482, range: 0 },
+    { type: 'snake', x: 1450, y: 2482, range: 0 },
+  ],
+
+  // room 2: the root-gate cairn combo before the lily crossing
+  puzzle: {
+    switches: [
+      { x: 2550, y: 2460, hue: 100 },
+      { x: 3130, y: 2240, hue: 45 },
+      { x: 2950, y: 2460, hue: 185 },
+    ],
+    order: [1, 0, 2],
+    display: { x: 3290, y: 2100 },
+    door: { x: 3350, y: 800, w: 60, h: 1700, kind: 'trunk' },
+  },
+
+  // room 3: THE ANCIENT SNAPPER holds hummock five, where the wire
+  // ends; flip him three times and True Flight is yours
+  boss: {
+    type: 'snapper',
+    pattern: 'charge',
+    x: 5300,
+    y: 2466,
+    arena: { x0: 5040, x1: 5560, top: 1000, floor: 2500 },
+    drops: 'flight',
+  },
+
   // the Shark Valley observation tower, out in the open water
   landmarks: [
     { type: 'sharktower', x: 4800, y0: 1000, y1: 2510 },
@@ -134,6 +163,15 @@ export default {
     // the Home Tree and the nest bough
     { x: 7760, y: 750, w: 90, h: 1750, kind: 'trunk' },
     { x: 7690, y: 750, w: 230, h: 36, kind: 'canopy' },
+    // the cypress-crown corridor: high boughs running west from the
+    // tower, gaps only True Flight can climb, ending at the heron roost
+    { x: 4560, y: 800, w: 130, h: 26, kind: 'canopy' },
+    { x: 3760, y: 760, w: 130, h: 26, kind: 'canopy' },
+    { x: 2960, y: 720, w: 130, h: 26, kind: 'canopy' },
+    { x: 2260, y: 660, w: 130, h: 26, kind: 'canopy' },
+    { x: 1620, y: 560, w: 240, h: 26, kind: 'canopy' },
+    // pad perch for the cairn combo
+    { x: 3080, y: 2280, w: 100, h: 22, kind: 'canopy' },
   ],
 
   platforms: [
@@ -185,7 +223,7 @@ export default {
   ],
 
   pickups: [
-    { x: 5480, y: 1408, ability: 'flight' },
+    // flight now falls from THE ANCIENT SNAPPER
   ],
 
   checkpoints: [
@@ -238,6 +276,10 @@ export default {
     ...diag(7150, 1150, 7450, 1000, 3),
     ...col(7550, 2300, 900, 4),
     ...arc(7700, 700, 7950, 700, 3, 40),
+    // the crown corridor and the heron roost
+    [4620, 760], [3820, 720], [3020, 680], [2320, 620],
+    ...line(1660, 520, 1830, 4),
+    ...arc(1640, 470, 1840, 470, 3, 40),
   ],
 
   decor: [
@@ -259,14 +301,19 @@ export default {
     { type: 'boardwalk', x: 7280, w: 260 },
     { type: 'flock', x: 5500, y: 1550, count: 10 },
     { type: 'flock', x: 7900, y: 620, count: 6 },
+    { type: 'flock', x: 1740, y: 460, count: 5 },
   ],
 
   hints: [
     { x: 460, y: 2400, text: 'no streets now. only the river of grass' },
+    { x: 900, y: 2430, text: 'cottonmouths flash white before they strike' },
     { x: 720, y: 2420, text: 'roots grow low: tumble through' },
     { x: 1150, y: 2350, text: 'jaws in the water: cross while they gape' },
     { x: 1620, y: 2400, text: 'moss holds talons like paint once did' },
+    { x: 1760, y: 1010, text: 'an old heron roost crowns the sky. no wings born yet can reach it' },
+    { x: 2800, y: 2430, text: 'the cairn stones hum a combination' },
     { x: 3620, y: 2380, text: 'lily pads sink: keep moving' },
+    { x: 5200, y: 2380, text: 'hummock five is claimed. the shell is older than the swamp' },
     { x: 4700, y: 2420, text: 'the old ranger tower still stands' },
     { x: 4940, y: 1060, text: 'a guy-wire runs east: ride it down' },
     { x: 5500, y: 2380, text: 'THE FLOCK rides the warm air' },
