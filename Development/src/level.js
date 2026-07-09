@@ -54,6 +54,9 @@ export class Level {
     this.vents = data.vents.map((v) => ({ ...v }));
     this.hazards = data.hazards.map((h) => ({ ...h, sag: h.sag ?? 14 }));
     this.darkZones = (data.darkZones || []).map((z) => ({ ...z }));
+    this.murals = (data.murals || []).map((m) => ({ ...m }));
+    this.hooks = (data.hooks || []).map((h) => ({ ...h, held: false }));
+    this.backdrops = data.backdrops ? data.backdrops.map((b) => ({ ...b })) : this.darkZones;
 
     this.shinies = data.shinies.map(([x, y], i) => ({ x, y, ox: x, oy: y, got: false, phase: i * 0.7 }));
     this.shinyTotal = this.shinies.length;
@@ -68,6 +71,15 @@ export class Level {
     for (const b of data.buildings) {
       b.cache = renderBuilding(b, this.groundY);
     }
+  }
+
+  // Is there grippable painted wall at this face position? dir is the side
+  // the crow pushes toward (+1 = wall on the crow's right).
+  muralAt(edgeX, y, dir) {
+    for (const m of this.murals) {
+      if (m.dir === dir && Math.abs(m.x - edgeX) < 6 && y > m.y0 && y < m.y1) return true;
+    }
+    return false;
   }
 
   smash(s, game) {
@@ -204,8 +216,8 @@ export class Level {
     const x0 = cam.x - 60;
     const x1 = cam.x + cam.viewW + 60;
 
-    // underground backdrop first so the sky never shows below street level
-    for (const z of this.darkZones) {
+    // interior/underground backdrops first so the sky never shows through
+    for (const z of this.backdrops) {
       drawBackdrop(ctx, z);
     }
 
@@ -242,6 +254,7 @@ export class Level {
       else if (d.type === 'grass') drawGrass(ctx, d.x, d.y || this.groundY, t);
       else if (d.type === 'lamp') drawLamp(ctx, d.x, d.y || this.groundY);
       else if (d.type === 'bigpipe') drawBigPipe(ctx, d);
+      else if (d.type === 'mast') drawMast(ctx, d, this.groundY);
       else if (d.type === 'sewerwater') drawSewerWater(ctx, d, t);
       else if (d.type === 'grate') drawGrateBeam(ctx, d, t);
     }
@@ -256,6 +269,18 @@ export class Level {
     for (const c of this.cables) {
       if (c.x + c.w < x0 || c.x > x1) continue;
       drawCable(ctx, c, t, !!player?.abilities.launch);
+    }
+
+    // murals (grippable painted walls)
+    for (const m of this.murals) {
+      if (m.x < x0 - 20 || m.x > x1 + 20) continue;
+      drawMural(ctx, m, t, !!player?.abilities.grip);
+    }
+
+    // crane hooks
+    for (const hk of this.hooks) {
+      if (hk.x < x0 - 40 || hk.x > x1 + 40) continue;
+      drawHook(ctx, hk, t, !!player?.abilities.hook);
     }
 
     // vents and thermals
@@ -564,6 +589,10 @@ function neonPath(ctx, b) {
 // ------------------------------------------------ structure blocks
 
 function drawBlock(ctx, s, t, player) {
+  if (s.kind === 'steel') { drawSteel(ctx, s); return; }
+  if (s.kind === 'shutter') { drawShutterWall(ctx, s); return; }
+  if (s.kind === 'crate') { drawCrateBlock(ctx, s); return; }
+  if (s.kind === 'container') { drawContainer(ctx, s); return; }
   const g = ctx.createLinearGradient(0, s.y, 0, s.y + s.h);
   g.addColorStop(0, '#3a2a33');
   g.addColorStop(1, '#241a24');
@@ -630,6 +659,70 @@ function drawBlock(ctx, s, t, player) {
 }
 
 function drawBackdrop(ctx, z) {
+  if (z.style === 'gallery') {
+    // warm gallery interior with framed art and track lights
+    const g = ctx.createLinearGradient(0, z.y, 0, z.y + z.h);
+    g.addColorStop(0, '#3b3046');
+    g.addColorStop(1, '#2a2136');
+    ctx.fillStyle = g;
+    ctx.fillRect(z.x, z.y, z.w, z.h);
+    const rand = rng(z.x * 3 + 11);
+    for (let fx = z.x + 60; fx < z.x + z.w - 120; fx += 150 + rand() * 90) {
+      const fw = 60 + rand() * 50;
+      const fh = 46 + rand() * 40;
+      const fy = z.y + 40 + rand() * (z.h - fh - 120);
+      ctx.fillStyle = '#1c1626';
+      ctx.fillRect(fx - 4, fy - 4, fw + 8, fh + 8);
+      ctx.fillStyle = `hsl(${Math.floor(rand() * 360)}, 45%, 38%)`;
+      ctx.fillRect(fx, fy, fw, fh);
+      ctx.fillStyle = `hsla(${Math.floor(rand() * 360)}, 60%, 60%, 0.5)`;
+      ctx.beginPath();
+      ctx.ellipse(fx + fw * (0.3 + rand() * 0.4), fy + fh * 0.5, fw * 0.22, fh * 0.3, rand(), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(20,14,30,0.9)';
+    ctx.fillRect(z.x, z.y + 14, z.w, 6);
+    for (let lx = z.x + 90; lx < z.x + z.w; lx += 180) {
+      ctx.fillStyle = '#2a2136';
+      ctx.fillRect(lx - 3, z.y + 20, 6, 10);
+      const lg = ctx.createRadialGradient(lx, z.y + 34, 2, lx, z.y + 34, 60);
+      lg.addColorStop(0, 'rgba(255,230,180,0.16)');
+      lg.addColorStop(1, 'rgba(255,230,180,0)');
+      ctx.fillStyle = lg;
+      ctx.beginPath();
+      ctx.arc(lx, z.y + 34, 60, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    return;
+  }
+  if (z.style === 'workshop') {
+    // corrugated workshop interior with a tool wall and tarps
+    const g = ctx.createLinearGradient(0, z.y, 0, z.y + z.h);
+    g.addColorStop(0, '#2c2836');
+    g.addColorStop(1, '#201c2a');
+    ctx.fillStyle = g;
+    ctx.fillRect(z.x, z.y, z.w, z.h);
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (let lx = z.x + 24; lx < z.x + z.w; lx += 26) {
+      ctx.moveTo(lx, z.y);
+      ctx.lineTo(lx, z.y + z.h);
+    }
+    ctx.stroke();
+    const rand = rng(z.x * 5 + 3);
+    ctx.fillStyle = 'rgba(120,110,140,0.2)';
+    for (let i = 0; i < 6; i++) {
+      const tx = z.x + 40 + rand() * (z.w - 120);
+      ctx.fillRect(tx, z.y + 40 + rand() * 40, 3 + rand() * 26, 8 + rand() * 30);
+    }
+    ctx.fillStyle = 'rgba(90,150,180,0.14)';
+    ctx.beginPath();
+    ctx.moveTo(z.x + z.w * 0.62, z.y + z.h);
+    ctx.quadraticCurveTo(z.x + z.w * 0.68, z.y + z.h - 90, z.x + z.w * 0.76, z.y + z.h);
+    ctx.fill();
+    return;
+  }
   const g = ctx.createLinearGradient(0, z.y, 0, z.y + z.h);
   g.addColorStop(0, '#1c1322');
   g.addColorStop(1, '#120b16');
@@ -648,6 +741,161 @@ function drawBackdrop(ctx, z) {
   ctx.fillStyle = 'rgba(90,80,110,0.16)';
   ctx.fillRect(z.x, z.y + 30, z.w, 13);
   ctx.fillRect(z.x, z.y + 52, z.w, 7);
+}
+
+function drawSteel(ctx, s) {
+  const g = ctx.createLinearGradient(0, s.y, 0, s.y + s.h);
+  g.addColorStop(0, '#4a4458');
+  g.addColorStop(1, '#332e42');
+  ctx.fillStyle = g;
+  ctx.fillRect(s.x, s.y, s.w, s.h);
+  ctx.strokeStyle = 'rgba(12,8,20,0.4)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  if (s.w >= s.h) {
+    for (let y = s.y + 10; y < s.y + s.h; y += 12) {
+      ctx.moveTo(s.x, y);
+      ctx.lineTo(s.x + s.w, y);
+    }
+  } else {
+    for (let x = s.x + 10; x < s.x + s.w; x += 12) {
+      ctx.moveTo(x, s.y);
+      ctx.lineTo(x, s.y + s.h);
+    }
+  }
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(s.x, s.y, s.w, 3);
+}
+
+function drawShutterWall(ctx, s) {
+  const g = ctx.createLinearGradient(0, s.y, 0, s.y + s.h);
+  g.addColorStop(0, '#5a5468');
+  g.addColorStop(1, '#3d3850');
+  ctx.fillStyle = g;
+  ctx.fillRect(s.x, s.y, s.w, s.h);
+  ctx.strokeStyle = 'rgba(14,10,22,0.5)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let y = s.y + 8; y < s.y + s.h; y += 10) {
+    ctx.moveTo(s.x, y);
+    ctx.lineTo(s.x + s.w, y);
+  }
+  ctx.stroke();
+  // bottom rail with handle: reads as a half-open rolling door
+  ctx.fillStyle = '#171226';
+  ctx.fillRect(s.x - 3, s.y + s.h - 8, s.w + 6, 8);
+  ctx.fillStyle = '#8d83a3';
+  ctx.fillRect(s.x + s.w / 2 - 8, s.y + s.h - 5, 16, 3);
+}
+
+function drawCrateBlock(ctx, s) {
+  ctx.fillStyle = '#5a4432';
+  ctx.fillRect(s.x, s.y, s.w, s.h);
+  ctx.strokeStyle = 'rgba(20,12,8,0.5)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(s.x + 1.5, s.y + 1.5, s.w - 3, s.h - 3);
+  ctx.beginPath();
+  ctx.moveTo(s.x, s.y);
+  ctx.lineTo(s.x + s.w, s.y + s.h);
+  ctx.moveTo(s.x + s.w, s.y);
+  ctx.lineTo(s.x, s.y + s.h);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.07)';
+  ctx.fillRect(s.x, s.y, s.w, 3);
+}
+
+function drawContainer(ctx, s) {
+  const hue = s.hue ?? 15;
+  const g = ctx.createLinearGradient(0, s.y, 0, s.y + s.h);
+  g.addColorStop(0, `hsl(${hue}, 45%, 34%)`);
+  g.addColorStop(1, `hsl(${hue}, 45%, 22%)`);
+  ctx.fillStyle = g;
+  ctx.fillRect(s.x, s.y, s.w, s.h);
+  ctx.strokeStyle = 'rgba(10,8,16,0.4)';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (let x = s.x + 12; x < s.x + s.w - 6; x += 14) {
+    ctx.moveTo(x, s.y + 5);
+    ctx.lineTo(x, s.y + s.h - 5);
+  }
+  ctx.stroke();
+  ctx.strokeStyle = `hsl(${hue}, 40%, 16%)`;
+  ctx.lineWidth = 3;
+  ctx.strokeRect(s.x + 1.5, s.y + 1.5, s.w - 3, s.h - 3);
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillRect(s.x, s.y, s.w, 3);
+}
+
+function drawMural(ctx, m, t, hasGrip) {
+  const w = 14;
+  const x = m.dir === 1 ? m.x : m.x - w;
+  const rand = rng(m.x * 7 + m.y0);
+  let y = m.y0;
+  while (y < m.y1) {
+    const bh = 40 + rand() * 90;
+    ctx.fillStyle = `hsla(${Math.floor(rand() * 360)}, 75%, ${45 + rand() * 20}%, 0.85)`;
+    ctx.fillRect(x, y, w, Math.min(bh, m.y1 - y));
+    if (rand() < 0.5) {
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.beginPath();
+      ctx.arc(x + w * (0.3 + rand() * 0.4), y + bh * 0.4, 3 + rand() * 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    y += bh;
+  }
+  // paint drips at the bottom edge
+  ctx.fillStyle = 'rgba(20,14,28,0.35)';
+  for (let i = 0; i < 4; i++) {
+    ctx.fillRect(x + 2 + i * 3.4, m.y1 - 4, 2, 4 + rand() * 8);
+  }
+  if (hasGrip) {
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.strokeStyle = `rgba(99,230,164,${0.3 + Math.sin(t * 3) * 0.15})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(m.dir === 1 ? m.x : m.x - 1, m.y0);
+    ctx.lineTo(m.dir === 1 ? m.x : m.x - 1, m.y1);
+    ctx.stroke();
+    ctx.globalCompositeOperation = 'source-over';
+  }
+}
+
+function drawHook(ctx, hk, t, hasAbility) {
+  const top = hk.top ?? hk.y - 240;
+  // chain
+  ctx.strokeStyle = '#3a3450';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(hk.x, top);
+  ctx.lineTo(hk.x, hk.y - 10);
+  ctx.stroke();
+  ctx.fillStyle = '#4a4462';
+  for (let y = top + 8; y < hk.y - 12; y += 16) {
+    ctx.beginPath();
+    ctx.ellipse(hk.x, y, 3, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // the hook itself
+  ctx.strokeStyle = hasAbility ? '#d9b8ff' : '#6a5f8a';
+  ctx.lineWidth = 4.5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(hk.x, hk.y - 12);
+  ctx.lineTo(hk.x, hk.y + 2);
+  ctx.arc(hk.x - 7, hk.y + 2, 7, 0, Math.PI * 0.85);
+  ctx.stroke();
+  if (hasAbility && !hk.held) {
+    ctx.globalCompositeOperation = 'lighter';
+    const g = ctx.createRadialGradient(hk.x, hk.y, 2, hk.x, hk.y, 26);
+    g.addColorStop(0, `rgba(217,184,255,${0.2 + Math.sin(t * 2.6 + hk.x) * 0.1})`);
+    g.addColorStop(1, 'rgba(217,184,255,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(hk.x, hk.y, 26, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+  }
 }
 
 // ------------------------------------------------ entity drawing
@@ -1278,6 +1526,40 @@ function drawLamp(ctx, x, baseY) {
   ctx.ellipse(x + 24, baseY + 2, 46, 12, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.globalCompositeOperation = 'source-over';
+}
+
+function drawMast(ctx, d, groundY) {
+  // decorative crane mast: lattice tower from the jib down to the street
+  const x0 = d.x;
+  const x1 = d.x + d.w;
+  ctx.strokeStyle = '#3d3850';
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(x0 + 4, d.y0);
+  ctx.lineTo(x0 + 4, groundY);
+  ctx.moveTo(x1 - 4, d.y0);
+  ctx.lineTo(x1 - 4, groundY);
+  ctx.stroke();
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = '#332e42';
+  ctx.beginPath();
+  for (let y = d.y0 + 10; y < groundY - 40; y += 80) {
+    ctx.moveTo(x0 + 4, y);
+    ctx.lineTo(x1 - 4, y + 40);
+    ctx.moveTo(x1 - 4, y);
+    ctx.lineTo(x0 + 4, y + 40);
+    ctx.moveTo(x0 + 4, y);
+    ctx.lineTo(x1 - 4, y);
+  }
+  ctx.stroke();
+  // operator cab near the top
+  ctx.fillStyle = '#4a4458';
+  ctx.fillRect(x0 - 10, d.y0 + 46, d.w + 20, 34);
+  ctx.fillStyle = 'rgba(255,220,150,0.5)';
+  ctx.fillRect(x0 - 4, d.y0 + 54, 16, 12);
+  // base plates
+  ctx.fillStyle = '#332e42';
+  ctx.fillRect(x0 - 8, groundY - 12, d.w + 16, 12);
 }
 
 function drawBigPipe(ctx, d) {

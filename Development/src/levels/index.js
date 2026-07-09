@@ -2,12 +2,12 @@
 
 import oceanDrive from './ocean-drive.js';
 import brickellAscent from './brickell-ascent.js';
+import wynwoodWalls from './wynwood-walls.js';
 
-export const LEVELS = [oceanDrive, brickellAscent];
+export const LEVELS = [oceanDrive, brickellAscent, wynwoodWalls];
 
 // Shown as locked cards on the district select screen.
 export const COMING_SOON = [
-  { district: 3, name: 'Wynwood Walls' },
   { district: 4, name: 'Little Havana Nights' },
 ];
 

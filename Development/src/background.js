@@ -122,54 +122,71 @@ export class Background {
     }));
   }
 
-  draw(ctx, cam, cssW, cssH, t, groundY = 1500) {
+  draw(ctx, cam, cssW, cssH, t, groundY = 1500, mood = 'dusk') {
+    const dawn = mood === 'dawn';
     // ---- sky ----
     const sky = ctx.createLinearGradient(0, 0, 0, cssH);
     const horizon = Math.max(cssH * 0.3, Math.min((groundY - cam.y) * cam.scale * 0.88 - 30, cssH + 90));
     const hFrac = Math.max(0.2, Math.min(horizon / cssH, 1));
-    sky.addColorStop(0, '#0d0620');
-    sky.addColorStop(Math.max(0, hFrac - 0.45), '#221040');
-    sky.addColorStop(Math.max(0, hFrac - 0.18), '#5a1a5e');
-    sky.addColorStop(Math.min(1, hFrac - 0.02), '#b63a68');
-    sky.addColorStop(Math.min(1, hFrac + 0.03), '#3a1548');
-    sky.addColorStop(1, '#160a26');
+    if (dawn) {
+      sky.addColorStop(0, '#251a40');
+      sky.addColorStop(Math.max(0, hFrac - 0.45), '#4e3370');
+      sky.addColorStop(Math.max(0, hFrac - 0.18), '#b0577e');
+      sky.addColorStop(Math.min(1, hFrac - 0.02), '#ffb36b');
+      sky.addColorStop(Math.min(1, hFrac + 0.03), '#5a2b52');
+      sky.addColorStop(1, '#241330');
+    } else {
+      sky.addColorStop(0, '#0d0620');
+      sky.addColorStop(Math.max(0, hFrac - 0.45), '#221040');
+      sky.addColorStop(Math.max(0, hFrac - 0.18), '#5a1a5e');
+      sky.addColorStop(Math.min(1, hFrac - 0.02), '#b63a68');
+      sky.addColorStop(Math.min(1, hFrac + 0.03), '#3a1548');
+      sky.addColorStop(1, '#160a26');
+    }
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, cssW, cssH);
+    const starDim = dawn ? 0.35 : 1;
 
     // stars
     ctx.fillStyle = '#fff';
     for (const s of this.stars) {
       const sx = ((s.x * 1800 - cam.x * 0.03 * cam.scale) % cssW + cssW) % cssW;
       const sy = s.y * horizon * 0.85;
-      const a = 0.35 + 0.4 * Math.sin(t * 1.4 + s.tw);
-      ctx.globalAlpha = Math.max(0.08, a);
+      const a = (0.35 + 0.4 * Math.sin(t * 1.4 + s.tw)) * starDim;
+      ctx.globalAlpha = Math.max(0.05, a);
       ctx.fillRect(sx, sy, s.r, s.r);
     }
     ctx.globalAlpha = 1;
 
-    // half-set sun with vapor bands
+    // low sun with vapor bands (half set at dusk, rising at dawn)
     const sunX = cssW * 0.62 - cam.x * 0.02 * cam.scale;
     const sunR = Math.min(cssW, cssH) * 0.16;
-    const sunY = horizon - sunR * 0.25;
+    const sunY = horizon - sunR * (dawn ? 0.62 : 0.25);
     ctx.save();
     ctx.beginPath();
     ctx.rect(0, 0, cssW, horizon);
     ctx.clip();
     const sg = ctx.createLinearGradient(0, sunY - sunR, 0, sunY + sunR);
-    sg.addColorStop(0, '#ffd88a');
-    sg.addColorStop(0.55, '#ff8b5e');
-    sg.addColorStop(1, '#ff4fa3');
+    if (dawn) {
+      sg.addColorStop(0, '#fff4c8');
+      sg.addColorStop(0.55, '#ffcf8a');
+      sg.addColorStop(1, '#ff9d6b');
+    } else {
+      sg.addColorStop(0, '#ffd88a');
+      sg.addColorStop(0.55, '#ff8b5e');
+      sg.addColorStop(1, '#ff4fa3');
+    }
     ctx.fillStyle = sg;
     ctx.beginPath();
     ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = 'rgba(90,26,94,0.9)';
+    ctx.fillStyle = dawn ? 'rgba(122,58,102,0.55)' : 'rgba(90,26,94,0.9)';
     for (let i = 0; i < 4; i++) {
       const by = sunY - sunR * 0.15 + i * sunR * 0.26;
       ctx.fillRect(sunX - sunR - 4, by, sunR * 2 + 8, 2.5 + i * 1.5);
     }
     const glow = ctx.createRadialGradient(sunX, sunY, sunR * 0.4, sunX, sunY, sunR * 2.6);
-    glow.addColorStop(0, 'rgba(255,140,110,0.28)');
+    glow.addColorStop(0, dawn ? 'rgba(255,190,130,0.38)' : 'rgba(255,140,110,0.28)');
     glow.addColorStop(1, 'rgba(255,140,110,0)');
     ctx.fillStyle = glow;
     ctx.fillRect(sunX - sunR * 3, sunY - sunR * 3, sunR * 6, sunR * 6);
@@ -197,7 +214,7 @@ export class Background {
     for (const c of this.clouds) {
       const cx = ((c.x * 2400 + t * c.speed - cam.x * 0.04 * cam.scale) % (cssW + c.w) + cssW + c.w) % (cssW + c.w) - c.w;
       const cy = c.y * horizon;
-      ctx.fillStyle = `rgba(255,150,190,${c.a * 0.6})`;
+      ctx.fillStyle = dawn ? `rgba(255,205,160,${c.a * 0.9})` : `rgba(255,150,190,${c.a * 0.6})`;
       ctx.beginPath();
       ctx.ellipse(cx, cy, c.w * 0.5, c.w * 0.11, 0, 0, Math.PI * 2);
       ctx.fill();

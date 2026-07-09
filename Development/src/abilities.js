@@ -38,4 +38,22 @@ export const ABILITIES = {
     toast: 'hold {JUMP} inside a thermal to ride it skyward',
     icon: '<svg viewBox="0 0 24 24"><path d="M6 20 Q14 18 13 12.5 Q12.3 8.5 16 7.5 Q18.8 6.8 18.8 4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M4 8 Q7 5.5 10 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   },
+  roll: {
+    name: 'ROLL',
+    color: '#e8734d',
+    toast: 'press {DASH} on the ground to tumble through low gaps',
+    icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M12 4.5 A7.5 7.5 0 0 1 19.5 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>',
+  },
+  grip: {
+    name: 'PAINT GRIP',
+    color: '#63e6a4',
+    toast: 'hold into a painted wall to climb it',
+    icon: '<svg viewBox="0 0 24 24"><rect x="14" y="4" width="6" height="16" rx="1.5" fill="currentColor"/><path d="M10 18 L10 7 M6.5 10.5 L10 7 L13.5 10.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  },
+  hook: {
+    name: 'TALON HOOK',
+    color: '#d9b8ff',
+    toast: 'touch a hanging hook to latch on, then {JUMP} to launch',
+    icon: '<svg viewBox="0 0 24 24"><path d="M12 3 L12 12 M12 12 a4.5 4.5 0 1 0 4.5 4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  },
 };

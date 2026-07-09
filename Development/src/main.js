@@ -236,7 +236,7 @@ function render() {
   const cssH = canvas.height / dpr;
 
   const inWorld = game.level && game.mode !== 'menu';
-  background.draw(ctx, camera, cssW, cssH, game.time, inWorld ? game.level.groundY : 1500);
+  background.draw(ctx, camera, cssW, cssH, game.time, inWorld ? game.level.groundY : 1500, inWorld ? game.level.data.sky : 'dusk');
 
   if (inWorld) {
     ctx.save();

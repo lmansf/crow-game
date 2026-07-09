@@ -136,11 +136,12 @@ export default {
   ],
 
   hazards: [
+    // all at shin height so walking zaps and hopping clears
     { x1: 430, x2: 570, y: 2380, sag: 10 },    // downed line on the west street
-    { x1: 1330, x2: 1450, y: 745, sag: 12 },   // ARCADIA roof
-    { x1: 1480, x2: 1600, y: 737, sag: 12 },
-    { x1: 2060, x2: 2200, y: 1245, sag: 12 },  // PALMA roof
-    { x1: 2940, x2: 3040, y: 3130, sag: 8 },   // guards the sewer stash
+    { x1: 1330, x2: 1450, y: 780, sag: 8 },    // ARCADIA roof (roof at 800)
+    { x1: 1480, x2: 1600, y: 772, sag: 8 },
+    { x1: 2060, x2: 2200, y: 1280, sag: 8 },   // PALMA roof (roof at 1300)
+    { x1: 2940, x2: 3040, y: 3180, sag: 6 },   // guards the sewer stash
   ],
 
   pickups: [

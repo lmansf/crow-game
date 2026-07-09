@@ -26,12 +26,16 @@ const DASH_TIME = 0.17;
 const DASH_CD = 0.45;
 const VENT_ACCEL = 3400;
 const VENT_MAX_RISE = 470;
+const ROLL_TIME = 0.42;
+const ROLL_SPEED = 480;
+const CLIMB_SPEED = 230;
+const HOOK_RADIUS = 85;
 
 export class Player {
   constructor(spawn) {
     this.w = 30;
     this.h = 26;
-    this.abilities = { flap: false, glide: false, swoop: false, break: false, launch: false, soar: false };
+    this.abilities = { flap: false, glide: false, swoop: false, break: false, launch: false, soar: false, roll: false, grip: false, hook: false };
     this.respawnAt(spawn);
     this.facing = 1;
     this.animT = Math.random() * 10;
@@ -60,6 +64,26 @@ export class Player {
     this.inVent = false;
     this.runPhase = 0;
     this.groundPlat = null;
+    this.h = 26;
+    this.rolling = 0;
+    this.rollPhase = 0;
+    this.climbing = false;
+    this.hooked = null;
+    this.hookCd = 0;
+  }
+
+  tryUnroll(level) {
+    const bottom = this.y + this.h / 2;
+    const probe = { x: this.x - this.w / 2, y: bottom - 26, w: this.w, h: 26 };
+    for (const s of level.solids) {
+      if (s.broken) continue;
+      if (probe.x < s.x + s.w && probe.x + probe.w > s.x && probe.y < s.y + s.h && probe.y + probe.h > s.y) {
+        this.rolling = 0.1; // no headroom yet: stay tucked a beat longer
+        return;
+      }
+    }
+    this.h = 26;
+    this.y = bottom - 13;
   }
 
   rect() {
@@ -72,6 +96,12 @@ export class Player {
     if (this.landT > 0) this.landT -= dt;
     if (this.dashCd > 0) this.dashCd -= dt;
     if (this.wallLock > 0) this.wallLock -= dt;
+    if (this.hookCd > 0) this.hookCd -= dt;
+    if (this.rolling > 0) {
+      this.rolling -= dt;
+      this.rollPhase += dt * 15;
+      if (this.rolling <= 0) this.tryUnroll(level);
+    }
     this.blinkT -= dt;
     if (this.blinkT < -0.12) this.blinkT = 2 + Math.random() * 3.5;
 
@@ -84,6 +114,31 @@ export class Player {
       return;
     }
 
+    // hanging from a crane hook: sway until the player launches off
+    if (this.hooked) {
+      this.x = this.hooked.x + Math.sin(this.animT * 2) * 3;
+      this.y = this.hooked.y + 16;
+      this.vx = 0;
+      this.vy = 0;
+      if (input.consumeJump()) {
+        const dir = input.moveX !== 0 ? input.moveX : this.facing;
+        this.facing = dir >= 0 ? 1 : -1;
+        this.hooked.held = false;
+        this.hooked = null;
+        this.hookCd = 0.4;
+        this.vy = -500;
+        this.vx = this.facing * 730;
+        this.launchT = 0.35;
+        this.usedFlap = false;
+        this.dashReady = true;
+        this.flapT = 1;
+        audio.launch();
+        particles.feathers(this.x, this.y, 3, this.facing);
+      } else {
+        return;
+      }
+    }
+
     const move = input.moveX;
     if (move !== 0 && this.wallLock <= 0) this.facing = move;
 
@@ -93,12 +148,16 @@ export class Player {
       this.vx = this.dashDir * DASH_V;
       this.vy = 0;
       particles.trail(this.x - this.dashDir * 12, this.y + (Math.random() - 0.5) * 12, 'rgba(255,79,163,0.85)');
+    } else if (this.rolling > 0) {
+      this.vx = this.rollDir * ROLL_SPEED;
     } else if (this.wallLock > 0) {
       // brief lockout after a wall kick so it actually launches
     } else if (move !== 0) {
       const accel = this.grounded ? ACCEL_GROUND : ACCEL_AIR;
       this.vx += move * accel * dt;
-      this.vx = Math.max(-MOVE, Math.min(MOVE, this.vx));
+      // steering never hard-clamps launch/kick momentum: excess speed decays
+      const cap = Math.max(MOVE, Math.abs(this.vx) - 900 * dt);
+      this.vx = Math.max(-cap, Math.min(cap, this.vx));
     } else if (this.grounded) {
       const s = Math.sign(this.vx);
       this.vx -= s * FRICTION * dt;
@@ -107,8 +166,8 @@ export class Player {
       this.vx *= 1 - 1.1 * dt;
     }
 
-    // ---- jumping ----
-    if (input.consumeJump()) {
+    // ---- jumping (locked out while tumbling) ----
+    if (this.rolling <= 0 && input.consumeJump()) {
       if (this.grounded || this.coyote > 0) {
         this.vy = -JUMP_V;
         this.grounded = false;
@@ -141,16 +200,27 @@ export class Player {
       this.vy = -JUMP_CUT * JUMP_V;
     }
 
-    // ---- swoop (dash) ----
-    if (input.consumeDash() && this.abilities.swoop && this.dashCd <= 0 && this.dashReady && this.dashing <= 0) {
-      this.dashing = DASH_TIME;
-      this.dashDir = move !== 0 ? move : this.facing;
-      this.facing = this.dashDir;
-      this.dashCd = DASH_CD;
-      this.dashReady = this.grounded; // one air swoop until landing or wall touch
-      this.usedFlap = this.usedFlap && true;
-      audio.dash();
-      game.hitstop(0.03);
+    // ---- dash button: roll on the ground, swoop otherwise ----
+    if (input.consumeDash() && this.dashCd <= 0 && this.dashing <= 0 && this.rolling <= 0) {
+      if (this.grounded && this.abilities.roll) {
+        this.rolling = ROLL_TIME;
+        this.rollDir = move !== 0 ? move : this.facing;
+        this.facing = this.rollDir;
+        this.rollPhase = 0;
+        this.h = 14;
+        this.y += 6;
+        this.dashCd = 0.25;
+        audio.flap();
+        particles.dust(this.x, this.y + this.h / 2);
+      } else if (this.abilities.swoop && this.dashReady) {
+        this.dashing = DASH_TIME;
+        this.dashDir = move !== 0 ? move : this.facing;
+        this.facing = this.dashDir;
+        this.dashCd = DASH_CD;
+        this.dashReady = this.grounded; // one air swoop until landing or wall touch
+        audio.dash();
+        game.hitstop(0.03);
+      }
     }
 
     // ---- vents (updrafts); thermals only lift once Soar is learned ----
@@ -167,19 +237,51 @@ export class Player {
       }
     }
 
-    // ---- gravity, glide, wall slide ----
+    // ---- gravity, mural climb, glide, wall slide ----
     const pushingWall = this.wall !== 0 && move === this.wall;
     this.gliding = false;
+    this.climbing = false;
     if (this.dashing <= 0) {
       this.vy += G * dt;
-      if (!this.grounded && pushingWall && this.vy > 0) {
+      const onMural = !this.grounded && pushingWall && this.abilities.grip &&
+        level.muralAt(this.x + this.wall * this.w / 2, this.y, this.wall);
+      if (onMural) {
+        this.climbing = true;
+        this.vy = Math.max(this.vy - G * 3.4 * dt, -CLIMB_SPEED);
+        // vault over the lip when the paint runs out just above
+        if (!level.muralAt(this.x + this.wall * this.w / 2, this.y - 34, this.wall)) {
+          this.vy = -430;
+          this.flapT = 1;
+        }
+        if (Math.random() < 0.35) {
+          particles.trail(this.x + this.wall * this.w / 2, this.y + 8, `hsla(${Math.floor((this.animT * 140) % 360)}, 90%, 65%, 0.7)`);
+        }
+      } else if (!this.grounded && pushingWall && this.vy > 0) {
         if (this.vy > WALL_SLIDE_MAX) this.vy = Math.max(WALL_SLIDE_MAX, this.vy - G * 3 * dt);
         if (Math.random() < 0.25) particles.trail(this.x + this.wall * this.w / 2, this.y + 8, 'rgba(190,175,210,0.4)');
-      } else if (!this.grounded && this.abilities.glide && input.holdingJump && this.vy > 0 && !this.inVent) {
+      } else if (!this.grounded && this.abilities.glide && input.holdingJump && this.vy > 0 && !this.inVent && this.rolling <= 0) {
         this.gliding = true;
         if (this.vy > GLIDE_FALL) this.vy = Math.max(GLIDE_FALL, this.vy - G * 2.6 * dt);
       }
       if (this.vy > TERMINAL) this.vy = TERMINAL;
+    }
+
+    // ---- crane hooks: latch on contact ----
+    if (this.abilities.hook && !this.grounded && !this.hooked && this.hookCd <= 0 && this.dashing <= 0) {
+      for (const hk of level.hooks) {
+        const dx = this.x - hk.x;
+        const dy = this.y - (hk.y + 10);
+        if (dx * dx + dy * dy < HOOK_RADIUS * HOOK_RADIUS) {
+          this.hooked = hk;
+          hk.held = true;
+          this.gliding = false;
+          this.rolling = 0;
+          this.h = 26;
+          audio.wallGrab();
+          particles.burst(hk.x, hk.y, { count: 6, color: '#d9b8ff', speed: 90, life: 0.3, size: 1.8 });
+          break;
+        }
+      }
     }
     audio.glide(this.gliding || (this.inVent && !this.grounded));
 
@@ -339,13 +441,44 @@ export class Player {
 
     ctx.scale(this.facing, 1);
 
+    // tumbling: a compact spinning ball of feathers
+    if (this.rolling > 0) {
+      ctx.rotate(this.rollPhase);
+      const rb = ctx.createLinearGradient(0, -10, 0, 10);
+      rb.addColorStop(0, '#262336');
+      rb.addColorStop(1, '#100e17');
+      ctx.fillStyle = rb;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 11, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = `hsla(${(t * 34) % 360}, 80%, 70%, 0.3)`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 8, 7, 0.5, Math.PI * 0.2, Math.PI * 1.1);
+      ctx.stroke();
+      ctx.fillStyle = '#33303f';
+      ctx.beginPath();
+      ctx.moveTo(9, -3);
+      ctx.lineTo(15, 0);
+      ctx.lineTo(9, 2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+      ctx.globalAlpha = 1;
+      return;
+    }
+
     // pose
     let bodyRot = Math.max(-0.35, Math.min(0.35, this.vy / 2400)) * (this.grounded ? 0 : 1);
     let wingAngle, wingLen = 24, wingBend = 0;
     const running = this.grounded && Math.abs(this.vx) > 30;
-    const wallSliding = !this.grounded && this.wall !== 0 && this.vy >= 0;
+    const wallSliding = (!this.grounded && this.wall !== 0 && this.vy >= 0) || this.climbing;
 
-    if (this.dashing > 0) {
+    if (this.hooked) {
+      bodyRot = Math.sin(t * 2) * 0.08;
+      wingAngle = 1.0;
+      wingLen = 19;
+    } else if (this.dashing > 0) {
       bodyRot = 0.08;
       wingAngle = 0.55;
       wingLen = 27;

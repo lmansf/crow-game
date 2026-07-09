@@ -133,8 +133,9 @@ export default {
   ],
 
   hazards: [
-    { x1: 5940, x2: 6100, y: 505, sag: 14 },
-    { x1: 6140, x2: 6300, y: 492, sag: 14 },
+    // shin height above the roof at 560, so walking zaps and hopping clears
+    { x1: 5940, x2: 6100, y: 540, sag: 8 },
+    { x1: 6140, x2: 6300, y: 534, sag: 8 },
   ],
 
   pickups: [
