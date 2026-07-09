@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crow Game — Demo</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0b1020; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; font-family: system-ui, sans-serif; }
+  canvas { background: #1a2540; image-rendering: pixelated; box-shadow: 0 0 40px #000; }
+  #hud { position: fixed; top: 12px; left: 12px; color: #cfe0ff; font-size: 13px; line-height: 1.5; pointer-events: none; text-shadow: 0 1px 2px #000; }
+  #hud b { color: #ffd86b; }
+</style>
+</head>
+<body>
+<div id="hud">
+  <div><b>Crow Game</b> — demo</div>
+  <div>← → move · <b>Z</b>/Space hop · hold <b>Z</b> in air to glide</div>
+  <div id="status"></div>
+</div>
+<canvas id="c" width="800" height="450"></canvas>
+<script>
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const W = cv.width, H = cv.height;
+const statusEl = document.getElementById('status');
+
+// ponytail: hand-rolled AABB platformer, no engine. A physics lib is overkill for a demo.
+const keys = {};
+addEventListener('keydown', e => { keys[e.code] = true; if ([ 'Space','ArrowUp','ArrowDown' ].includes(e.code)) e.preventDefault(); });
+addEventListener('keyup', e => { keys[e.code] = false; });
+
+const GRAV = 0.55, MOVE = 2.6, JUMP = -9.5, GLIDE_FALL = 1.2;
+
+const crow = { x: 60, y: 300, w: 22, h: 18, vx: 0, vy: 0, onGround: false, face: 1, gliding: false };
+
+// platforms: [x, y, w, h] — a little path up and to the right
+const platforms = [
+  [0, 420, 300, 30],
+  [360, 370, 120, 16],
+  [540, 310, 120, 16],
+  [360, 240, 120, 16],
+  [120, 180, 160, 16],
+  [560, 150, 240, 16],
+];
+const goal = { x: 720, y: 110, w: 24, h: 40 }; // the "Everglades exit"
+
+let won = false;
+
+function rectsOverlap(a, b) {
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+function update() {
+  // horizontal
+  crow.vx = 0;
+  if (keys['ArrowLeft'])  { crow.vx = -MOVE; crow.face = -1; }
+  if (keys['ArrowRight']) { crow.vx =  MOVE; crow.face =  1; }
+
+  const hopKey = keys['KeyZ'] || keys['Space'];
+  // hop
+  if (hopKey && crow.onGround) { crow.vy = JUMP; crow.onGround = false; }
+
+  // glide: hold hop in the air while falling
+  crow.gliding = false;
+  if (hopKey && !crow.onGround && crow.vy > 0) {
+    crow.vy = Math.min(crow.vy + GRAV, GLIDE_FALL);
+    crow.gliding = true;
+  } else {
+    crow.vy += GRAV;
+  }
+
+  crow.x += crow.vx;
+  crow.y += crow.vy;
+  crow.onGround = false;
+
+  // collide with platforms (resolve vertically)
+  for (const [px, py, pw, ph] of platforms) {
+    const p = { x: px, y: py, w: pw, h: ph };
+    if (rectsOverlap(crow, p)) {
+      const prevBottom = crow.y - crow.vy + crow.h;
+      if (prevBottom <= py + 2 && crow.vy >= 0) {        // landed on top
+        crow.y = py - crow.h; crow.vy = 0; crow.onGround = true;
+      } else if (crow.vy < 0 && crow.y >= py) {          // bonked head
+        crow.y = py + ph; crow.vy = 0;
+      }
+    }
+  }
+
+  // walls
+  crow.x = Math.max(0, Math.min(W - crow.w, crow.x));
+
+  // fell off the world -> respawn
+  if (crow.y > H + 100) { crow.x = 60; crow.y = 300; crow.vx = crow.vy = 0; }
+
+  if (!won && rectsOverlap(crow, goal)) won = true;
+
+  statusEl.textContent = won ? '🌿 You made it back to the Everglades!' :
+    (crow.gliding ? 'gliding…' : crow.onGround ? 'grounded' : 'airborne');
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // platforms
+  ctx.fillStyle = '#33507a';
+  for (const [x, y, w, h] of platforms) ctx.fillRect(x, y, w, h);
+  ctx.fillStyle = '#2b4368';
+  for (const [x, y, w] of platforms) ctx.fillRect(x, y, w, 4);
+
+  // goal
+  ctx.fillStyle = won ? '#7CFC9A' : '#3fa66a';
+  ctx.fillRect(goal.x, goal.y, goal.w, goal.h);
+  ctx.fillStyle = '#cfe0ff';
+  ctx.font = '11px system-ui';
+  ctx.fillText('EXIT', goal.x - 4, goal.y - 6);
+
+  // crow
+  ctx.save();
+  ctx.translate(crow.x + crow.w / 2, crow.y + crow.h / 2);
+  ctx.scale(crow.face, 1);
+  ctx.fillStyle = '#111';
+  ctx.fillRect(-crow.w / 2, -crow.h / 2, crow.w, crow.h);      // body
+  if (crow.gliding) { ctx.fillRect(-crow.w / 2 - 8, -2, 8, 4); ctx.fillRect(crow.w / 2, -2, 8, 4); } // spread wings
+  ctx.fillStyle = '#ffb347';
+  ctx.fillRect(crow.w / 2 - 4, -crow.h / 2 + 4, 6, 4);          // beak
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(crow.w / 2 - 8, -crow.h / 2 + 3, 3, 3);          // eye
+  ctx.restore();
+}
+
+function loop() { update(); draw(); requestAnimationFrame(loop); }
+loop();
+</script>
+</body>
+</html>

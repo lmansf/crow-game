@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b0614">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Crow Game - Ocean Drive</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%230b0614'/><path d='M8 20 Q13 10 24 9 L20 13 Q26 13 27 11 Q25 17 18 18 L21 24 L17 21 L15 24 L14 19 Q10 20 8 20Z' fill='%23a98fff'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- In-game HUD -->
+<div id="hud" class="hidden">
+  <div class="hud-left">
+    <svg class="shiny-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2 L17 9 L12 22 L7 9 Z" fill="#ffd166"/>
+      <path d="M12 2 L17 9 L7 9 Z" fill="#ffe9a8"/>
+    </svg>
+    <span id="shiny-count">0</span><span id="shiny-total" class="dim">/0</span>
+  </div>
+  <div id="hud-timer">0:00</div>
+  <div class="hud-right">
+    <div id="ability-slots"></div>
+    <button id="btn-mute" class="icon-btn" aria-label="Toggle sound">
+      <svg viewBox="0 0 24 24"><path class="spk" d="M4 9 L8 9 L13 4.5 L13 19.5 L8 15 L4 15 Z" fill="currentColor"/><path class="waves" d="M16 8.5 Q19 12 16 15.5 M18.5 6 Q23 12 18.5 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line class="mute-x" x1="16" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line class="mute-x" x1="22" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+    <button id="btn-pause" class="icon-btn" aria-label="Pause">
+      <svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1.4" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1.4" fill="currentColor"/></svg>
+    </button>
+  </div>
+  <div id="toast" class="hidden"><div id="toast-title"></div><div id="toast-sub"></div></div>
+</div>
+
+<!-- Touch controls -->
+<div id="touch-controls" class="hidden">
+  <div class="pad-left">
+    <button id="btn-left" class="tbtn" aria-label="Move left"><svg viewBox="0 0 24 24"><path d="M15.5 4 L7.5 12 L15.5 20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button id="btn-right" class="tbtn" aria-label="Move right"><svg viewBox="0 0 24 24"><path d="M8.5 4 L16.5 12 L8.5 20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <div class="pad-right">
+    <button id="btn-dash" class="tbtn tbtn-b locked" aria-label="Swoop">
+      <svg class="glyph" viewBox="0 0 24 24"><path d="M4 6 L11 12 L4 18 Z" fill="currentColor"/><path d="M12 6 L19 12 L12 18 Z" fill="currentColor"/></svg>
+      <svg class="lock" viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9" rx="2" fill="currentColor"/><path d="M8.5 11 V8.5 Q8.5 5 12 5 Q15.5 5 15.5 8.5 V11" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
+    </button>
+    <button id="btn-jump" class="tbtn tbtn-a" aria-label="Hop"><svg viewBox="0 0 24 24"><path d="M4 15 L12 6.5 L20 15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+</div>
+
+<!-- Title screen -->
+<div id="screen-title" class="screen">
+  <div class="title-art">
+    <h1 class="neon-title"><span>CROW</span> <span class="pink">GAME</span></h1>
+    <div class="tagline">a Miami metroidvania</div>
+  </div>
+  <button id="btn-play" class="big-btn">PLAY</button>
+  <div class="fineprint">best in landscape, sound on</div>
+</div>
+
+<!-- Level select -->
+<div id="screen-levels" class="screen hidden">
+  <h2 class="screen-heading">DISTRICTS</h2>
+  <div id="level-cards"></div>
+  <button id="btn-levels-back" class="ghost-btn">back</button>
+</div>
+
+<!-- Story intro -->
+<div id="screen-story" class="screen hidden">
+  <div id="story-text" class="story"></div>
+  <button id="btn-story-go" class="big-btn">TAKE FLIGHT</button>
+</div>
+
+<!-- Pause -->
+<div id="screen-pause" class="screen overlay hidden">
+  <h2 class="screen-heading">PAUSED</h2>
+  <div class="menu-col">
+    <button id="btn-resume" class="big-btn">RESUME</button>
+    <button id="btn-restart" class="ghost-btn">restart level</button>
+    <button id="btn-quit" class="ghost-btn">quit to menu</button>
+  </div>
+  <div class="fineprint" id="pause-controls"></div>
+</div>
+
+<!-- Level complete -->
+<div id="screen-complete" class="screen hidden">
+  <h2 id="complete-heading" class="screen-heading pink-glow">THE ROOST</h2>
+  <div id="complete-story" class="story small"></div>
+  <div id="complete-stats" class="stats"></div>
+  <div class="menu-col">
+    <button id="btn-next" class="big-btn" disabled>COMING SOON</button>
+    <button id="btn-replay" class="ghost-btn">fly it again</button>
+    <button id="btn-menu" class="ghost-btn">back to menu</button>
+  </div>
+</div>
+
+<div id="rotate-hint" class="hidden">rotate for a wider view</div>
+<div id="flash"></div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

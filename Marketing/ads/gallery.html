@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Crow Game - Ad Gallery</title>
+<style>
+  body { background: #0b0614; color: #e8e2f2; font-family: "Segoe UI", system-ui, sans-serif; padding: 28px; }
+  h1 { font-size: 20px; letter-spacing: 0.2em; color: #35e0e0; }
+  p { color: #8d83a3; font-size: 13px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; margin-top: 20px; }
+  figure { margin: 0; }
+  figcaption { color: #8d83a3; font-size: 12px; letter-spacing: 0.08em; margin-bottom: 6px; }
+  img { display: block; box-shadow: 0 6px 34px rgba(0,0,0,0.65); max-width: 100%; }
+  .tall img { max-height: 640px; width: auto; }
+</style>
+</head>
+<body>
+<h1>CROW GAME - AD SET</h1>
+<p>Seven standard sizes, rendered from the game's own art code. Regenerate any time: serve the game and open /ads/ in Development.</p>
+<div class="grid">
+  <figure><figcaption>320x50 - mobile banner</figcaption><img src="crowgame-ad-320x50.png" width="320" height="50"></figure>
+  <figure><figcaption>728x90 - leaderboard</figcaption><img src="crowgame-ad-728x90.png" width="728" height="90"></figure>
+  <figure><figcaption>300x250 - medium rectangle</figcaption><img src="crowgame-ad-300x250.png" width="300" height="250"></figure>
+  <figure class="tall"><figcaption>160x600 - wide skyscraper</figcaption><img src="crowgame-ad-160x600.png"></figure>
+  <figure><figcaption>1200x628 - social / OG landscape</figcaption><img src="crowgame-ad-1200x628.png" width="600"></figure>
+  <figure><figcaption>1080x1080 - social square</figcaption><img src="crowgame-ad-1080x1080.png" width="440"></figure>
+  <figure class="tall"><figcaption>1080x1920 - story / reel</figcaption><img src="crowgame-ad-1080x1920.png"></figure>
+</div>
+</body>
+</html>

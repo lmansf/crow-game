@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Crow Game - Ad Generator</title>
+<style>
+  body { background: #0b0614; color: #e8e2f2; font-family: "Segoe UI", system-ui, sans-serif; padding: 20px; }
+  h1 { font-size: 18px; letter-spacing: 0.2em; }
+  .ad { margin: 18px 0; }
+  .ad .label { color: #8d83a3; font-size: 12px; margin-bottom: 6px; letter-spacing: 0.1em; }
+  canvas { box-shadow: 0 4px 30px rgba(0,0,0,0.6); max-width: 100%; }
+</style>
+</head>
+<body>
+<h1>CROW GAME - AD SHEET</h1>
+<div id="out"></div>
+
+<script type="module">
+// Renders the ad set using the game's own art code, then posts PNGs to the
+// local dev receiver on :8124 (harmless no-op if it is not running).
+import { Background } from '../src/background.js';
+import { Player } from '../src/player.js';
+
+const T = 1.7; // fixed clock so every render is deterministic
+const bg = new Background();
+
+const INK = '#f8f4ff';
+const PINK = '#ff4fa3';
+const CYAN = '#35e0e0';
+const GOLD = '#ffd166';
+
+const TAGLINE = 'A MIAMI METROIDVANIA';
+const HOOK1 = 'Lost in Miami.';
+const HOOK2 = 'Fly home.';
+const BADGE = '2 DISTRICTS · 6 SKILLS · 166 SHINIES';
+
+// ---------- shared pieces ----------
+
+function scene(ctx, w, h, horizonFrac, camX = 1200) {
+  const cam = { x: camX, y: 1500 - (horizonFrac * h + 30) / 0.88, scale: 1 };
+  bg.draw(ctx, cam, w, h, T, 1500);
+}
+
+function simpleBg(ctx, w, h) {
+  // for thin banners: gradient + sun sliver + rooftop strip
+  const g = ctx.createLinearGradient(0, 0, 0, h);
+  g.addColorStop(0, '#170a2e');
+  g.addColorStop(0.72, '#4a1655');
+  g.addColorStop(1, '#7c2260');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, h);
+  // stars
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  for (let i = 0; i < w / 14; i++) {
+    const x = (i * 137.3) % w;
+    const y = ((i * 61.7) % (h * 0.55));
+    if (Math.sin(i * 3.7) > -0.2) ctx.fillRect(x, y, 1.2, 1.2);
+  }
+  // sun
+  const sx = w * 0.66;
+  const sr = h * 0.62;
+  const sg = ctx.createLinearGradient(0, h - sr, 0, h + sr * 0.4);
+  sg.addColorStop(0, '#ffd88a');
+  sg.addColorStop(0.55, '#ff8b5e');
+  sg.addColorStop(1, '#ff4fa3');
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, w, h - 8);
+  ctx.clip();
+  ctx.fillStyle = sg;
+  ctx.beginPath();
+  ctx.arc(sx, h + sr * 0.15, sr, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(74,22,85,0.9)';
+  ctx.fillRect(sx - sr - 4, h - sr * 0.42, sr * 2 + 8, 2.5);
+  ctx.fillRect(sx - sr - 4, h - sr * 0.2, sr * 2 + 8, 3.5);
+  ctx.restore();
+  // rooftop strip
+  ctx.fillStyle = '#241040';
+  for (let i = 0; i < w / 26; i++) {
+    const bw = 18 + ((i * 89) % 26);
+    const bh = 6 + ((i * 53) % (h * 0.28));
+    ctx.fillRect(i * 26, h - bh, bw, bh);
+  }
+  ctx.fillStyle = 'rgba(255,79,163,0.5)';
+  ctx.fillRect(0, h - 2, w, 2);
+}
+
+function crowAt(ctx, x, y, k, pose = 'flap', facing = 1) {
+  // soft violet halo so the dark bird pops off the night sky
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const halo = ctx.createRadialGradient(x, y, 2, x, y, 46 * k);
+  halo.addColorStop(0, 'rgba(169,143,255,0.2)');
+  halo.addColorStop(1, 'rgba(169,143,255,0)');
+  ctx.fillStyle = halo;
+  ctx.beginPath();
+  ctx.arc(x, y, 46 * k, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  const p = new Player({ x: 0, y: 0 });
+  p.invuln = -1;
+  p.facing = facing;
+  p.animT = 1.32;
+  p.blinkT = 5;
+  if (pose === 'glide') { p.gliding = true; p.grounded = false; }
+  else if (pose === 'dash') { p.dashing = 0.1; p.dashDir = facing; p.grounded = false; }
+  else if (pose === 'flap') { p.grounded = false; p.flapT = 0.55; p.vy = -300; }
+  p.x = 0;
+  p.y = 0;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(k, k);
+  p.draw(ctx);
+  ctx.restore();
+}
+
+function trail(ctx, x, y, k, facing = 1) {
+  // sparkle wake behind the crow
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 7; i++) {
+    const u = (i + 1) / 7;
+    const tx = x - facing * u * 130 * k * 0.32;
+    const ty = y + Math.sin(u * 5) * 10 * k * 0.22 + u * 14 * k * 0.2;
+    const r = (1 - u) * 5 * k * 0.32 + 1;
+    const col = i % 2 ? 'rgba(53,224,224,' : 'rgba(169,143,255,';
+    const g = ctx.createRadialGradient(tx, ty, 0.5, tx, ty, r * 2.4);
+    g.addColorStop(0, col + (0.5 * (1 - u) + 0.15) + ')');
+    g.addColorStop(1, col + '0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(tx, ty, r * 2.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+  // two drifting feathers
+  for (const [fx, fy, rot, s] of [[-0.42, 0.24, 0.7, 4], [-0.62, 0.02, -0.5, 3]]) {
+    const px = x + facing * fx * 130 * k * 0.32;
+    const py = y + fy * 100 * k * 0.3;
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(rot);
+    ctx.scale(k * 0.3, k * 0.3);
+    ctx.fillStyle = '#2a2438';
+    ctx.beginPath();
+    ctx.moveTo(-s, 0);
+    ctx.quadraticCurveTo(0, -s * 0.7, s * 1.6, 0);
+    ctx.quadraticCurveTo(0, s * 0.7, -s, 0);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(169,143,255,0.6)';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(-s, 0);
+    ctx.lineTo(s * 1.6, 0);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function shiny(ctx, x, y, s) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createRadialGradient(0, 0, 1, 0, 0, s * 2.4);
+  g.addColorStop(0, 'rgba(255,209,102,0.55)');
+  g.addColorStop(1, 'rgba(255,209,102,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(0, 0, s * 2.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = GOLD;
+  ctx.beginPath();
+  ctx.moveTo(0, -s);
+  ctx.lineTo(s * 0.8, 0);
+  ctx.lineTo(0, s);
+  ctx.lineTo(-s * 0.8, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#fff3d0';
+  ctx.beginPath();
+  ctx.moveTo(0, -s);
+  ctx.lineTo(s * 0.8, 0);
+  ctx.lineTo(-s * 0.8, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function neonWord(ctx, word, x, y, size, color, align = 'center', spacing = 0.1) {
+  ctx.save();
+  ctx.font = `800 ${size}px "Segoe UI", system-ui, sans-serif`;
+  ctx.textAlign = align;
+  ctx.letterSpacing = `${Math.round(size * spacing)}px`;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = size * 0.45;
+  ctx.fillStyle = color;
+  ctx.fillText(word, x, y);
+  ctx.fillText(word, x, y);
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = INK;
+  ctx.globalAlpha = 0.92;
+  ctx.fillText(word, x, y);
+  ctx.restore();
+}
+
+// CROW in cyan, GAME in pink, on one line centered at cx
+function logo(ctx, cx, y, size) {
+  ctx.save();
+  ctx.font = `800 ${size}px "Segoe UI", system-ui, sans-serif`;
+  ctx.letterSpacing = `${Math.round(size * 0.1)}px`;
+  const wCrow = ctx.measureText('CROW').width;
+  const wGame = ctx.measureText('GAME').width;
+  const gap = size * 0.34;
+  const total = wCrow + gap + wGame;
+  ctx.restore();
+  neonWord(ctx, 'CROW', cx - total / 2, y, size, CYAN, 'left');
+  neonWord(ctx, 'GAME', cx - total / 2 + wCrow + gap, y, size, PINK, 'left');
+}
+
+function logoStacked(ctx, cx, y, size, lineGap = 1.06) {
+  neonWord(ctx, 'CROW', cx, y, size, CYAN);
+  neonWord(ctx, 'GAME', cx, y + size * lineGap, size, PINK);
+}
+
+function tagline(ctx, cx, y, size, maxW = Infinity) {
+  ctx.save();
+  ctx.font = `600 ${size}px "Segoe UI", system-ui, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.letterSpacing = `${Math.round(size * 0.42)}px`;
+  ctx.fillStyle = 'rgba(232,226,242,0.78)';
+  const w = ctx.measureText(TAGLINE).width;
+  const fit = Math.min(1, maxW / w);
+  ctx.translate(cx + size * 0.21, y);
+  ctx.scale(fit, fit);
+  ctx.fillText(TAGLINE, 0, 0);
+  ctx.restore();
+}
+
+function hook(ctx, cx, y, size, twoLines = true) {
+  ctx.save();
+  ctx.font = `600 ${size}px "Segoe UI", system-ui, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = INK;
+  ctx.shadowColor = 'rgba(0,0,0,0.8)';
+  ctx.shadowBlur = size * 0.4;
+  if (twoLines) {
+    ctx.fillText(HOOK1, cx, y);
+    ctx.fillText(HOOK2, cx, y + size * 1.25);
+  } else {
+    ctx.fillText(`${HOOK1} ${HOOK2}`, cx, y);
+  }
+  ctx.restore();
+}
+
+function badge(ctx, cx, y, size) {
+  ctx.save();
+  ctx.font = `700 ${size}px "Segoe UI", system-ui, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.letterSpacing = `${Math.round(size * 0.13)}px`;
+  ctx.fillStyle = GOLD;
+  ctx.shadowColor = 'rgba(255,209,102,0.6)';
+  ctx.shadowBlur = size * 0.5;
+  ctx.fillText(BADGE, cx + size * 0.07, y);
+  ctx.restore();
+}
+
+function cta(ctx, cx, cy, text, h) {
+  ctx.save();
+  const size = h * 0.42;
+  ctx.font = `700 ${size}px "Segoe UI", system-ui, sans-serif`;
+  ctx.letterSpacing = `${Math.round(size * 0.14)}px`;
+  const tw = ctx.measureText(text).width;
+  const w = tw + h * 1.1;
+  ctx.shadowColor = PINK;
+  ctx.shadowBlur = h * 0.35;
+  ctx.fillStyle = 'rgba(255,79,163,0.16)';
+  ctx.strokeStyle = PINK;
+  ctx.lineWidth = Math.max(1.5, h * 0.045);
+  ctx.beginPath();
+  ctx.roundRect(cx - w / 2, cy - h / 2, w, h, h / 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = INK;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, cx + size * 0.07, cy + h * 0.04);
+  ctx.restore();
+}
+
+function scrim(ctx, x, y, w, h, alpha = 0.4) {
+  const g = ctx.createRadialGradient(x + w / 2, y + h / 2, 8, x + w / 2, y + h / 2, Math.max(w, h) * 0.62);
+  g.addColorStop(0, `rgba(11,5,22,${alpha})`);
+  g.addColorStop(1, 'rgba(11,5,22,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(x - w * 0.3, y - h * 0.3, w * 1.6, h * 1.6);
+}
+
+function frame(ctx, w, h) {
+  // vignette + hairline border
+  const v = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.44, w / 2, h / 2, Math.max(w, h) * 0.74);
+  v.addColorStop(0, 'rgba(0,0,0,0)');
+  v.addColorStop(1, 'rgba(5,2,12,0.4)');
+  ctx.fillStyle = v;
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0.5, 0.5, w - 1, h - 1);
+}
+
+// ---------- the ad set ----------
+
+const ADS = [
+  {
+    name: 'crowgame-ad-320x50', w: 320, h: 50,
+    draw(ctx, w, h) {
+      simpleBg(ctx, w, h);
+      crowAt(ctx, 34, 25, 0.85, 'dash');
+      logo(ctx, 143, 32, 21);
+      shiny(ctx, 226, 15, 3.4);
+      cta(ctx, 279, 25, 'PLAY', 26);
+      frame(ctx, w, h);
+    },
+  },
+  {
+    name: 'crowgame-ad-728x90', w: 728, h: 90,
+    draw(ctx, w, h) {
+      simpleBg(ctx, w, h);
+      crowAt(ctx, 74, 44, 1.5, 'flap');
+      trail(ctx, 74, 44, 1.5);
+      logo(ctx, 320, 44, 36);
+      tagline(ctx, 320, 68, 11);
+      shiny(ctx, 483, 28, 4);
+      shiny(ctx, 512, 52, 3);
+      cta(ctx, 626, 45, 'PLAY THE DEMO', 38);
+      frame(ctx, w, h);
+    },
+  },
+  {
+    name: 'crowgame-ad-300x250', w: 300, h: 250,
+    draw(ctx, w, h) {
+      scene(ctx, w, h, 0.74);
+      scrim(ctx, 60, 10, 180, 60, 0.42);
+      logo(ctx, 150, 52, 34);
+      tagline(ctx, 150, 74, 10);
+      crowAt(ctx, 150, 152, 1.9, 'flap');
+      trail(ctx, 150, 152, 1.9);
+      shiny(ctx, 226, 104, 4.5);
+      shiny(ctx, 252, 130, 3.2);
+      shiny(ctx, 62, 152, 3.6);
+      cta(ctx, 150, 216, 'PLAY THE DEMO', 34);
+      frame(ctx, w, h);
+    },
+  },
+  {
+    name: 'crowgame-ad-160x600', w: 160, h: 600,
+    draw(ctx, w, h) {
+      scene(ctx, w, h, 0.8, 800);
+      scrim(ctx, 20, 30, 120, 110, 0.45);
+      logoStacked(ctx, 80, 70, 34);
+      tagline(ctx, 80, 128, 9, 134);
+      shiny(ctx, 42, 208, 3.4);
+      shiny(ctx, 118, 250, 4.2);
+      crowAt(ctx, 80, 320, 2.3, 'flap');
+      trail(ctx, 80, 320, 2.3);
+      shiny(ctx, 50, 392, 3.4);
+      hook(ctx, 80, 452, 16);
+      cta(ctx, 80, 540, 'PLAY', 36);
+      frame(ctx, w, h);
+    },
+  },
+  {
+    name: 'crowgame-ad-1200x628', w: 1200, h: 628,
+    draw(ctx, w, h) {
+      scene(ctx, w, h, 0.76, 2000);
+      scrim(ctx, 60, 130, 560, 320, 0.5);
+      ctx.save();
+      ctx.textAlign = 'left';
+      ctx.restore();
+      logo(ctx, 340, 220, 88);
+      tagline(ctx, 340, 262, 19);
+      hook(ctx, 340, 330, 34);
+      badge(ctx, 340, 420, 17);
+      cta(ctx, 340, 496, 'PLAY THE DEMO', 62);
+      crowAt(ctx, 880, 270, 5.2, 'flap');
+      trail(ctx, 880, 270, 5.2);
+      shiny(ctx, 1080, 180, 9);
+      shiny(ctx, 1120, 260, 6);
+      shiny(ctx, 720, 130, 7);
+      frame(ctx, w, h);
+    },
+  },
+  {
+    name: 'crowgame-ad-1080x1080', w: 1080, h: 1080,
+    draw(ctx, w, h) {
+      scene(ctx, w, h, 0.78, 1500);
+      scrim(ctx, 240, 80, 600, 200, 0.45);
+      logo(ctx, 540, 190, 118);
+      tagline(ctx, 540, 250, 26);
+      crowAt(ctx, 540, 520, 6.2, 'flap');
+      trail(ctx, 540, 520, 6.2);
+      shiny(ctx, 800, 380, 11);
+      shiny(ctx, 870, 470, 7);
+      shiny(ctx, 230, 560, 9);
+      shiny(ctx, 320, 340, 6);
+      hook(ctx, 540, 776, 44, false);
+      badge(ctx, 540, 846, 24);
+      cta(ctx, 540, 964, 'PLAY THE DEMO', 84);
+      frame(ctx, w, h);
+    },
+  },
+  {
+    name: 'crowgame-ad-1080x1920', w: 1080, h: 1920,
+    draw(ctx, w, h) {
+      scene(ctx, w, h, 0.84, 1500);
+      scrim(ctx, 220, 200, 640, 300, 0.45);
+      logoStacked(ctx, 540, 330, 150, 1.04);
+      tagline(ctx, 540, 590, 28);
+      crowAt(ctx, 540, 930, 8, 'flap');
+      trail(ctx, 540, 930, 8);
+      shiny(ctx, 850, 740, 13);
+      shiny(ctx, 930, 860, 8);
+      shiny(ctx, 200, 1010, 11);
+      shiny(ctx, 300, 700, 8);
+      shiny(ctx, 750, 1130, 9);
+      scrim(ctx, 240, 1280, 600, 260, 0.55);
+      hook(ctx, 540, 1330, 56);
+      badge(ctx, 540, 1470, 28);
+      cta(ctx, 540, 1650, 'PLAY THE DEMO', 110);
+      frame(ctx, w, h);
+    },
+  },
+];
+
+// ---------- render + export ----------
+
+const out = document.getElementById('out');
+const results = [];
+
+async function run() {
+  for (const ad of ADS) {
+    const big = document.createElement('canvas');
+    big.width = ad.w * 2;
+    big.height = ad.h * 2;
+    const bctx = big.getContext('2d');
+    bctx.scale(2, 2);
+    ad.draw(bctx, ad.w, ad.h);
+
+    const fin = document.createElement('canvas');
+    fin.width = ad.w;
+    fin.height = ad.h;
+    fin.getContext('2d').drawImage(big, 0, 0, ad.w, ad.h);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'ad';
+    wrap.innerHTML = `<div class="label">${ad.name} (${ad.w}x${ad.h})</div>`;
+    wrap.appendChild(fin);
+    out.appendChild(wrap);
+
+    try {
+      const b64 = fin.toDataURL('image/png').split(',')[1];
+      const res = await fetch(`http://localhost:8124/?name=${ad.name}&ext=png`, { method: 'POST', body: b64 });
+      results.push(`${ad.name}: ${await res.text()}`);
+    } catch (e) {
+      results.push(`${ad.name}: post failed (${e.message})`);
+    }
+  }
+  window.__adsDone = results;
+}
+
+run();
+</script>
+</body>
+</html>
