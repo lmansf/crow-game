@@ -378,6 +378,7 @@ export class Level {
     // ability pickups
     for (const p of this.pickups) {
       if (p.got || player.dead > 0) continue;
+      if (player.abilities[p.ability]) { p.got = true; continue; }
       const dx = player.x - p.x;
       const dy = player.y - p.y;
       if (dx * dx + dy * dy < 42 * 42) {
