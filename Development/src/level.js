@@ -3,9 +3,35 @@
 
 import { audio } from './audio.js';
 import { particles } from './particles.js';
+import { save } from './save.js';
 import { ABILITIES } from './abilities.js';
 import { Enemies } from './enemies.js';
 import { Boss } from './boss.js';
+import { LEVELS } from './levels/index.js';
+
+// the junk only the ray gun cares about
+const CURIO_NAMES = {
+  flamingo: 'LAWN FLAMINGO',
+  cone: 'TRAFFIC CONE',
+  duck: 'RUBBER DUCK',
+  dish: 'SATELLITE DISH',
+  bucket: 'PAINT BUCKET',
+  record: 'VINYL RECORD',
+  maraca: 'LONE MARACA',
+  cafecito: 'CAFECITO CUP',
+  propeller: 'BOAT PROPELLER',
+  token: 'TOLL TOKEN',
+  egg: 'GATOR EGG (DO NOT SHAKE)',
+  shell: 'CONCH SHELL',
+};
+
+let curioTotalCache = 0;
+function curioTotal() {
+  if (!curioTotalCache) {
+    for (const l of LEVELS) curioTotalCache += (l.curios || []).length;
+  }
+  return curioTotalCache;
+}
 
 function rng(seed) {
   let s = seed >>> 0;
@@ -82,6 +108,12 @@ export class Level {
     // mega-map plumbing: doors to neighbouring zones, and named arrival spots
     this.exits = (data.exits || []).map((e) => ({ ...e }));
     this.entries = data.entries || {};
+
+    // tractor beams, and the ray gun's curios (already-lifted ones stay gone)
+    this.beams = (data.beams || []).map((b) => ({ ...b }));
+    this.curios = (data.curios || [])
+      .map((c, i) => ({ ...c, i, got: false, t: 0, phase: Math.random() * 6 }))
+      .filter((c) => !save.getFlag(`curio:${data.id}:${c.i}`));
 
     // critters, boss, and the district puzzle
     this.enemies = new Enemies(data);
@@ -180,8 +212,19 @@ export class Level {
       }
     }
     for (const e of this.exits) {
-      if (e.x + e.w < x0 || e.x > x1) continue;
+      if (e.hidden || e.x + e.w < x0 || e.x > x1) continue;
       out.push({ x: e.x + e.w / 2, y: e.y + e.h / 2, r: 180, color: 'rgba(140,220,255,0.4)' });
+    }
+    for (const b of this.beams) {
+      if (b.x + b.w < x0 || b.x > x1) continue;
+      out.push({ x: b.x + b.w / 2, y: Math.max(b.top + 200, cam.y + 120), r: 320, color: 'rgba(125,255,106,0.35)' });
+      out.push({ x: b.x + b.w / 2, y: b.base - 60, r: 220, color: 'rgba(125,255,106,0.3)' });
+    }
+    if (player?.abilities.raygun) {
+      for (const c of this.curios) {
+        if (c.got || c.x < x0 || c.x > x1) continue;
+        out.push({ x: c.x, y: c.y - 8, r: 60, color: 'rgba(125,255,106,0.4)' });
+      }
     }
     if (this.puzzle) {
       for (const s of this.puzzle.switches) {
@@ -441,6 +484,36 @@ export class Level {
       pd.rect.y = pd.baseY + pd.t * pd.t * 30 + Math.sin(t * 1.4 + pd.x) * 1.5;
     }
 
+    // the ray gun's one and only power: lifting the curious junk
+    if (player.abilities.raygun && player.dead <= 0) {
+      for (const c of this.curios) {
+        if (c.got) continue;
+        const dx = player.x - c.x;
+        const dy = player.y - 6 - c.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < 120 * 120) {
+          c.t += dt;
+          const d = Math.sqrt(d2) || 1;
+          const pull = 220 + c.t * 340;
+          c.x += (dx / d) * pull * dt;
+          c.y += (dy / d) * pull * dt;
+          if (Math.random() < 0.5) particles.trail(c.x, c.y, 'rgba(125,255,106,0.7)');
+          if (d2 < 30 * 30) {
+            c.got = true;
+            save.setFlag(`curio:${this.data.id}:${c.i}`);
+            const n = (save.getFlag('curios') || 0) + 1;
+            save.setFlag('curios', n);
+            audio.collect();
+            audio.perch();
+            particles.burst(c.x, c.y, { count: 14, color: '#7dff6a', speed: 190, life: 0.5, size: 2.2 });
+            game.ui.toast('CURIO BEAMED UP', `${CURIO_NAMES[c.type] || c.type} - ${n} of ${curioTotal()} lifted`);
+          }
+        } else {
+          c.t = Math.max(0, c.t - dt * 2);
+        }
+      }
+    }
+
     // critters, boss, puzzle
     this.enemies.update(dt, player, game, t);
     if (this.boss) this.boss.update(dt, player, game, t);
@@ -514,7 +587,7 @@ export class Level {
 
     // zone doors, behind the structure blocks
     for (const e of this.exits) {
-      if (e.x + e.w < x0 - 60 || e.x > x1 + 60) continue;
+      if (e.hidden || e.x + e.w < x0 - 60 || e.x > x1 + 60) continue;
       drawExitDoor(ctx, e, t);
     }
 
@@ -554,6 +627,7 @@ export class Level {
       else if (d.type === 'flock') drawFlock(ctx, d, t);
       else if (d.type === 'archlegs') drawArchLegs(ctx, d, this.groundY);
       else if (d.type === 'crane') drawBargeCrane(ctx, d, t);
+      else if (d.type === 'specimen') drawSpecimen(ctx, d, this.groundY, t);
     }
 
     // platforms
@@ -622,6 +696,18 @@ export class Level {
     for (const c of this.cages) {
       if (c.x < x0 - 40 || c.x > x1 + 40) continue;
       drawCage(ctx, c, t);
+    }
+
+    // tractor beams, over the world but translucent
+    for (const b of this.beams) {
+      if (b.x + b.w < x0 || b.x > x1) continue;
+      drawBeam(ctx, b, t);
+    }
+
+    // curios: the junk nobody but the ray gun cares about
+    for (const c of this.curios) {
+      if (c.got || c.x < x0 - 60 || c.x > x1 + 60) continue;
+      drawCurio(ctx, c, t, !!player?.abilities.raygun);
     }
 
     // hints
@@ -1231,6 +1317,54 @@ function drawBackdrop(ctx, z) {
       ctx.beginPath();
       ctx.arc(lx, z.y + 34, 60, 0, Math.PI * 2);
       ctx.fill();
+    }
+    return;
+  }
+  if (z.style === 'ship') {
+    // mothership interior: dark hull, ribs, glow strips, and portholes
+    // full of stars (and one of Miami, far below)
+    const g = ctx.createLinearGradient(0, z.y, 0, z.y + z.h);
+    g.addColorStop(0, '#101a16');
+    g.addColorStop(0.5, '#16241e');
+    g.addColorStop(1, '#0c1410');
+    ctx.fillStyle = g;
+    ctx.fillRect(z.x, z.y, z.w, z.h);
+    // ribs
+    ctx.strokeStyle = 'rgba(60,110,80,0.35)';
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    for (let rx = z.x + 120; rx < z.x + z.w; rx += 300) {
+      ctx.moveTo(rx, z.y);
+      ctx.quadraticCurveTo(rx + 26, z.y + z.h / 2, rx, z.y + z.h);
+    }
+    ctx.stroke();
+    // running glow strips
+    for (const sy of [z.y + z.h * 0.22, z.y + z.h * 0.72]) {
+      ctx.fillStyle = 'rgba(125,255,106,0.14)';
+      ctx.fillRect(z.x, sy, z.w, 4);
+    }
+    // portholes
+    for (let px = z.x + 210; px < z.x + z.w - 120; px += 420) {
+      ctx.fillStyle = '#05070c';
+      ctx.beginPath();
+      ctx.arc(px, z.y + z.h * 0.4, 34, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(125,255,106,0.4)';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      for (let s = 0; s < 5; s++) {
+        ctx.fillRect(px - 22 + ((px * 13 + s * 29) % 44), z.y + z.h * 0.4 - 22 + ((px * 7 + s * 41) % 44), 1.6, 1.6);
+      }
+      // one porthole looks down on the neon grid
+      if (((px / 420) | 0) % 3 === 1) {
+        ctx.fillStyle = 'rgba(90,26,94,0.8)';
+        ctx.beginPath();
+        ctx.arc(px, z.y + z.h * 0.4 + 10, 20, 0, Math.PI);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,79,163,0.5)';
+        for (let s = 0; s < 6; s++) ctx.fillRect(px - 15 + s * 5.4, z.y + z.h * 0.4 + 12 + (s % 3) * 4, 3, 1.4);
+      }
     }
     return;
   }
@@ -3511,6 +3645,326 @@ function drawPuzzleDisplay(ctx, pz, t) {
     ctx.arc(d.x - w / 2 + 24 + i * 26, d.y, showing ? 9 : 7, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalCompositeOperation = 'source-over';
+  }
+}
+
+// ------------------------------------------------ the abduction
+
+function drawBeam(ctx, b, t) {
+  const cx = b.x + b.w / 2;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  // the column
+  const g = ctx.createLinearGradient(cx - b.w / 2, 0, cx + b.w / 2, 0);
+  g.addColorStop(0, 'rgba(125,255,106,0)');
+  g.addColorStop(0.5, `rgba(125,255,106,${0.16 + Math.sin(t * 1.7) * 0.04})`);
+  g.addColorStop(1, 'rgba(125,255,106,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(b.x - 10, b.top, b.w + 20, b.base - b.top);
+  // hard edges
+  ctx.strokeStyle = 'rgba(125,255,106,0.35)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(b.x, b.top);
+  ctx.lineTo(b.x, b.base);
+  ctx.moveTo(b.x + b.w, b.top);
+  ctx.lineTo(b.x + b.w, b.base);
+  ctx.stroke();
+  // rising rings
+  const span = b.base - b.top;
+  for (let i = 0; i < 6; i++) {
+    const u = 1 - (((t * 160 + i * span / 6) % span) / span);
+    const y = b.base - (1 - u) * span;
+    ctx.globalAlpha = 0.5 * Math.sin(Math.PI * (1 - u));
+    ctx.strokeStyle = 'rgba(180,255,160,0.8)';
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.ellipse(cx, y, b.w / 2 + 6 * Math.sin((1 - u) * 9), 5, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  // drifting motes
+  for (let i = 0; i < 4; i++) {
+    const u = ((t * 0.24 + i / 4) % 1);
+    ctx.fillStyle = `rgba(200,255,180,${0.7 * (1 - u)})`;
+    ctx.beginPath();
+    ctx.arc(cx + Math.sin(t * 2 + i * 2.4) * b.w * 0.3, b.base - u * span, 2.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+  // base glow where it meets the roof
+  ctx.globalCompositeOperation = 'lighter';
+  const bg = ctx.createRadialGradient(cx, b.base, 4, cx, b.base, b.w);
+  bg.addColorStop(0, 'rgba(125,255,106,0.3)');
+  bg.addColorStop(1, 'rgba(125,255,106,0)');
+  ctx.fillStyle = bg;
+  ctx.beginPath();
+  ctx.ellipse(cx, b.base, b.w, 16, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+function drawCurio(ctx, c, t, hasGun) {
+  const y = c.y + (c.t > 0 ? Math.sin(t * 22) * 1.6 : 0);
+  ctx.save();
+  ctx.translate(c.x, y);
+  if (c.t > 0) ctx.rotate(Math.sin(t * 9) * 0.2);
+  drawCurioIcon(ctx, c.type, t);
+  ctx.restore();
+  if (hasGun) {
+    // the gun knows what it wants
+    ctx.globalCompositeOperation = 'lighter';
+    const g = ctx.createRadialGradient(c.x, y - 6, 2, c.x, y - 6, 26);
+    g.addColorStop(0, `rgba(125,255,106,${0.25 + Math.sin(t * 3 + c.phase) * 0.1})`);
+    g.addColorStop(1, 'rgba(125,255,106,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(c.x, y - 6, 26, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+  } else if (Math.sin(t * 2.2 + c.phase) > 0.9) {
+    // a faint wink of strangeness for the unarmed
+    ctx.fillStyle = 'rgba(200,255,180,0.5)';
+    ctx.font = '600 11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('?', c.x, y - 18);
+  }
+}
+
+function drawCurioIcon(ctx, type, t) {
+  switch (type) {
+    case 'flamingo':
+      ctx.strokeStyle = '#ff8ab5';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, -12);
+      ctx.stroke();
+      ctx.fillStyle = '#ff8ab5';
+      ctx.beginPath();
+      ctx.ellipse(2, -15, 6, 4, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(8, -19, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 'cone':
+      ctx.fillStyle = '#ff8a4d';
+      ctx.beginPath();
+      ctx.moveTo(-8, 0);
+      ctx.lineTo(-2, -16);
+      ctx.lineTo(2, -16);
+      ctx.lineTo(8, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#f4f0ff';
+      ctx.fillRect(-5, -8, 10, 3);
+      break;
+    case 'duck':
+      ctx.fillStyle = '#ffd94d';
+      ctx.beginPath();
+      ctx.ellipse(0, -5, 7, 5, 0, 0, Math.PI * 2);
+      ctx.arc(5, -10, 3.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ff8a4d';
+      ctx.fillRect(8, -10, 4, 2);
+      break;
+    case 'dish':
+      ctx.fillStyle = '#b8b2c8';
+      ctx.beginPath();
+      ctx.ellipse(0, -8, 9, 5, -0.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#8d83a3';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, -8);
+      ctx.lineTo(4, -14);
+      ctx.moveTo(-3, 0);
+      ctx.lineTo(0, -8);
+      ctx.stroke();
+      break;
+    case 'bucket':
+      ctx.fillStyle = '#8d83a3';
+      ctx.beginPath();
+      ctx.moveTo(-6, -12);
+      ctx.lineTo(6, -12);
+      ctx.lineTo(4, 0);
+      ctx.lineTo(-4, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#35e0e0';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 6, 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 'record':
+      ctx.fillStyle = '#191325';
+      ctx.beginPath();
+      ctx.arc(0, -8, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ff4fa3';
+      ctx.beginPath();
+      ctx.arc(0, -8, 2.6, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 'maraca':
+      ctx.fillStyle = '#c9705e';
+      ctx.fillRect(-1.5, -8, 3, 8);
+      ctx.fillStyle = '#ffd166';
+      ctx.beginPath();
+      ctx.ellipse(0, -12, 5, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 'cafecito':
+      ctx.fillStyle = '#f4f0ff';
+      ctx.beginPath();
+      ctx.moveTo(-5, -9);
+      ctx.lineTo(5, -9);
+      ctx.lineTo(3.4, 0);
+      ctx.lineTo(-3.4, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(232,226,242,0.7)';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(6, -5, 2.6, -1.2, 1.2);
+      ctx.stroke();
+      break;
+    case 'propeller':
+      ctx.fillStyle = '#b8b2c8';
+      for (let i = 0; i < 3; i++) {
+        ctx.save();
+        ctx.translate(0, -8);
+        ctx.rotate((i / 3) * Math.PI * 2 + t * 0.4);
+        ctx.beginPath();
+        ctx.ellipse(0, -6, 2.6, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      break;
+    case 'token':
+      ctx.fillStyle = '#ffd166';
+      ctx.beginPath();
+      ctx.arc(0, -7, 6.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#8a6f2e';
+      ctx.font = '800 8px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('0', 0, -4.4);
+      break;
+    case 'egg':
+      ctx.fillStyle = '#f0ecd8';
+      ctx.beginPath();
+      ctx.ellipse(0, -7, 5.4, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(90,120,80,0.5)';
+      ctx.beginPath();
+      ctx.arc(-2, -9, 1, 0, Math.PI * 2);
+      ctx.arc(2, -5, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 'shell':
+      ctx.fillStyle = '#ffc2ce';
+      ctx.beginPath();
+      ctx.moveTo(-7, 0);
+      ctx.quadraticCurveTo(-8, -12, 0, -12);
+      ctx.quadraticCurveTo(8, -12, 7, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(150,90,110,0.5)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(-4, -1);
+      ctx.lineTo(-2, -10);
+      ctx.moveTo(0, -1);
+      ctx.lineTo(0, -11);
+      ctx.moveTo(4, -1);
+      ctx.lineTo(2, -10);
+      ctx.stroke();
+      break;
+    default:
+      ctx.fillStyle = '#b8b2c8';
+      ctx.fillRect(-5, -10, 10, 10);
+  }
+}
+
+function drawSpecimen(ctx, d, groundY, t) {
+  // an abductee in a glass tube, bobbing in green suspension
+  const x = d.x;
+  const base = d.y || groundY;
+  const h = d.h || 120;
+  const w = d.w || 64;
+  // pedestal
+  ctx.fillStyle = '#2c3a36';
+  ctx.fillRect(x - w / 2 - 8, base - 14, w + 16, 14);
+  // tube glass + fluid
+  const g = ctx.createLinearGradient(x - w / 2, 0, x + w / 2, 0);
+  g.addColorStop(0, 'rgba(125,255,106,0.06)');
+  g.addColorStop(0.5, 'rgba(125,255,106,0.16)');
+  g.addColorStop(1, 'rgba(125,255,106,0.06)');
+  ctx.fillStyle = g;
+  ctx.fillRect(x - w / 2, base - h, w, h - 14);
+  ctx.strokeStyle = 'rgba(180,255,160,0.4)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x - w / 2, base - h, w, h - 14);
+  // cap
+  ctx.fillStyle = '#2c3a36';
+  ctx.fillRect(x - w / 2 - 6, base - h - 12, w + 12, 12);
+  // the specimen, gently bobbing
+  const bob = Math.sin(t * 1.1 + x) * 4;
+  ctx.save();
+  ctx.translate(x, base - h / 2 + bob);
+  ctx.globalAlpha = 0.9;
+  if (d.item === 'palm') {
+    ctx.strokeStyle = '#24503a';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, 28);
+    ctx.lineTo(0, -6);
+    ctx.stroke();
+    ctx.strokeStyle = '#2e6e46';
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 5; i++) {
+      const a = -Math.PI / 2 + (i - 2) * 0.5;
+      ctx.beginPath();
+      ctx.moveTo(0, -6);
+      ctx.quadraticCurveTo(Math.cos(a) * 14, -6 + Math.sin(a) * 14, Math.cos(a) * 22, -2 + Math.sin(a) * 18);
+      ctx.stroke();
+    }
+  } else if (d.item === 'car') {
+    ctx.save();
+    ctx.scale(0.42, 0.42);
+    drawCar(ctx, -46, 16, d.hue || 320);
+    ctx.restore();
+  } else if (d.item === 'rooster') {
+    ctx.save();
+    ctx.scale(0.55, 0.55);
+    drawRooster(ctx, 0, 36);
+    ctx.restore();
+  } else {
+    // a very confused gull
+    ctx.strokeStyle = '#d8d2c2';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-10, 0);
+    ctx.quadraticCurveTo(0, -8, 10, 0);
+    ctx.stroke();
+    ctx.fillStyle = '#f0ece0';
+    ctx.beginPath();
+    ctx.ellipse(0, 4, 9, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#191325';
+    ctx.beginPath();
+    ctx.arc(4, 1, 1.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+  // rising bubbles
+  if (Math.random() < 0.12) {
+    particles.burst(x + (Math.random() - 0.5) * w * 0.6, base - 20, {
+      count: 1, color: 'rgba(180,255,160,0.5)', speed: 22, angle: -Math.PI / 2, spread: 0.2, life: 1.4, size: 1.6, gravity: -30, glow: false,
+    });
   }
 }
 

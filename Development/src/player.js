@@ -69,6 +69,7 @@ export class Player {
     this.landT = 0;
     this.launchT = 0;
     this.inVent = false;
+    this.inBeam = false;
     this.runPhase = 0;
     this.groundPlat = null;
     this.h = 26;
@@ -307,6 +308,28 @@ export class Player {
       }
     }
 
+    // ---- tractor beams: gravity bends toward the green light ----
+    this.inBeam = false;
+    for (const b of level.beams) {
+      const cx = b.x + b.w / 2;
+      if (this.y < b.top || this.y > b.base) continue;
+      if (this.x > b.x && this.x < b.x + b.w) {
+        // inside the column: hauled upward, held to the centerline
+        this.inBeam = true;
+        this.vy -= 3400 * dt;
+        if (this.vy < -560) this.vy = -560;
+        this.vx += (cx - this.x) * 4 * dt;
+        this.vx *= 1 - 2.5 * dt;
+        this.usedFlap = false;
+        this.dashReady = true;
+        this.stamina = STAMINA_MAX;
+        if (Math.random() < 0.4) particles.trail(this.x + (Math.random() - 0.5) * 20, this.y + 16, 'rgba(125,255,106,0.6)');
+      } else if (!this.grounded && this.x > b.x - 120 && this.x < b.x + b.w + 120) {
+        // the fringe: a sideways tug you can feel
+        this.vx += Math.sign(cx - this.x) * 700 * dt;
+      }
+    }
+
     // ---- wind zones (gusts act on airborne birds only) ----
     this.windZone = null;
     if (!this.grounded) {
@@ -426,7 +449,7 @@ export class Player {
         }
       }
     }
-    audio.glide(this.gliding || this.flying || (this.inVent && !this.grounded));
+    audio.glide(this.gliding || this.flying || this.inBeam || (this.inVent && !this.grounded));
 
     // ---- integrate + collide ----
     const wasGrounded = this.grounded;

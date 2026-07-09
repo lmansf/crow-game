@@ -71,6 +71,12 @@ export default {
     { type: 'wynwoodgate', x: 2830, w: 340 },
   ],
 
+  // inert junk only the ray gun can lift
+  curios: [
+    { x: 2000, y: 2185, type: 'bucket' },
+    { x: 5200, y: 1285, type: 'record' },
+  ],
+
   // mega-map doors at both street ends
   entries: {
     west: { x: 250, y: 2170 },

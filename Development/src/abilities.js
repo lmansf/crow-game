@@ -74,4 +74,10 @@ export const ABILITIES = {
     toast: 'hold {JUMP} in the air to climb while your wings hold out',
     icon: '<svg viewBox="0 0 24 24"><path d="M12 20 L12 9 M4 12 Q12 2 20 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M6.5 16 Q12 9 17.5 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   },
+  raygun: {
+    name: 'RAY GUN',
+    color: '#7dff6a',
+    toast: 'it does nothing. except lift the curious junk nobody else can',
+    icon: '<svg viewBox="0 0 24 24"><path d="M4 13 L13 13 L13 17 L9 17 M13 13 L19 7 M17.5 5.5 L20.5 8.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="9" r="1.2" fill="currentColor"/><circle cx="10" cy="7" r="1" fill="currentColor"/></svg>',
+  },
 };

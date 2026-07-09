@@ -14,6 +14,7 @@ function load() {
 let data = load();
 data.levels = data.levels || {};
 data.settings = data.settings || { muted: false };
+data.flags = data.flags || {};
 
 function persist() {
   try {
@@ -36,6 +37,16 @@ export const save = {
       shinyTotal,
       bestTimeMs: prev.bestTimeMs ? Math.min(prev.bestTimeMs, timeMs) : timeMs,
     };
+    persist();
+  },
+
+  // free-form progress flags (easter eggs, curio pickups, ...)
+  getFlag(key) {
+    return data.flags[key];
+  },
+
+  setFlag(key, value = true) {
+    data.flags[key] = value;
     persist();
   },
 

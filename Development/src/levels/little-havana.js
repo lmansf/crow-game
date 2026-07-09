@@ -79,6 +79,12 @@ export default {
     { x: 505, y: 1850, w: 70, h: 150, to: 'hall-toll', entry: 'west', label: 'THE SKYWAY', dir: -1 },
   ],
 
+  // inert junk only the ray gun can lift
+  curios: [
+    { x: 4470, y: 1885, type: 'maraca' },
+    { x: 5600, y: 1385, type: 'cafecito' },
+  ],
+
   buildings: [
     { x: 7420, w: 180, h: 240, style: 'block', hue: 8, sign: 'AREPAS' },
     { x: 150, w: 350, h: 420, style: 'block', hue: 150, sign: 'CUBAOCHO' },

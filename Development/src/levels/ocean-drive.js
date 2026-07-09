@@ -71,6 +71,12 @@ export default {
     { x: 7110, y: 1350, w: 84, h: 150, to: 'hall-drain', entry: 'west', label: 'BRICKELL', dir: 1 },
   ],
 
+  // inert junk only the ray gun can lift
+  curios: [
+    { x: 500, y: 1485, type: 'flamingo' },
+    { x: 4500, y: 845, type: 'cone' },
+  ],
+
   // room 1's locals: vice gulls own this stretch of sky
   enemies: [
     { type: 'gull', x: 880, y: 1010, range: 240 },

@@ -9,6 +9,7 @@ import littleHavana from './little-havana.js';
 import skywayMileZero from './skyway-mile-zero.js';
 import riverOfGrass from './river-of-grass.js';
 import { hallDrain, hallGlideway, hallUnderpass, hallToll, hallCauseway } from './hallways.js';
+import ufo from './ufo.js';
 
 export const LEVELS = [
   oceanDrive,
@@ -22,6 +23,7 @@ export const LEVELS = [
   skywayMileZero,
   hallCauseway,
   riverOfGrass,
+  ufo, // hidden: reachable only through the green light
 ];
 
 // Shown as locked cards on the district select screen.

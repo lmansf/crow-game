@@ -73,10 +73,23 @@ export default {
   entries: {
     west: { x: 210, y: 3160 },
     east: { x: 3226, y: 320 },
+    beamdown: { x: 340, y: 1120 },
   },
   exits: [
     { x: 118, y: 3070, w: 56, h: 140, to: 'hall-drain', entry: 'east', label: 'OCEAN DRIVE', dir: -1 },
     { x: 3250, y: 210, w: 60, h: 140, to: 'hall-glideway', entry: 'west', label: 'THE GLIDE-WAY', dir: 1 },
+    // the top of the green beam: not a door, an abduction
+    { x: 160, y: -60, w: 120, h: 160, to: 'ufo', entry: 'beam', hidden: true },
+  ],
+
+  // easter egg: the beam hangs over VIZCAYA's secret roof
+  beams: [
+    { x: 160, w: 120, base: 1150, top: -100 },
+  ],
+
+  curios: [
+    { x: 1650, y: 2825, type: 'duck' },
+    { x: 2150, y: 1285, type: 'dish' },
   ],
 
   // real downtown silhouettes behind the playable towers
@@ -258,5 +271,6 @@ export default {
     { x: 1840, y: 2330, text: 'climb the parking garage' },
     { x: 1110, y: 2090, text: 'slack cables: perch on one' },
     { x: 2505, y: 1180, text: 'warm air rises between the towers' },
+    { x: 260, y: 1060, text: 'the sky hums green over VIZCAYA' },
   ],
 };

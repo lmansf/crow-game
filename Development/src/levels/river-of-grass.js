@@ -101,6 +101,12 @@ export default {
     { x: 6700, y: 2510, w: 500, h: 490 },
   ],
 
+  // inert junk only the ray gun can lift
+  curios: [
+    { x: 3000, y: 2485, type: 'egg' },
+    { x: 7350, y: 2485, type: 'shell' },
+  ],
+
   // the Shark Valley observation tower, out in the open water
   landmarks: [
     { type: 'sharktower', x: 4800, y0: 1000, y1: 2510 },

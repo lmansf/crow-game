@@ -92,6 +92,12 @@ export default {
     { x: 3000, y: 2436, w: 300, h: 364 },
   ],
 
+  // inert junk only the ray gun can lift
+  curios: [
+    { x: 2650, y: 2325, type: 'propeller' },
+    { x: 1500, y: 1785, type: 'token' },
+  ],
+
   // Stiltsville shacks standing out in the flood
   landmarks: [
     { type: 'stilthouse', x: 2050, y: 2410, scale: 0.75 },

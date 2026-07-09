@@ -65,6 +65,10 @@ const game = {
     if (save.getLevel('river-of-grass')?.completed && !this.player.abilities.flight) {
       this.player.grant('flight');
     }
+    // the ray gun, once beamed down with, is yours forever
+    if (save.getFlag('raygun') && !this.player.abilities.raygun) {
+      this.player.grant('raygun');
+    }
     this.checkpoint = { ...spawn };
     this.shinies = 0;
     this.runTime = 0;
@@ -86,6 +90,7 @@ const game = {
       ...Object.keys(opts.carry || {}).filter((a) => opts.carry[a]),
       ...data.pickups.map((p) => p.ability),
       ...(data.boss ? [data.boss.drops] : []),
+      ...(this.player.abilities.raygun ? ['raygun'] : []),
     ])];
     this.ui.buildAbilitySlots(abilityOrder, this.player.abilities);
     if (opts.entry) {
@@ -140,6 +145,7 @@ const game = {
   onAbility(ability) {
     this.ui.setAbility(ability);
     this.ui.abilityToast(ability);
+    if (ability === 'raygun') save.setFlag('raygun');
   },
 
   onBlockedBreakable() {

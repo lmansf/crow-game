@@ -46,6 +46,13 @@ District 1 now demonstrates the full metroidvania loop that the remaining distri
 - **Room 3 (boss)**: the Gull King, a giant of the local species, walls you into LUNA REY's rooftop. Dodge the telegraphed dives (the landing spot is marked - a hop clears the strike), then stomp him from above while he is down. Three stomps win the Swoop, which falls from his talons.
 - **The way back**: a swoop-gap billboard corridor runs from the boss roof all the way back to the beach, ending at the teased vault - enterable only with the ability you just won.
 
+### An easter egg
+
+Somewhere above downtown, the sky hums green.
+Fly into the light and you will be politely abducted into a hidden bonus zone, and if you quest through it you will come home with a RAY GUN.
+The ray gun does nothing - except tractor-lift the twelve pieces of curious junk scattered across Miami (a lawn flamingo, a gator egg, a lone maraca...) that nothing else in the game can touch.
+Lifted curios are remembered forever.
+
 ### Run it
 
 ```

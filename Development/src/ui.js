@@ -132,7 +132,8 @@ export class UI {
         <span class="best">best ${fmtTime(stats.bestTimeMs)}</span></div>`;
 
     const idx = LEVELS.findIndex((l) => l.id === levelData.id);
-    const next = LEVELS[idx + 1];
+    let next = LEVELS[idx + 1];
+    if (next && next.hidden) next = null; // easter eggs are not on the itinerary
     const btn = $('btn-next');
     if (next) {
       this.nextLevelId = next.id;
