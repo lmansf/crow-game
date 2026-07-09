@@ -28,10 +28,17 @@ You play a hurricane-blown crow collecting Shinies and unlocking movement abilit
 ### Run it
 
 ```
+python "Crow Game/Development/tools/serve.py" [port]
+```
+
+This serves the `Development/` folder on `0.0.0.0` (default port 8123) with caching disabled, so reloads always pick up fresh code - handy when testing on a phone.
+Any static file server works too:
+
+```
 python -m http.server 8123 --directory "Crow Game/Development"
 ```
 
-Then open http://localhost:8123 (any static file server works; ES modules require http, not file://).
+Then open http://localhost:8123 (ES modules require http, not file://).
 To play on your phone, open http://YOUR-PC-IP:8123 on the same wifi.
 
 ### Controls
