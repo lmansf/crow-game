@@ -76,6 +76,7 @@ export class Player {
     this.rolling = 0;
     this.rollPhase = 0;
     this.climbing = false;
+    if (this.hooked) this.hooked.held = false;
     this.hooked = null;
     this.hookCd = 0;
     this.grindRail = null;
