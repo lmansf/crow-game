@@ -45,18 +45,27 @@ const game = {
     });
   },
 
-  launchLevel(id) {
+  launchLevel(id, opts = {}) {
     const data = getLevelData(id);
     if (!data) return;
     this.levelId = id;
     this.level = new Level(data);
-    this.player = new Player(this.level.spawn);
+    // mega-map arrivals come in through a named entry, carrying every
+    // ability earned on the way here
+    const entry = opts.entry && this.level.entries[opts.entry];
+    const spawn = entry ? { ...entry } : this.level.spawn;
+    this.player = new Player(spawn);
     for (const a of data.initialAbilities || []) this.player.grant(a);
+    if (opts.carry) {
+      for (const [a, owned] of Object.entries(opts.carry)) {
+        if (owned) this.player.grant(a);
+      }
+    }
     // post-game reward: True Flight carries into every district
     if (save.getLevel('river-of-grass')?.completed && !this.player.abilities.flight) {
       this.player.grant('flight');
     }
-    this.checkpoint = { ...this.level.spawn };
+    this.checkpoint = { ...spawn };
     this.shinies = 0;
     this.runTime = 0;
     this.outroT = 0;
@@ -72,8 +81,42 @@ const game = {
     camera.snapTo(this.player.x, this.player.y, this.level);
     this.ui.show(null);
     this.ui.setShinies(0, this.level.shinyTotal);
-    const abilityOrder = [...(data.initialAbilities || []), ...data.pickups.map((p) => p.ability)];
+    const abilityOrder = [...new Set([
+      ...(data.initialAbilities || []),
+      ...Object.keys(opts.carry || {}).filter((a) => opts.carry[a]),
+      ...data.pickups.map((p) => p.ability),
+      ...(data.boss ? [data.boss.drops] : []),
+    ])];
     this.ui.buildAbilitySlots(abilityOrder, this.player.abilities);
+    if (opts.entry) {
+      this.ui.toast(data.name.toUpperCase(), data.blurb || '', 2600);
+      // a completed district's sign stays lit and never replays its outro
+      if (this.level.goal && save.getLevel(id)?.completed) {
+        this.level.goal.reached = true;
+        this.level.goal.lit = 1;
+      }
+    }
+  },
+
+  // walking into a zone door: fade to black, swap zones at the midpoint
+  beginExit(exit) {
+    if (this.fadeT > 0 || this.mode !== 'play') return;
+    this.exitPending = exit;
+    this.fadeT = 0.7;
+    input.locked = true;
+    audio.glide(false);
+  },
+
+  tickFade(dt) {
+    if (this.fadeT <= 0) return;
+    this.fadeT -= dt;
+    if (this.exitPending && this.fadeT <= 0.35) {
+      const ex = this.exitPending;
+      this.exitPending = null;
+      this.launchLevel(ex.to, { entry: ex.entry, carry: { ...this.player.abilities } });
+      input.locked = true; // stay locked until the fade lifts
+    }
+    if (this.fadeT <= 0 && this.mode === 'play') input.locked = false;
   },
 
   quitToMenu() {
@@ -108,6 +151,7 @@ const game = {
   onRespawn() {
     camera.snapTo(this.player.x, this.player.y, this.level);
     this.flash(0.15);
+    this.level.boss?.reset();
   },
 
   beginOutro() {
@@ -167,6 +211,7 @@ function frame(now) {
   last = now;
   game.time += dt;
 
+  game.tickFade(dt);
   if ((game.mode === 'play' || game.mode === 'outro') && !game.paused) {
     if (game.freeze > 0) {
       game.freeze -= dt;
@@ -275,6 +320,13 @@ function render() {
   v.addColorStop(1, 'rgba(5,2,12,0.42)');
   ctx.fillStyle = v;
   ctx.fillRect(0, 0, cssW, cssH);
+
+  // zone-door fade (out, swap at the midpoint, back in)
+  if (game.fadeT > 0) {
+    const k = game.fadeT > 0.35 ? (0.7 - game.fadeT) / 0.35 : game.fadeT / 0.35;
+    ctx.fillStyle = `rgba(5,2,12,${Math.min(1, k * 1.15)})`;
+    ctx.fillRect(0, 0, cssW, cssH);
+  }
 }
 
 // ------------------------------------------------ boot
@@ -307,6 +359,7 @@ if (location.search.includes('debug')) {
     step(dt = STEP, frames = 1) {
       for (let i = 0; i < frames; i++) {
         game.time += dt;
+        game.tickFade(dt);
         if (game.mode === 'play' && !game.paused) {
           input.update(dt);
           game.player.update(dt, game.level, game);

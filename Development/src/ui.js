@@ -89,6 +89,7 @@ export class UI {
     const wrap = $('level-cards');
     wrap.innerHTML = '';
     for (const lvl of LEVELS) {
+      if (lvl.connector) continue; // hallways live between the cards
       const stats = save.getLevel(lvl.id);
       const card = document.createElement('button');
       card.className = 'level-card';

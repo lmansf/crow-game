@@ -63,6 +63,56 @@ export default {
   beachEnd: 640,
   spawn: { x: 300, y: 1470 },
 
+  // mega-map door: the storm drain at the far end of the strip
+  entries: {
+    east: { x: 7078, y: 1470 },
+  },
+  exits: [
+    { x: 7110, y: 1350, w: 84, h: 150, to: 'hall-drain', entry: 'west', label: 'BRICKELL', dir: 1 },
+  ],
+
+  // room 1's locals: vice gulls own this stretch of sky
+  enemies: [
+    { type: 'gull', x: 880, y: 1010, range: 240 },
+    { type: 'gull', x: 1560, y: 840, range: 200 },
+  ],
+
+  // room 2: the neon combo chamber in EL CUERVO's courtyard.
+  // The board flashes the order; touch the pads to match it.
+  puzzle: {
+    switches: [
+      { x: 3010, y: 1445, hue: 320 },
+      { x: 3130, y: 1330, hue: 185 },
+      { x: 3230, y: 1210, hue: 45 },
+    ],
+    order: [1, 2, 0],
+    display: { x: 3120, y: 1080 },
+    door: { x: 3238, y: 850, w: 66, h: 650 },
+  },
+
+  // room 3: the Gull King roosts over LUNA REY and holds the Swoop
+  boss: {
+    type: 'gullking',
+    x: 5180,
+    y: 470,
+    arena: { x0: 4960, x1: 5400, top: 240, floor: 600 },
+    drops: 'swoop',
+  },
+
+  // the teased penthouse vault floats over the beach: visible from the
+  // first screen, reachable only along the swoop-gap corridor that runs
+  // home from the Gull King's roof
+  extraSolids: [
+    { x: 180, y: 700, w: 340, h: 30, kind: 'steel' },
+    { x: 180, y: 494, w: 340, h: 26, kind: 'steel' },
+    { x: 180, y: 520, w: 26, h: 180, kind: 'steel' },
+    { x: 494, y: 520, w: 26, h: 86, kind: 'steel' },
+  ],
+
+  backdrops: [
+    { x: 206, y: 520, w: 288, h: 180, style: 'gallery' },
+  ],
+
   buildings: [
     // the Colony Hotel: Ocean Drive's blue neon blade, recognizable anywhere
     { x: 640, w: 430, h: 400, style: 'deco', hue: 210, blade: 'COLONY' },
@@ -98,6 +148,9 @@ export default {
     { x: 2184, y: 940, w: 66, type: 'fireescape' },
     // TIKI billboard above PALMERA
     { x: 2620, y: 600, w: 120, type: 'billboard', text: 'TIKI', hue: 150 },
+    // puzzle chamber perches for the upper neon pads
+    { x: 3080, y: 1360, w: 100, type: 'ledge' },
+    { x: 3180, y: 1240, w: 100, type: 'ledge' },
     // courtyard exit: fire escape up EL CUERVO's left wall
     { x: 3252, y: 1380, w: 68, type: 'fireescape' },
     { x: 3252, y: 1260, w: 68, type: 'fireescape' },
@@ -114,8 +167,17 @@ export default {
     { x: 4440, y: 620, w: 150, type: 'billboard', text: 'COLADA', hue: 185 },
     // chimney helper between BISCAYNE and LUNA REY
     { x: 4880, y: 730, w: 70, type: 'ledge' },
-    // SWOOP pickup antenna above LUNA REY
+    // the Gull King's antenna roost above LUNA REY
     { x: 5150, y: 460, w: 80, type: 'antenna' },
+    // the swoop-way home: a billboard corridor running west from the
+    // boss roof, gaps sized for wings that can dash
+    { x: 4545, y: 540, w: 150, type: 'billboard', text: 'ROOST AIR', hue: 185 },
+    { x: 3915, y: 520, w: 150, type: 'billboard', text: 'FLY', hue: 320 },
+    { x: 3285, y: 545, w: 150, type: 'billboard', text: 'WEST', hue: 45 },
+    { x: 2715, y: 530, w: 150, type: 'billboard', text: 'YOUNG', hue: 150 },
+    { x: 2025, y: 545, w: 150, type: 'billboard', text: 'BIRD', hue: 275 },
+    { x: 1395, y: 520, w: 150, type: 'billboard', text: 'ALMOST', hue: 185 },
+    { x: 765, y: 545, w: 150, type: 'billboard', text: 'HOME', hue: 320 },
     // street recovery in the swoop gap: LUNA REY's right wall
     { x: 5400, y: 1380, w: 68, type: 'fireescape' },
     { x: 5400, y: 1260, w: 68, type: 'fireescape' },
@@ -145,7 +207,7 @@ export default {
   pickups: [
     { x: 1925, y: 655, ability: 'flap' },
     { x: 3710, y: 515, ability: 'glide' },
-    { x: 5190, y: 415, ability: 'swoop' },
+    // swoop now falls from the Gull King's talons
   ],
 
   checkpoints: [
@@ -200,6 +262,12 @@ export default {
     ...col(6490, 1050, 450, 3),
     // summit crown
     ...arc(6600, 175, 7000, 175, 5, 70),
+    // the swoop-way home
+    ...line(4620, 490, 840, 7),
+    // the penthouse vault
+    ...line(240, 660, 460, 6),
+    [350, 600], [290, 565], [410, 565],
+    ...arc(220, 450, 480, 450, 4, 40),
   ],
 
   decor: [
@@ -219,7 +287,11 @@ export default {
   hints: [
     { x: 300, y: 1395, text: '{MOVE} walk', kb: 'A / D walk' },
     { x: 180, y: 1290, text: '{JUMP} hop', kb: 'SPACE hop' },
+    { x: 350, y: 1200, text: 'a sealed roost glitters high above the sand' },
+    { x: 900, y: 1330, text: 'vice gulls dive: step aside, or swoop them later' },
     { x: 600, y: 1130, text: 'hop up the awnings' },
+    { x: 3120, y: 1470, text: 'the board knows the combo: touch the pads in its order' },
+    { x: 4900, y: 1430, text: 'something enormous is nesting on LUNA REY' },
     { x: 1130, y: 930, text: 'hold into a wall to grip it, {JUMP} to kick off', kb: 'hold into a wall to grip it, SPACE to kick off' },
     { x: 3050, y: 1360, text: 'shinies hide at street level too' },
     { x: 3580, y: 760, text: 'AC updraft: ride it up' },

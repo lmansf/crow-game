@@ -168,6 +168,22 @@ export const audio = {
     whoosh({ freq: 420, peak: 0.1, attack: 0.005, decay: 0.16, q: 0.8 });
   },
 
+  squawk() {
+    tone({ freq: 880, type: 'sawtooth', slide: -260, peak: 0.07, attack: 0.005, decay: 0.14 });
+    tone({ freq: 660, type: 'sawtooth', slide: -180, peak: 0.05, attack: 0.005, decay: 0.1, delay: 0.09 });
+  },
+
+  bossHit() {
+    tone({ freq: 220, type: 'square', slide: -120, peak: 0.16, attack: 0.004, decay: 0.3 });
+    whoosh({ freq: 600, peak: 0.14, attack: 0.005, decay: 0.2, q: 0.8 });
+  },
+
+  bossDown() {
+    [392, 493.88, 587.33, 783.99].forEach((f, i) =>
+      tone({ freq: f, type: 'triangle', peak: 0.13, attack: 0.01, decay: 0.6, delay: i * 0.1 }));
+    whoosh({ freq: 300, peak: 0.16, attack: 0.01, decay: 0.5 });
+  },
+
   smash() {
     tone({ freq: 95, type: 'square', slide: -45, peak: 0.16, attack: 0.004, decay: 0.22 });
     whoosh({ freq: 240, peak: 0.18, attack: 0.004, decay: 0.24, q: 0.6 });

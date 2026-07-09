@@ -68,6 +68,17 @@ export default {
   spawn: { x: 7350, y: 1970 },
   initialAbilities: ['flap', 'glide', 'swoop', 'break', 'launch', 'soar', 'roll', 'grip', 'hook'],
 
+  // mega-map doors: the underpass east of the paseo, the toll ramp
+  // west past the theater lobby
+  entries: {
+    east: { x: 7310, y: 1970 },
+    west: { x: 640, y: 1970 },
+  },
+  exits: [
+    { x: 7368, y: 1850, w: 50, h: 150, to: 'hall-underpass', entry: 'east', label: 'WYNWOOD', dir: 1 },
+    { x: 505, y: 1850, w: 70, h: 150, to: 'hall-toll', entry: 'west', label: 'THE SKYWAY', dir: -1 },
+  ],
+
   buildings: [
     { x: 7420, w: 180, h: 240, style: 'block', hue: 8, sign: 'AREPAS' },
     { x: 150, w: 350, h: 420, style: 'block', hue: 150, sign: 'CUBAOCHO' },
@@ -95,8 +106,9 @@ export default {
     { x: 4300, y: 1900, w: 300, h: 100, kind: 'steel' },
     // marquee ledge outside the flytower
     { x: 2400, y: 1420, w: 170, h: 26, kind: 'steel' },
-    // Tower Theater: solid front of house (fin and marquee drawn on it)
-    { x: 1200, y: 1100, w: 540, h: 900, kind: 'theaterfacade' },
+    // Tower Theater: solid front of house (fin and marquee drawn on it);
+    // the art reaches the street but the lobby doors are a walkway
+    { x: 1200, y: 1100, w: 540, h: 810, artH: 900, kind: 'theaterfacade' },
     // flytower roof slabs, with the exit gap between them
     { x: 1740, y: 1100, w: 200, h: 60, kind: 'steel' },
     { x: 2200, y: 1100, w: 200, h: 60, kind: 'steel' },

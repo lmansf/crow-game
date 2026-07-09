@@ -82,6 +82,14 @@ export default {
   spawn: { x: 450, y: 2470 },
   initialAbilities: ['flap', 'glide', 'swoop', 'break', 'launch', 'soar', 'roll', 'grip', 'hook', 'grind', 'wind'],
 
+  // mega-map door on the first hummock's western lip
+  entries: {
+    west: { x: 430, y: 2470 },
+  },
+  exits: [
+    { x: 306, y: 2350, w: 60, h: 150, to: 'hall-causeway', entry: 'east', label: 'THE SKYWAY', dir: -1 },
+  ],
+
   // open water everywhere the hummocks are not
   waters: [
     { x: 0, y: 2510, w: 300, h: 490 },

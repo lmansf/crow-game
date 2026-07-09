@@ -75,6 +75,16 @@ export default {
   spawn: { x: 500, y: 2370 },
   initialAbilities: ['flap', 'glide', 'swoop', 'break', 'launch', 'soar', 'roll', 'grip', 'hook', 'grind'],
 
+  // mega-map doors on the towpath at both ends
+  entries: {
+    west: { x: 150, y: 2370 },
+    east: { x: 7830, y: 2370 },
+  },
+  exits: [
+    { x: 0, y: 2250, w: 70, h: 150, to: 'hall-toll', entry: 'east', label: 'CALLE OCHO', dir: -1 },
+    { x: 7930, y: 2250, w: 70, h: 150, to: 'hall-causeway', entry: 'west', label: 'THE GLADES', dir: 1 },
+  ],
+
   // the flooded canal pools: one splash and it takes you
   waters: [
     { x: 1900, y: 2436, w: 300, h: 364 },

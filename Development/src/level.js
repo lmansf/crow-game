@@ -4,6 +4,8 @@
 import { audio } from './audio.js';
 import { particles } from './particles.js';
 import { ABILITIES } from './abilities.js';
+import { Enemies } from './enemies.js';
+import { Boss } from './boss.js';
 
 function rng(seed) {
   let s = seed >>> 0;
@@ -77,12 +79,33 @@ export class Level {
     this.cages = (data.cages || []).map((c) => ({ ...c, opened: false }));
     this.landmarks = (data.landmarks || []).map((l) => ({ ...l }));
 
+    // mega-map plumbing: doors to neighbouring zones, and named arrival spots
+    this.exits = (data.exits || []).map((e) => ({ ...e }));
+    this.entries = data.entries || {};
+
+    // critters, boss, and the district puzzle
+    this.enemies = new Enemies(data);
+    this.boss = data.boss ? new Boss(data.boss, this) : null;
+    this.puzzle = null;
+    if (data.puzzle) {
+      this.puzzle = {
+        switches: data.puzzle.switches.map((s) => ({ ...s, lit: false, cool: 0, touching: false })),
+        order: data.puzzle.order,
+        display: data.puzzle.display,
+        progress: 0,
+        solved: false,
+        door: { ...data.puzzle.door, kind: data.puzzle.door.kind || 'steel' },
+      };
+      this.solids.push(this.puzzle.door);
+    }
+
     this.shinies = data.shinies.map(([x, y], i) => ({ x, y, ox: x, oy: y, got: false, phase: i * 0.7 }));
     this.shinyTotal = this.shinies.length;
 
     this.pickups = data.pickups.map((p) => ({ ...p, got: false, phase: Math.random() * 6 }));
     this.checkpoints = data.checkpoints.map((c) => ({ ...c, active: false }));
-    this.goal = { ...data.goal, lit: 0, reached: false };
+    // connector hallways have no goal sign at all
+    this.goal = data.goal ? { ...data.goal, lit: 0, reached: false } : null;
     this.decor = data.decor || [];
     this.hints = data.hints || [];
 
@@ -156,8 +179,18 @@ export class Level {
         out.push({ x: h.x + h.w / 2, y: h.y + h.h * 0.4, r: 170, color: 'rgba(255,200,120,0.55)' });
       }
     }
+    for (const e of this.exits) {
+      if (e.x + e.w < x0 || e.x > x1) continue;
+      out.push({ x: e.x + e.w / 2, y: e.y + e.h / 2, r: 180, color: 'rgba(140,220,255,0.4)' });
+    }
+    if (this.puzzle) {
+      for (const s of this.puzzle.switches) {
+        if (s.x < x0 || s.x > x1) continue;
+        out.push({ x: s.x, y: s.y, r: 90, color: `hsla(${s.hue}, 90%, 65%, ${s.lit ? 0.55 : 0.25})` });
+      }
+    }
     const g = this.goal;
-    if (g.x > x0 && g.x < x1) {
+    if (g && g.x > x0 && g.x < x1) {
       out.push({
         x: g.x,
         y: g.y - 110,
@@ -199,6 +232,40 @@ export class Level {
       particles.burst(x, cam.y + Math.random() * cam.viewH, {
         count: 1, color: 'rgba(200,215,255,0.35)', speed: 8, life: 3, size: 1.4, gravity: -3, glow: false,
       });
+    }
+  }
+
+  // Sequence puzzle: hit the neon pads in the order the display shows.
+  updatePuzzle(dt, player, game, t) {
+    const pz = this.puzzle;
+    for (let i = 0; i < pz.switches.length; i++) {
+      const s = pz.switches[i];
+      if (s.cool > 0) s.cool -= dt;
+      const touch = player.dead <= 0 && Math.abs(player.x - s.x) < 30 && Math.abs(player.y - s.y) < 36;
+      if (touch && !s.touching && s.cool <= 0) {
+        s.cool = 0.4;
+        if (pz.order[pz.progress] === i) {
+          pz.progress++;
+          s.lit = true;
+          audio.collect();
+          particles.burst(s.x, s.y, { count: 8, color: `hsl(${s.hue}, 90%, 65%)`, speed: 130, life: 0.4, size: 2 });
+          if (pz.progress >= pz.order.length) {
+            pz.solved = true;
+            pz.door.broken = true;
+            audio.power();
+            game.hitstop(0.15);
+            game.camera?.shake(6, 0.3);
+            game.ui.toast('NEON COMBO', 'the storm shutter slides open');
+            particles.burst(pz.door.x + pz.door.w / 2, pz.door.y + pz.door.h / 3, { count: 22, color: '#35e0e0', speed: 260, life: 0.6, size: 2.4 });
+          }
+        } else {
+          pz.progress = 0;
+          for (const sw of pz.switches) sw.lit = false;
+          audio.zap();
+          game.flash(0.12);
+        }
+      }
+      s.touching = touch;
     }
   }
 
@@ -321,14 +388,14 @@ export class Level {
     }
 
     // goal
-    if (!this.goal.reached && player.dead <= 0) {
+    if (this.goal && !this.goal.reached && player.dead <= 0) {
       const g = this.goal;
       if (Math.abs(player.x - g.x) < 110 && player.y > g.y - 190 && player.y < g.y + 30) {
         g.reached = true;
         game.beginOutro();
       }
     }
-    if (this.goal.reached) {
+    if (this.goal && this.goal.reached) {
       this.goal.lit = Math.min(1, this.goal.lit + dt * 0.45);
     }
 
@@ -372,6 +439,21 @@ export class Level {
       if (pd.t >= 1) pd.rect.disabled = true;
       else if (pd.t < 0.25) pd.rect.disabled = false;
       pd.rect.y = pd.baseY + pd.t * pd.t * 30 + Math.sin(t * 1.4 + pd.x) * 1.5;
+    }
+
+    // critters, boss, puzzle
+    this.enemies.update(dt, player, game, t);
+    if (this.boss) this.boss.update(dt, player, game, t);
+    if (this.puzzle && !this.puzzle.solved) this.updatePuzzle(dt, player, game, t);
+
+    // zone doors
+    if (player.dead <= 0) {
+      for (const e of this.exits) {
+        if (player.x > e.x && player.x < e.x + e.w && player.y > e.y && player.y < e.y + e.h) {
+          game.beginExit(e);
+          break;
+        }
+      }
     }
 
     // caged songbirds: brush the cage to spring the door
@@ -430,11 +512,23 @@ export class Level {
       }
     }
 
+    // zone doors, behind the structure blocks
+    for (const e of this.exits) {
+      if (e.x + e.w < x0 - 60 || e.x > x1 + 60) continue;
+      drawExitDoor(ctx, e, t);
+    }
+
     // structure blocks (sewer masonry, breakables)
     for (const s of this.solids) {
-      if (!s.kind || s.broken) continue;
+      if (!s.kind || s.broken || s.off) continue;
       if (s.x + s.w < x0 || s.x > x1) continue;
       drawBlock(ctx, s, t, player);
+    }
+
+    // puzzle furniture
+    if (this.puzzle) {
+      drawPuzzleDisplay(ctx, this.puzzle, t);
+      for (const s of this.puzzle.switches) drawPuzzleSwitch(ctx, s, t);
     }
 
     // decor in front of buildings
@@ -557,8 +651,12 @@ export class Level {
       drawPickup(ctx, p, t);
     }
 
+    // critters and the boss
+    this.enemies.draw(ctx, cam, t);
+    if (this.boss) this.boss.draw(ctx, t);
+
     // goal sign
-    drawGoal(ctx, this.goal, t);
+    if (this.goal) drawGoal(ctx, this.goal, t);
   }
 
   drawGround(ctx, cam, x0, x1) {
@@ -2730,9 +2828,11 @@ function drawRoot(ctx, s) {
   ctx.fillRect(s.x, s.y, s.w, 5);
 }
 
-function drawTheaterFacade(ctx, s, t) {
+function drawTheaterFacade(ctx, sIn, t) {
   // Calle Ocho's deco movie palace: cream facade, banded parapet,
-  // and the lit vertical fin rising off the roof.
+  // and the lit vertical fin rising off the roof. The art may extend
+  // below the solid (artH) so the lobby doors double as a walkway.
+  const s = { x: sIn.x, y: sIn.y, w: sIn.w, h: sIn.artH || sIn.h };
   const g = ctx.createLinearGradient(0, s.y, 0, s.y + s.h);
   g.addColorStop(0, '#8a7a68');
   g.addColorStop(0.5, '#6e5f52');
@@ -3288,6 +3388,127 @@ function drawPinata(ctx, hk, t, hasAbility) {
     ctx.fillStyle = g;
     ctx.beginPath();
     ctx.arc(hk.x, hk.y, 30, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+  }
+}
+
+// ------------------------------------------------ mega-map furniture
+
+function drawExitDoor(ctx, e, t) {
+  const cx = e.x + e.w / 2;
+  const archY = e.y + Math.min(30, e.h * 0.2);
+  // frame
+  ctx.fillStyle = '#141021';
+  ctx.beginPath();
+  ctx.moveTo(e.x - 10, e.y + e.h);
+  ctx.lineTo(e.x - 10, archY);
+  ctx.arc(cx, archY, e.w / 2 + 10, Math.PI, 0);
+  ctx.lineTo(e.x + e.w + 10, e.y + e.h);
+  ctx.closePath();
+  ctx.fill();
+  // tunnel depth
+  const g = ctx.createLinearGradient(0, e.y, 0, e.y + e.h);
+  g.addColorStop(0, '#0a0614');
+  g.addColorStop(1, '#1c1430');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.moveTo(e.x, e.y + e.h);
+  ctx.lineTo(e.x, archY);
+  ctx.arc(cx, archY, e.w / 2, Math.PI, 0);
+  ctx.lineTo(e.x + e.w, e.y + e.h);
+  ctx.closePath();
+  ctx.fill();
+  // glowing rim
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = `rgba(140,220,255,${0.5 + Math.sin(t * 2.2 + e.x) * 0.2})`;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(e.x, e.y + e.h);
+  ctx.lineTo(e.x, archY);
+  ctx.arc(cx, archY, e.w / 2, Math.PI, 0);
+  ctx.lineTo(e.x + e.w, e.y + e.h);
+  ctx.stroke();
+  // drifting chevrons inside
+  const dir = e.dir || 1;
+  for (let i = 0; i < 3; i++) {
+    const u = ((t * 0.5 + i / 3) % 1);
+    ctx.strokeStyle = `rgba(140,220,255,${0.5 * (1 - u)})`;
+    ctx.lineWidth = 3;
+    const px = cx + (u - 0.5) * e.w * 0.5 * dir;
+    ctx.beginPath();
+    ctx.moveTo(px - 5 * dir, e.y + e.h * 0.45 - 8);
+    ctx.lineTo(px + 4 * dir, e.y + e.h * 0.45);
+    ctx.lineTo(px - 5 * dir, e.y + e.h * 0.45 + 8);
+    ctx.stroke();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+  // where it leads
+  if (e.label) {
+    ctx.font = '700 13px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(140,220,255,0.85)';
+    ctx.fillText((dir === -1 ? '◂ ' : '') + e.label + (dir === -1 ? '' : ' ▸'), cx, e.y - 8);
+  }
+}
+
+function drawPuzzleSwitch(ctx, s, t) {
+  // neon pad on a little stand
+  ctx.fillStyle = '#39324a';
+  ctx.fillRect(s.x - 4, s.y + 10, 8, 14);
+  ctx.fillStyle = '#241f33';
+  ctx.fillRect(s.x - 12, s.y + 22, 24, 4);
+  const on = s.lit;
+  ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createRadialGradient(s.x, s.y, 2, s.x, s.y, on ? 34 : 20);
+  g.addColorStop(0, `hsla(${s.hue}, 92%, 64%, ${on ? 0.6 : 0.28 + Math.sin(t * 3 + s.x) * 0.08})`);
+  g.addColorStop(1, `hsla(${s.hue}, 92%, 64%, 0)`);
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(s.x, s.y, on ? 34 : 20, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = on ? `hsl(${s.hue}, 95%, 72%)` : `hsla(${s.hue}, 60%, 45%, 0.9)`;
+  ctx.beginPath();
+  ctx.arc(s.x, s.y, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(244,240,255,0.7)';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.arc(s.x, s.y, 9, 0, Math.PI * 2);
+  ctx.stroke();
+}
+
+function drawPuzzleDisplay(ctx, pz, t) {
+  const d = pz.display;
+  const n = pz.order.length;
+  const w = n * 26 + 22;
+  // board
+  ctx.fillStyle = '#141021';
+  ctx.fillRect(d.x - w / 2, d.y - 20, w, 40);
+  ctx.strokeStyle = pz.solved ? 'rgba(164,242,107,0.9)' : 'rgba(53,224,224,0.7)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(d.x - w / 2 + 2, d.y - 18, w - 4, 36);
+  if (pz.solved) {
+    ctx.fillStyle = '#a4f26b';
+    ctx.font = '800 18px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('✓', d.x, d.y + 7);
+    return;
+  }
+  // flash the combination on loop: step through the order, then rest
+  const cycle = n * 0.8 + 1.2;
+  const u = ((t % cycle) / 0.8) | 0;
+  for (let i = 0; i < n; i++) {
+    const s = pz.switches[pz.order[i]];
+    const showing = u === i;
+    const done = i < pz.progress;
+    ctx.globalCompositeOperation = showing || done ? 'lighter' : 'source-over';
+    ctx.fillStyle = showing ? `hsl(${s.hue}, 95%, 68%)`
+      : done ? `hsla(${s.hue}, 95%, 68%, 0.75)`
+      : `hsla(${s.hue}, 40%, 30%, 0.9)`;
+    ctx.beginPath();
+    ctx.arc(d.x - w / 2 + 24 + i * 26, d.y, showing ? 9 : 7, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalCompositeOperation = 'source-over';
   }

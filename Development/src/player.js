@@ -8,9 +8,11 @@ import { particles } from './particles.js';
 
 const G = 2300;
 const MOVE = 345;
-const ACCEL_GROUND = 3600;
-const ACCEL_AIR = 2100;
-const FRICTION = 2800;
+// gentler ramps: ~0.14s to top speed grounded, ~0.25s airborne, so the
+// crow banks into moves instead of snapping to full speed
+const ACCEL_GROUND = 2400;
+const ACCEL_AIR = 1400;
+const FRICTION = 2300;
 const JUMP_V = 850;
 const FLAP_V = 700;
 const JUMP_CUT = 0.42;
@@ -88,7 +90,7 @@ export class Player {
     const bottom = this.y + this.h / 2;
     const probe = { x: this.x - this.w / 2, y: bottom - 26, w: this.w, h: 26 };
     for (const s of level.solids) {
-      if (s.broken) continue;
+      if (s.broken || s.off) continue;
       if (probe.x < s.x + s.w && probe.x + probe.w > s.x && probe.y < s.y + s.h && probe.y + probe.h > s.y) {
         this.rolling = 0.1; // no headroom yet: stay tucked a beat longer
         return;
@@ -436,7 +438,7 @@ export class Player {
     this.x += this.vx * dt;
     let rr = this.rect();
     for (const s of level.solids) {
-      if (s.broken) continue;
+      if (s.broken || s.off) continue;
       if (overlap(rr, s)) {
         if (s.breakable && this.dashing > 0) {
           if (this.abilities.break) {
@@ -467,7 +469,7 @@ export class Player {
     if (this.wall === 0 && move !== 0) {
       const probe = { x: rr.x + move * 2, y: rr.y + 2, w: rr.w, h: rr.h - 4 };
       for (const s of level.solids) {
-        if (s.broken) continue;
+        if (s.broken || s.off) continue;
         if (overlap(probe, s)) { this.wall = move; break; }
       }
     }
@@ -477,7 +479,7 @@ export class Player {
     rr = this.rect();
     this.groundPlat = null;
     for (const s of level.solids) {
-      if (s.broken) continue;
+      if (s.broken || s.off) continue;
       if (overlap(rr, s)) {
         const penDown = rr.y + rr.h - s.y;       // push up by this much
         const penUp = s.y + s.h - rr.y;          // push down by this much

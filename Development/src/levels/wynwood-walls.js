@@ -71,6 +71,16 @@ export default {
     { type: 'wynwoodgate', x: 2830, w: 340 },
   ],
 
+  // mega-map doors at both street ends
+  entries: {
+    west: { x: 250, y: 2170 },
+    east: { x: 5640, y: 2170 },
+  },
+  exits: [
+    { x: 0, y: 2050, w: 70, h: 150, to: 'hall-glideway', entry: 'east', label: 'THE GLIDE-WAY', dir: -1 },
+    { x: 5730, y: 2050, w: 70, h: 150, to: 'hall-underpass', entry: 'west', label: 'CALLE OCHO', dir: 1 },
+  ],
+
   buildings: [
     { x: 800, w: 600, h: 1100, style: 'deco', hue: 275, sign: 'MUSEO' },    // top 1100, goal roof
     { x: 4700, w: 900, h: 900, style: 'block', hue: 15, sign: 'GALERIA', muralArt: true },  // top 1300, the great mural

@@ -31,6 +31,21 @@ You play a hurricane-blown crow collecting Shinies and unlocking movement abilit
 
 Each district also features a recognizable piece of real Miami: the Colony Hotel's blue neon blade and a South Beach lifeguard tower (D1), the Freedom Tower and Miami Tower (D2), the Wynwood Walls gate (D3), the Tower Theater fin and Domino Park (D4), the Stiltsville shacks (D5), and the Shark Valley observation tower (D6).
 
+### One connected world
+
+The six districts are stitched into a single mega map by five short, themed connector hallways with glowing zone doors at both ends: the Storm Drain Mouth (D1-D2), the Glide-Way (D2-D3, dusk turns to dawn as you cross), the Painted Underpass (D3-D4), the Toll Ramp (D4-D5, the rain starts halfway), and the Last Causeway (D5-D6).
+Walking through a door fades out, swaps the zone, and fades back in; every ability you have earned walks through with you, and you can backtrack the whole world in either direction.
+The complete screen's NEXT button follows the same path.
+
+### The three-room structure
+
+District 1 now demonstrates the full metroidvania loop that the remaining districts will adopt:
+
+- **Room 1 (intro)**: a short opening that introduces the district's unique creature (vice gulls that telegraph and dive-bomb; a swoop drops them) and visibly teases a locked reward - a sealed penthouse vault floating high over the beach.
+- **Room 2 (puzzle)**: the neon combo chamber in EL CUERVO's courtyard - a display board flashes a color order, and touching the pads in that order slides open the storm shutter blocking the fire escapes. A wrong pad resets the sequence.
+- **Room 3 (boss)**: the Gull King, a giant of the local species, walls you into LUNA REY's rooftop. Dodge the telegraphed dives (the landing spot is marked - a hop clears the strike), then stomp him from above while he is down. Three stomps win the Swoop, which falls from his talons.
+- **The way back**: a swoop-gap billboard corridor runs from the boss roof all the way back to the beach, ending at the teased vault - enterable only with the ability you just won.
+
 ### Run it
 
 ```

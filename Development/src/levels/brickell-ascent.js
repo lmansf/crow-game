@@ -69,6 +69,16 @@ export default {
   spawn: { x: 290, y: 3140 },
   initialAbilities: ['flap', 'glide', 'swoop'],
 
+  // mega-map doors: back down the drain, and out over the rooftops
+  entries: {
+    west: { x: 210, y: 3160 },
+    east: { x: 3226, y: 320 },
+  },
+  exits: [
+    { x: 118, y: 3070, w: 56, h: 140, to: 'hall-drain', entry: 'east', label: 'OCEAN DRIVE', dir: -1 },
+    { x: 3250, y: 210, w: 60, h: 140, to: 'hall-glideway', entry: 'west', label: 'THE GLIDE-WAY', dir: 1 },
+  ],
+
   // real downtown silhouettes behind the playable towers
   landmarks: [
     { type: 'freedomtower', x: 1000, w: 190, h: 1300 },   // the Freedom Tower's cupola crown
