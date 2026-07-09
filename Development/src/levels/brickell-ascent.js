@@ -83,8 +83,10 @@ export default {
     { x: 1050, y: 2960, w: 160, h: 240, kind: 'brick' },                     // pillar
     { x: 1580, y: 2840, w: 280, h: 80, kind: 'brick' },                      // gallery
     { x: 2280, y: 2520, w: 90, h: 680, kind: 'brick', breakable: true },     // bulkhead to the shaft
-    { x: 2640, y: 2560, w: 70, h: 640, kind: 'brick' },                      // shaft wall left
-    { x: 2900, y: 2560, w: 70, h: 640, kind: 'brick' },                      // shaft wall right
+    // shaft walls hang from the street slab, flush with the manhole edges,
+    // leaving a low passage along the floor into (and past) the shaft
+    { x: 2690, y: 2520, w: 70, h: 400, kind: 'brick' },                      // shaft wall left
+    { x: 2890, y: 2520, w: 80, h: 400, kind: 'brick' },                      // shaft wall right
     { x: 3050, y: 2860, w: 80, h: 340, kind: 'brick', breakable: true },     // secret stash wall
   ],
 
@@ -95,12 +97,13 @@ export default {
     { x: 1330, y: 2900, w: 110, type: 'pipe' },
     // tunnel beyond the bulkhead
     { x: 2460, y: 3080, w: 100, type: 'pipe' },
-    // shaft rungs up to the manhole
-    { x: 2725, y: 3040, w: 60, type: 'rung' },
-    { x: 2850, y: 2920, w: 60, type: 'rung' },
-    { x: 2725, y: 2800, w: 60, type: 'rung' },
-    { x: 2850, y: 2680, w: 60, type: 'rung' },
-    { x: 2725, y: 2560, w: 60, type: 'rung' },
+    // shaft rungs up to the manhole (top rung centered under the hole)
+    { x: 2762, y: 3040, w: 58, type: 'rung' },
+    { x: 2830, y: 2920, w: 58, type: 'rung' },
+    { x: 2762, y: 2800, w: 58, type: 'rung' },
+    { x: 2830, y: 2680, w: 58, type: 'rung' },
+    { x: 2790, y: 2540, w: 58, type: 'rung' },
+    { x: 2790, y: 2470, w: 58, type: 'rung' },   // inside the manhole itself
     // street furniture
     { x: 690, y: 2280, w: 90, type: 'awning' },
     { x: 830, y: 2280, w: 90, type: 'awning' },
