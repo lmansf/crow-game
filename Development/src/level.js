@@ -112,7 +112,7 @@ export class Level {
     // tractor beams, and the ray gun's curios (already-lifted ones stay gone)
     this.beams = (data.beams || []).map((b) => ({ ...b }));
     this.curios = (data.curios || [])
-      .map((c, i) => ({ ...c, i, got: false, t: 0, phase: Math.random() * 6 }))
+      .map((c, i) => ({ ...c, i, ox: c.x, oy: c.y, got: false, t: 0, phase: Math.random() * 6 }))
       .filter((c) => !save.getFlag(`curio:${data.id}:${c.i}`));
 
     // critters, boss, and the district puzzle
@@ -511,7 +511,10 @@ export class Level {
             game.ui.toast('CURIO BEAMED UP', `${CURIO_NAMES[c.type] || c.type} - ${n} of ${curioTotal()} lifted`);
           }
         } else {
+          // pull abandoned: the junk settles back where it belongs
           c.t = Math.max(0, c.t - dt * 2);
+          c.x += (c.ox - c.x) * Math.min(1, 4 * dt);
+          c.y += (c.oy - c.y) * Math.min(1, 4 * dt);
         }
       }
     }
