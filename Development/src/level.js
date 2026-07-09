@@ -102,7 +102,7 @@ export class Level {
     this.winds = (data.winds || []).map((w) => ({ ...w }));
     this.waters = (data.waters || []).map((w) => ({ ...w }));
     this.timedHazards = (data.timedHazards || []).map((h) => ({ ...h, period: h.period || 2.5, offset: h.offset || 0 }));
-    this.cages = (data.cages || []).map((c) => ({ ...c, opened: false }));
+    this.cages = (data.cages || []).map((c, i) => ({ ...c, i, opened: !!save.getFlag(`cage:${data.id}:${i}`) }));
     this.landmarks = (data.landmarks || []).map((l) => ({ ...l }));
 
     // mega-map plumbing: doors to neighbouring zones, and named arrival spots
@@ -317,7 +317,8 @@ export class Level {
   skyMood(player) {
     const mix = this.data.skyMix;
     if (mix && player) {
-      const k = Math.max(0, Math.min(1, (player.x - mix.x0) / (mix.x1 - mix.x0)));
+      const span = mix.x1 - mix.x0;
+      const k = span ? Math.max(0, Math.min(1, (player.x - mix.x0) / span)) : 0;
       return { from: mix.from, to: mix.to, k };
     }
     return this.data.sky || 'dusk';
@@ -536,6 +537,7 @@ export class Level {
       const dy = player.y - c.y;
       if (dx * dx + dy * dy < 46 * 46) {
         c.opened = true;
+        save.setFlag(`cage:${this.data.id}:${c.i}`);
         game.songbirds = (game.songbirds || 0) + 1;
         audio.perch();
         particles.feathers(c.x, c.y - 6, 4, 0);

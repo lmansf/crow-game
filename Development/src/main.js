@@ -30,6 +30,8 @@ const game = {
   freeze: 0,
   outroT: 0,
   time: 0,
+  fadeT: 0,
+  exitPending: null,
   ui: null,
 
   hitstop(t) {

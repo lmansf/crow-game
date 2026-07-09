@@ -94,6 +94,7 @@ export class Player {
       if (s.broken || s.off) continue;
       if (probe.x < s.x + s.w && probe.x + probe.w > s.x && probe.y < s.y + s.h && probe.y + probe.h > s.y) {
         this.rolling = 0.1; // no headroom yet: stay tucked a beat longer
+        if (this.wall === this.rollDir) this.rollDir = -this.rollDir; // dead-end: tumble back out
         return;
       }
     }
@@ -395,7 +396,7 @@ export class Player {
       }
       // gusts batter untrained wings: speed is wrenched toward a churning
       // oscillation (never a net push forward) plus a downdraft
-      if (this.windZone && !ridingWind && !this.grounded && !onMural) {
+      if (this.windZone && !ridingWind && !this.flying && this.rolling <= 0 && !this.grounded && !onMural) {
         const churn = Math.sin(this.animT * 7) * 240;
         this.vx += (churn - this.vx) * Math.min(1, 5 * dt);
         this.vy += 320 * dt;
