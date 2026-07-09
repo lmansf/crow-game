@@ -68,3 +68,8 @@ To regenerate after art or copy changes, serve the game, open `/ads/`, and save 
 - **Staging/** — pre-release builds for testing
 - **Production/** — shipped / release builds
 - **Marketing/** — promotional assets (ad set, gallery)
+
+## License
+
+MIT.
+Code, art, and story are free for anyone to use, modify, and redistribute; see [LICENSE](LICENSE).
