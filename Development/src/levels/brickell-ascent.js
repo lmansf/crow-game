@@ -97,7 +97,9 @@ export default {
   // room 1's locals: the drain rats own the dark
   enemies: [
     { type: 'rat', x: 600, y: 3188, range: 150 },
-    { type: 'rat', x: 950, y: 3188, range: 100 },
+    // patrol edge + full 1.1s charge at 300px/s must stay short of the
+    // boss arena wall at 1240: 880 + 330 = 1210
+    { type: 'rat', x: 800, y: 3188, range: 80 },
   ],
 
   // room 2: the junction-box combo seals the drain early

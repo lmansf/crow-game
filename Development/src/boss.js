@@ -186,8 +186,13 @@ export class Boss {
   updateCharge(dt, player, game, t, a) {
     this.y = a.floor - this.bodyH; // grounders never leave the floor
     if (this.state === 'perch') {
-      // lurking, catching its breath where it stands
+      // catching its breath, shuffling back toward the arena middle so a
+      // crow caught by the wall it crashed into always has room to slip out
       this.facing = player.x >= this.x ? 1 : -1;
+      this.x += (this.homeX - this.x) * Math.min(1, 1.2 * dt);
+      if (Math.abs(this.homeX - this.x) > 30 && Math.random() < 0.15) {
+        particles.dust(this.x - this.facing * 16, a.floor, 1);
+      }
       if (this.stateT > 1.0 / this.rage()) {
         this.state = 'aim';
         this.stateT = 0;
@@ -197,6 +202,11 @@ export class Boss {
       // rears up, shaking harder as the rush loads
       this.facing = player.x >= this.x ? 1 : -1;
       this.x += Math.sin(t * 30) * this.stateT * 2;
+      // the Toro snorts glitter while it loads (simulation side, so pausing
+      // mid-aim never stockpiles frozen puffs)
+      if (this.type === 'pinatabull' && Math.sin(t * 12) > 0) {
+        particles.trail(this.x + this.facing * 60, this.y - 14, 'rgba(255,209,102,0.6)');
+      }
       if (this.stateT > 0.9 / this.rage()) {
         this.state = 'charge';
         this.stateT = 0;
@@ -542,9 +552,6 @@ function drawPinataBull(ctx, e, t, stunned) {
   ctx.beginPath();
   ctx.ellipse(17.5, -6, 3.4, 2.6, 0.2, 0, Math.PI * 2);
   ctx.fill();
-  if (e.state === 'aim' && Math.sin(t * 12) > 0) {
-    particles.trail(e.x + e.facing * 60, e.y - 14, 'rgba(255,209,102,0.6)');
-  }
   // googly eye
   ctx.fillStyle = '#f4f0ff';
   ctx.beginPath();
