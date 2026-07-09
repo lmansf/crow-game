@@ -12,6 +12,15 @@ function rng(seed) {
 const LAYER_W = 2048;
 const LAYER_H = 420;
 
+// soft horizontal fog band peaking at yLine, fading upward over hgt
+function hazeBand(ctx, cssW, yLine, hgt, color) {
+  const g = ctx.createLinearGradient(0, yLine - hgt, 0, yLine);
+  g.addColorStop(0, 'rgba(0,0,0,0)');
+  g.addColorStop(1, color);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, yLine - hgt, cssW, hgt + 26);
+}
+
 function makeSkyline(seed, { color, minH, maxH, windowAlpha, neon }) {
   const c = document.createElement('canvas');
   c.width = LAYER_W;
@@ -147,16 +156,35 @@ export class Background {
     ctx.fillRect(0, 0, cssW, cssH);
     const starDim = dawn ? 0.35 : 1;
 
-    // stars
+    // stars, with cross flares on the brightest and the odd shooting star
     ctx.fillStyle = '#fff';
-    for (const s of this.stars) {
+    for (let i = 0; i < this.stars.length; i++) {
+      const s = this.stars[i];
       const sx = ((s.x * 1800 - cam.x * 0.03 * cam.scale) % cssW + cssW) % cssW;
       const sy = s.y * horizon * 0.85;
       const a = (0.35 + 0.4 * Math.sin(t * 1.4 + s.tw)) * starDim;
       ctx.globalAlpha = Math.max(0.05, a);
       ctx.fillRect(sx, sy, s.r, s.r);
+      if (i % 16 === 0) {
+        ctx.globalAlpha = Math.max(0.03, a * 0.5);
+        ctx.fillRect(sx - 3, sy, 7 + s.r, 1);
+        ctx.fillRect(sx + s.r / 2, sy - 3, 1, 7);
+      }
     }
     ctx.globalAlpha = 1;
+    const shoot = t % 19;
+    if (shoot < 0.7 && !dawn) {
+      const u = shoot / 0.7;
+      const seed = Math.floor(t / 19);
+      const sx0 = ((seed * 761) % 997) / 997 * cssW;
+      const sy0 = ((seed * 397) % 997) / 997 * horizon * 0.45;
+      ctx.strokeStyle = `rgba(255,255,255,${0.55 * (1 - u)})`;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(sx0 + cssW * 0.16 * u, sy0 + cssH * 0.09 * u);
+      ctx.lineTo(sx0 + cssW * 0.16 * u - 42, sy0 + cssH * 0.09 * u - 19);
+      ctx.stroke();
+    }
 
     // low sun with vapor bands (half set at dusk, rising at dawn)
     const sunX = cssW * 0.62 - cam.x * 0.02 * cam.scale;
@@ -190,6 +218,28 @@ export class Background {
     glow.addColorStop(1, 'rgba(255,140,110,0)');
     ctx.fillStyle = glow;
     ctx.fillRect(sunX - sunR * 3, sunY - sunR * 3, sunR * 6, sunR * 6);
+    // god rays fanning up from the sun
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 6; i++) {
+      const a = (i - 2.5) * 0.34 + Math.sin(t * 0.05 + i * 1.7) * 0.05;
+      const len = cssH * 0.95;
+      const wdt = sunR * (0.5 + (i % 3) * 0.3);
+      ctx.save();
+      ctx.translate(sunX, sunY);
+      ctx.rotate(a);
+      const rg = ctx.createLinearGradient(0, 0, 0, -len);
+      rg.addColorStop(0, dawn ? 'rgba(255,210,150,0.10)' : 'rgba(255,150,130,0.06)');
+      rg.addColorStop(1, 'rgba(255,180,140,0)');
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(-wdt / 2, -len);
+      ctx.lineTo(wdt / 2, -len);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.globalCompositeOperation = 'source-over';
     ctx.restore();
 
     // ocean strip with glitter and sun column
@@ -210,14 +260,21 @@ export class Background {
       ctx.globalAlpha = 1;
     }
 
-    // clouds
+    // layered clouds with sunlit undersides
     for (const c of this.clouds) {
       const cx = ((c.x * 2400 + t * c.speed - cam.x * 0.04 * cam.scale) % (cssW + c.w) + cssW + c.w) % (cssW + c.w) - c.w;
       const cy = c.y * horizon;
       ctx.fillStyle = dawn ? `rgba(255,205,160,${c.a * 0.9})` : `rgba(255,150,190,${c.a * 0.6})`;
       ctx.beginPath();
       ctx.ellipse(cx, cy, c.w * 0.5, c.w * 0.11, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx - c.w * 0.24, cy + c.w * 0.03, c.w * 0.3, c.w * 0.08, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx + c.w * 0.26, cy + c.w * 0.02, c.w * 0.26, c.w * 0.07, 0, 0, Math.PI * 2);
       ctx.fill();
+      ctx.strokeStyle = dawn ? 'rgba(255,235,190,0.28)' : 'rgba(255,170,150,0.16)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + c.w * 0.06, c.w * 0.42, c.w * 0.07, 0, Math.PI * 0.15, Math.PI * 0.85);
+      ctx.stroke();
     }
 
     // gulls
@@ -235,9 +292,11 @@ export class Background {
       ctx.stroke();
     }
 
-    // skyline layers
+    // skyline layers with distance haze between them
     this.drawLayer(ctx, this.far, cam, cssW, horizon, 0.08, 4);
+    hazeBand(ctx, cssW, horizon + 8, 110, dawn ? 'rgba(255,170,120,0.12)' : 'rgba(182,58,104,0.11)');
     this.drawLayer(ctx, this.mid, cam, cssW, horizon, 0.2, 14);
+    hazeBand(ctx, cssW, horizon + 18, 150, dawn ? 'rgba(150,80,110,0.13)' : 'rgba(58,21,72,0.15)');
     this.drawLayer(ctx, this.near, cam, cssW, horizon, 0.42, 30);
 
     // ground haze below near layer

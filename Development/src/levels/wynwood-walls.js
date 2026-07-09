@@ -41,6 +41,10 @@ export default {
   blurb: 'Read the painted walls of the gallery district.',
   completeHeading: 'THE FLOCK',
   sky: 'dawn',
+  ambient: 'rgb(238,226,232)',
+  grade: { top: 'rgba(150,80,150,0.10)', bottom: 'rgba(255,180,100,0.12)' },
+  ambience: 'petals',
+  bloom: 0.28,
 
   intro: [
     'First light over the Magic City. You fly west, high and hopeful, until the wind sets you down in Wynwood: the painted district.',
@@ -64,7 +68,7 @@ export default {
 
   buildings: [
     { x: 800, w: 600, h: 1100, style: 'deco', hue: 275, sign: 'MUSEO' },    // top 1100, goal roof
-    { x: 4700, w: 900, h: 900, style: 'block', hue: 15, sign: 'GALERIA' },  // top 1300, the great mural
+    { x: 4700, w: 900, h: 900, style: 'block', hue: 15, sign: 'GALERIA', muralArt: true },  // top 1300, the great mural
   ],
 
   extraSolids: [

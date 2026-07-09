@@ -7,6 +7,7 @@ import { save } from './save.js';
 import { particles } from './particles.js';
 import { Camera } from './camera.js';
 import { Background } from './background.js';
+import { FX } from './fx.js';
 import { Player } from './player.js';
 import { Level } from './level.js';
 import { getLevelData } from './levels/index.js';
@@ -135,6 +136,7 @@ function resolveHints(level) {
 
 const camera = new Camera();
 const background = new Background();
+const fx = new FX();
 let dpr = 1;
 
 function resize() {
@@ -157,6 +159,7 @@ let timerSecondShown = -1;
 function frame(now) {
   requestAnimationFrame(frame);
   let dt = Math.min((now - last) / 1000, 0.1);
+  fx.frame(now - last);
   last = now;
   game.time += dt;
 
@@ -174,6 +177,7 @@ function frame(now) {
       }
       if (game.player.dead <= 0) game.runTime += dt;
       camera.follow(game.player, game.level, dt);
+      game.level.ambience(dt, camera);
 
       const sec = Math.floor(game.runTime);
       if (sec !== timerSecondShown) {
@@ -247,8 +251,11 @@ function render() {
     particles.draw(ctx);
     game.player.draw(ctx);
     ctx.restore();
+    fx.lighting(ctx, camera, cssW, cssH, game.level.data.ambient, game.level.getLights(camera, game.time, game.player));
     game.level.drawDarkness(ctx, camera, game.player, cssW, cssH);
+    fx.grade(ctx, cssW, cssH, game.level.data.grade);
   }
+  fx.bloom(ctx, canvas, cssW, cssH, inWorld ? game.level.data.bloom ?? 0.34 : 0.3);
 
   // vignette
   const v = ctx.createRadialGradient(cssW / 2, cssH / 2, Math.min(cssW, cssH) * 0.42, cssW / 2, cssH / 2, Math.max(cssW, cssH) * 0.72);

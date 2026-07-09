@@ -73,6 +73,84 @@ export class Level {
     }
   }
 
+  // Everything in the scene that casts light, for the fx lightmap.
+  getLights(cam, t, player) {
+    const x0 = cam.x - 250;
+    const x1 = cam.x + cam.viewW + 250;
+    const out = [];
+    for (const b of this.data.buildings) {
+      if (!b.sign || b.x + b.w < x0 || b.x > x1) continue;
+      out.push({
+        x: b.x + b.w / 2,
+        y: this.groundY - b.h + (b.signY ?? 44),
+        r: Math.max(160, b.w * 0.55),
+        color: `hsla(${b.hue}, 90%, 70%, 0.55)`,
+      });
+    }
+    for (const d of this.decor) {
+      if (d.type !== 'lamp' || d.x < x0 || d.x > x1) continue;
+      out.push({ x: d.x + 24, y: (d.y || this.groundY) - 108, r: 140, color: 'rgba(255,215,150,0.6)' });
+    }
+    for (const p of this.pickups) {
+      if (p.got || p.x < x0 || p.x > x1) continue;
+      out.push({ x: p.x, y: p.y, r: 180, color: ABILITIES[p.ability].color + '99' });
+    }
+    for (const c of this.checkpoints) {
+      if (!c.active || c.x < x0 || c.x > x1) continue;
+      out.push({ x: c.x, y: c.y - 46, r: 150, color: 'rgba(255,79,163,0.5)' });
+    }
+    for (const hz of this.hazards) {
+      if (hz.x2 < x0 || hz.x1 > x1) continue;
+      out.push({ x: (hz.x1 + hz.x2) / 2, y: hz.y, r: 110, color: 'rgba(120,235,255,0.45)' });
+    }
+    if (player?.abilities.hook) {
+      for (const hk of this.hooks) {
+        if (hk.x < x0 || hk.x > x1) continue;
+        out.push({ x: hk.x, y: hk.y, r: 90, color: 'rgba(217,184,255,0.45)' });
+      }
+    }
+    for (const s of this.shinies) {
+      if (s.got || s.x < x0 || s.x > x1) continue;
+      out.push({ x: s.x, y: s.y, r: 48, color: 'rgba(255,209,102,0.5)' });
+    }
+    const g = this.goal;
+    if (g.x > x0 && g.x < x1) {
+      out.push({
+        x: g.x,
+        y: g.y - 110,
+        r: 240 + g.lit * 280,
+        color: g.lit > 0 ? 'rgba(255,120,190,0.75)' : 'rgba(200,180,255,0.28)',
+      });
+    }
+    if (player && player.dead <= 0) {
+      out.push({ x: player.x, y: player.y, r: 300, color: 'rgba(200,185,255,0.5)' });
+    }
+    return out;
+  }
+
+  // Sparse drifting ambience particles per district.
+  ambience(dt, cam) {
+    const kind = this.data.ambience;
+    if (!kind) return;
+    const rate = kind === 'petals' ? 5 : kind === 'motes' ? 4 : 3;
+    if (Math.random() > dt * rate) return;
+    const x = cam.x + Math.random() * cam.viewW;
+    if (kind === 'fireflies') {
+      particles.burst(x, this.groundY - 16 - Math.random() * 220, {
+        count: 1, color: 'rgba(210,255,140,0.75)', speed: 14, life: 2.6, size: 1.8, gravity: -6,
+      });
+    } else if (kind === 'petals') {
+      particles.burst(x, cam.y - 8, {
+        count: 1, color: `hsla(${Math.floor(Math.random() * 360)}, 85%, 66%, 0.85)`,
+        speed: 34, angle: Math.PI * 0.38, spread: 0.4, life: 3.2, size: 2.2, gravity: 26, glow: false,
+      });
+    } else {
+      particles.burst(x, cam.y + Math.random() * cam.viewH, {
+        count: 1, color: 'rgba(200,215,255,0.35)', speed: 8, life: 3, size: 1.4, gravity: -3, glow: false,
+      });
+    }
+  }
+
   // Is there grippable painted wall at this face position? dir is the side
   // the crow pushes toward (+1 = wall on the crow's right).
   muralAt(edgeX, y, dir) {
@@ -361,6 +439,21 @@ export class Level {
         for (let lx = Math.max(Math.floor(sx / 90) * 90, beachEnd); lx < ex; lx += 90) {
           ctx.fillRect(lx, gy + 56, 38, 5);
         }
+        // crosswalks
+        ctx.fillStyle = 'rgba(230,220,250,0.08)';
+        for (let cw = Math.max(Math.floor(sx / 760) * 760, beachEnd); cw < ex; cw += 760) {
+          for (let i = 0; i < 5; i++) ctx.fillRect(cw + i * 16, gy + 18, 9, 30);
+        }
+        // manhole covers
+        for (let mx = Math.max(Math.floor(sx / 470) * 470 + 230, beachEnd); mx < ex; mx += 470) {
+          ctx.fillStyle = 'rgba(0,0,0,0.3)';
+          ctx.beginPath();
+          ctx.ellipse(mx, gy + 40, 15, 5, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
       }
     }
 
@@ -388,6 +481,11 @@ export class Level {
       ctx.fillStyle = 'rgba(255,230,210,0.3)';
       for (let sx = 40; sx < beachEnd; sx += 113) {
         if (sx > x0 && sx < x1) ctx.fillRect(sx, gy + 26 + (sx % 37), 4, 2);
+      }
+      // sand speckle
+      ctx.fillStyle = 'rgba(255,235,205,0.1)';
+      for (let px = Math.max(0, Math.floor(x0 / 17) * 17); px < Math.min(beachEnd, x1); px += 17) {
+        ctx.fillRect(px + ((px * 7919) % 13), gy + 8 + ((px * 104729) % 96), 2, 2);
       }
     }
   }
@@ -484,25 +582,56 @@ function renderBuilding(b, groundY) {
     ctx.fillRect(b.w * 0.86 - 5, 0, 5, b.h);
   }
 
-  // windows
-  const litHues = [45, 45, 45, 185, 320];
-  for (let wy = 30; wy < b.h - 26; wy += 34) {
-    for (let wx = 15; wx < b.w - 28; wx += 27) {
-      if (b.style === 'deco' && wx > b.w * 0.5 - 22 && wx < b.w * 0.5 + 4) continue;
-      const lit = rand() < 0.36;
-      if (lit) {
-        const lh = litHues[Math.floor(rand() * litHues.length)];
-        ctx.fillStyle = `hsla(${lh}, 90%, ${62 + rand() * 16}%, ${0.5 + rand() * 0.4})`;
-      } else {
-        ctx.fillStyle = 'rgba(10,12,22,0.85)';
-      }
-      ctx.fillRect(wx, wy, 15, 21);
-      if (lit && rand() < 0.4) {
-        ctx.fillStyle = 'rgba(0,0,0,0.4)';
-        ctx.fillRect(wx, wy + 9, 15, 2);
+  if (b.muralArt) {
+    paintMuralFacade(ctx, b, rand);
+  } else {
+    // windows: lit ones bleed light, dark ones reflect the sky
+    const litHues = [45, 45, 45, 185, 320];
+    const halos = [];
+    for (let wy = 30; wy < b.h - 26; wy += 34) {
+      for (let wx = 15; wx < b.w - 28; wx += 27) {
+        if (b.style === 'deco' && wx > b.w * 0.5 - 22 && wx < b.w * 0.5 + 4) continue;
+        const lit = rand() < 0.36;
+        if (lit) {
+          const lh = litHues[Math.floor(rand() * litHues.length)];
+          ctx.fillStyle = `hsla(${lh}, 90%, ${62 + rand() * 16}%, ${0.5 + rand() * 0.4})`;
+          halos.push([wx + 7.5, wy + 10.5, lh]);
+        } else {
+          const rg = ctx.createLinearGradient(0, wy, 0, wy + 21);
+          rg.addColorStop(0, 'rgba(96,74,138,0.55)');
+          rg.addColorStop(0.45, 'rgba(30,24,52,0.85)');
+          rg.addColorStop(1, 'rgba(10,12,22,0.9)');
+          ctx.fillStyle = rg;
+        }
+        ctx.fillRect(wx, wy, 15, 21);
+        if (lit && rand() < 0.4) {
+          ctx.fillStyle = 'rgba(0,0,0,0.4)';
+          ctx.fillRect(wx, wy + 9, 15, 2);
+        }
       }
     }
+    ctx.globalCompositeOperation = 'lighter';
+    for (const [hx, hy, lh] of halos) {
+      const hg = ctx.createRadialGradient(hx, hy, 2, hx, hy, 26);
+      hg.addColorStop(0, `hsla(${lh}, 90%, 70%, 0.16)`);
+      hg.addColorStop(1, 'hsla(0, 0%, 0%, 0)');
+      ctx.fillStyle = hg;
+      ctx.fillRect(hx - 26, hy - 26, 52, 52);
+    }
+    ctx.globalCompositeOperation = 'source-over';
   }
+
+  // baked ambient occlusion: parapet shadow and base grime
+  const aoTop = ctx.createLinearGradient(0, 0, 0, 34);
+  aoTop.addColorStop(0, 'rgba(0,0,0,0.34)');
+  aoTop.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = aoTop;
+  ctx.fillRect(0, 0, b.w, 34);
+  const aoBase = ctx.createLinearGradient(0, b.h - 70, 0, b.h);
+  aoBase.addColorStop(0, 'rgba(0,0,0,0)');
+  aoBase.addColorStop(1, 'rgba(0,0,0,0.4)');
+  ctx.fillStyle = aoBase;
+  ctx.fillRect(0, b.h - 70, b.w, 70);
 
   // parapet
   ctx.fillStyle = `hsl(${hue}, 24%, 24%)`;
@@ -569,6 +698,80 @@ function renderBuilding(b, groundY) {
   }
 
   return c;
+}
+
+// Bold Wynwood-style painted facade: color bands, a sun, waves, a flock.
+function paintMuralFacade(ctx, b, rand) {
+  const w = b.w;
+  const h = b.h;
+  const base = Math.floor(rand() * 360);
+  const bands = 4 + Math.floor(rand() * 3);
+  for (let i = 0; i < bands; i++) {
+    ctx.fillStyle = `hsla(${(base + i * 42) % 360}, 68%, ${30 + i * 7}%, 0.92)`;
+    ctx.fillRect(0, (h / bands) * i, w, h / bands + 2);
+  }
+  const sx = w * (0.3 + rand() * 0.4);
+  const sy = h * (0.22 + rand() * 0.18);
+  const sr = Math.min(w, h) * 0.2;
+  ctx.fillStyle = `hsla(${(base + 180) % 360}, 85%, 62%, 0.95)`;
+  ctx.beginPath();
+  ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.arc(sx, sy, sr + 12, 0, Math.PI * 2);
+  ctx.stroke();
+  // large overlapping color discs behind the waves
+  for (let i = 0; i < 3; i++) {
+    ctx.fillStyle = `hsla(${(base + 120 + i * 60) % 360}, 75%, 60%, 0.35)`;
+    ctx.beginPath();
+    ctx.arc(w * (0.18 + rand() * 0.64), h * (0.42 + rand() * 0.3), Math.min(w, h) * (0.1 + rand() * 0.09), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.strokeStyle = `hsla(${(base + 90) % 360}, 80%, 72%, 0.8)`;
+  ctx.lineCap = 'round';
+  for (let row = 0; row < 3; row++) {
+    const wy = h * (0.6 + row * 0.12) + rand() * 14;
+    const amp = 11 + row * 5 + rand() * 6;
+    const step = 30 + row * 8;
+    const off = rand() * step;
+    ctx.lineWidth = 6 + row * 1.5;
+    ctx.beginPath();
+    ctx.moveTo(-step + off, wy);
+    for (let x = -step + off; x < w + step; x += step) {
+      ctx.quadraticCurveTo(x + step * 0.25, wy - amp, x + step * 0.5, wy);
+      ctx.quadraticCurveTo(x + step * 0.75, wy + amp, x + step, wy);
+    }
+    ctx.stroke();
+  }
+  // one big painted bird mid-wall
+  const bigX = w * (0.4 + rand() * 0.2);
+  const bigY = h * 0.52;
+  const bigS = Math.min(w, h) * 0.17;
+  ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+  ctx.lineWidth = 11;
+  ctx.beginPath();
+  ctx.moveTo(bigX - bigS, bigY);
+  ctx.quadraticCurveTo(bigX - bigS * 0.3, bigY - bigS * 0.85, bigX, bigY);
+  ctx.quadraticCurveTo(bigX + bigS * 0.3, bigY - bigS * 0.85, bigX + bigS, bigY);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(20,14,28,0.85)';
+  ctx.lineWidth = 4;
+  for (let i = 0; i < 9; i++) {
+    const bx = w * (0.12 + rand() * 0.76);
+    const by = h * (0.08 + rand() * 0.38);
+    const s = 6 + rand() * 10;
+    ctx.beginPath();
+    ctx.moveTo(bx - s, by);
+    ctx.quadraticCurveTo(bx - s * 0.3, by - s * 0.7, bx, by);
+    ctx.quadraticCurveTo(bx + s * 0.3, by - s * 0.7, bx + s, by);
+    ctx.stroke();
+  }
+  ctx.fillStyle = 'rgba(15,10,22,0.25)';
+  for (let i = 0; i < 14; i++) {
+    ctx.fillRect(rand() * w, h * (0.3 + rand() * 0.5), 3, 12 + rand() * 30);
+  }
 }
 
 function neonPath(ctx, b) {

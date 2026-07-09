@@ -70,6 +70,8 @@ export class Player {
     this.climbing = false;
     this.hooked = null;
     this.hookCd = 0;
+    this.ghosts = [];
+    this._ghostTick = 0;
   }
 
   tryUnroll(level) {
@@ -104,6 +106,20 @@ export class Player {
     }
     this.blinkT -= dt;
     if (this.blinkT < -0.12) this.blinkT = 2 + Math.random() * 3.5;
+
+    // afterimage trail while moving fast
+    if (this.dashing > 0 || this.launchT > 0.1 || this.rolling > 0) {
+      this._ghostTick += dt;
+      if (this._ghostTick > 0.03) {
+        this._ghostTick = 0;
+        this.ghosts.push({ x: this.x, y: this.y, f: this.facing, t: 0 });
+        if (this.ghosts.length > 8) this.ghosts.shift();
+      }
+    }
+    for (let i = this.ghosts.length - 1; i >= 0; i--) {
+      this.ghosts[i].t += dt;
+      if (this.ghosts[i].t > 0.3) this.ghosts.splice(i, 1);
+    }
 
     if (this.dead > 0) {
       this.dead -= dt;
@@ -423,6 +439,29 @@ export class Player {
     if (this.dead > 0) return;
 
     const t = this.animT;
+
+    // afterimages (world space, additive violet)
+    if (this.ghosts.length) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = 'rgba(190,120,255,1)';
+      for (const g of this.ghosts) {
+        const k = 1 - g.t / 0.3;
+        ctx.globalAlpha = k * 0.28;
+        ctx.save();
+        ctx.translate(g.x, g.y);
+        ctx.scale(g.f, 1);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 14, 8, 0, 0, Math.PI * 2);
+        ctx.moveTo(-2, -2);
+        ctx.lineTo(-15, -13);
+        ctx.lineTo(3, -4);
+        ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
     ctx.save();
     ctx.translate(this.x, this.y);
 
@@ -640,6 +679,19 @@ function drawWing(ctx, sx, sy, len, angle, bend, color) {
   ctx.moveTo(len * 0.25, len * 0.05);
   ctx.quadraticCurveTo(len * 0.6, len * 0.02, len * 0.92, bend * 10);
   ctx.stroke();
+  // splayed primaries on open wings
+  if (len >= 26) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 3; i++) {
+      const u = 0.72 + i * 0.11;
+      ctx.beginPath();
+      ctx.moveTo(len * u, bend * 12 * u);
+      ctx.lineTo(len * (u + 0.17), bend * 12 * u + (i - 1) * 2.6 + 3.2);
+      ctx.stroke();
+    }
+  }
   ctx.restore();
 }
 

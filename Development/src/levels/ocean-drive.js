@@ -38,6 +38,9 @@ export default {
   district: 1,
   blurb: 'Beach to beacon across the neon rooftops.',
   completeHeading: 'THE ROOST',
+  ambient: 'rgb(186,170,220)',
+  grade: { top: 'rgba(40,16,80,0.16)', bottom: 'rgba(255,80,150,0.10)' },
+  ambience: 'fireflies',
 
   intro: [
     'The hurricane took you.',

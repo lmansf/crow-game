@@ -40,6 +40,9 @@ export default {
   district: 2,
   blurb: 'Storm drains to the skyline crown.',
   completeHeading: 'THE WAY HOME',
+  ambient: 'rgb(178,164,216)',
+  grade: { top: 'rgba(30,20,70,0.16)', bottom: 'rgba(120,200,255,0.08)' },
+  ambience: 'motes',
 
   intro: [
     'Dawn broke rough. Two blocks out from The Roost, a squall slammed you into the gutter, and the gutter swallowed you whole.',

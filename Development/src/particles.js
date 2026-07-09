@@ -4,6 +4,25 @@
 const MAX = 520;
 const pool = [];
 
+// pre-rendered radial glow sprites, cached per color
+const glowCache = new Map();
+function glowSprite(color) {
+  let c = glowCache.get(color);
+  if (!c) {
+    c = document.createElement('canvas');
+    c.width = c.height = 48;
+    const g = c.getContext('2d');
+    const rg = g.createRadialGradient(24, 24, 2, 24, 24, 24);
+    rg.addColorStop(0, color);
+    rg.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = rg;
+    g.fillRect(0, 0, 48, 48);
+    if (glowCache.size > 400) glowCache.clear();
+    glowCache.set(color, c);
+  }
+  return c;
+}
+
 function spawn(p) {
   if (pool.length >= MAX) pool.shift();
   pool.push(p);
@@ -95,11 +114,9 @@ export const particles = {
         ctx.globalAlpha = k;
         if (p.glow) {
           ctx.globalCompositeOperation = 'lighter';
-          ctx.fillStyle = p.color;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size * (0.5 + k * 0.5) * 2.2, 0, Math.PI * 2);
-          ctx.globalAlpha = k * 0.25;
-          ctx.fill();
+          ctx.globalAlpha = k * 0.55;
+          const r = p.size * (0.5 + k * 0.5) * 3.2;
+          ctx.drawImage(glowSprite(p.color), p.x - r, p.y - r, r * 2, r * 2);
           ctx.globalAlpha = k;
         }
         ctx.fillStyle = p.color;
