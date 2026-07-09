@@ -126,7 +126,10 @@ export class Enemies {
       e.x += e.facing * 90 * dt;
       if (e.x > e.ox + e.range) e.facing = -1;
       if (e.x < e.ox - e.range) e.facing = 1;
-      if (near) { e.state = 'charge'; e.facing = dx >= 0 ? 1 : -1; e.stateT = 0; }
+      if (near) { e.state = 'aim'; e.facing = dx >= 0 ? 1 : -1; e.stateT = 0; }
+    } else if (e.state === 'aim') {
+      // hunches for a beat so the rush is always telegraphed
+      if (e.stateT > 0.35) { e.state = 'charge'; e.stateT = 0; }
     } else if (e.state === 'charge') {
       e.x += e.facing * 300 * dt;
       if (e.stateT > 1.1 || Math.abs(e.x - e.ox) > e.range + 160) { e.state = 'patrol'; e.stateT = 0; }
@@ -321,8 +324,8 @@ function drawRat(ctx, e, t) {
   ctx.beginPath();
   ctx.arc(6, -7, 2.6, 0, Math.PI * 2); // ear
   ctx.fill();
-  // eye: gleams when charging
-  ctx.fillStyle = e.state === 'charge' ? '#e83c4b' : '#191325';
+  // eye: gleams when hunting
+  ctx.fillStyle = e.state === 'charge' || e.state === 'aim' ? '#e83c4b' : '#191325';
   ctx.beginPath();
   ctx.arc(11.5, -3.4, 1.4, 0, Math.PI * 2);
   ctx.fill();
@@ -336,6 +339,7 @@ function drawRat(ctx, e, t) {
   ctx.lineTo(5 - scurry, 9);
   ctx.stroke();
   ctx.restore();
+  telegraph(ctx, e, t, -22);
 }
 
 function drawIguana(ctx, e, t) {
