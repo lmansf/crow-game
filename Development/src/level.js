@@ -540,7 +540,8 @@ export class Level {
         audio.perch();
         particles.feathers(c.x, c.y - 6, 4, 0);
         particles.burst(c.x, c.y - 10, { count: 12, color: '#ffe98a', speed: 170, life: 0.55, size: 2, gravity: -140 });
-        game.ui.toast('SONGBIRD FREED', `${game.songbirds} of ${this.cages.length} cages opened tonight`);
+        const freedHere = this.cages.filter((cage) => cage.opened).length;
+        game.ui.toast('SONGBIRD FREED', `${freedHere} of ${this.cages.length} cages opened tonight`);
       }
     }
   }

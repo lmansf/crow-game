@@ -6,6 +6,7 @@ export class FX {
   constructor() {
     this.quality = 2; // 2 full, 1 lightmap only, 0 off
     this._slow = 0;
+    this._fast = 0;
     this._light = document.createElement('canvas');
     this._bloomA = document.createElement('canvas');
     this._bloomB = document.createElement('canvas');
@@ -24,12 +25,24 @@ export class FX {
     }
   }
 
-  // Rolling performance check: drop features rather than frames.
+  // Rolling performance check: drop features rather than frames, but let
+  // quality climb back once performance recovers so one-off spikes (tab
+  // resume, level construction) don't permanently degrade the session.
   frame(dtMs) {
-    if (dtMs > 30) this._slow++;
-    else if (dtMs < 17) this._slow = Math.max(0, this._slow - 0.25);
+    if (dtMs > 30) {
+      this._slow++;
+      this._fast = 0;
+    } else if (dtMs < 17) {
+      this._slow = Math.max(0, this._slow - 0.25);
+      this._fast++;
+    }
     if (this._slow > 90 && this.quality > 0) {
       this.quality--;
+      this._slow = 0;
+      this._fast = 0;
+    } else if (this._fast > 600 && this.quality < 2) {
+      this.quality++;
+      this._fast = 0;
       this._slow = 0;
     }
   }

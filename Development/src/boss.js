@@ -251,7 +251,7 @@ export class Boss {
     ctx.restore();
 
     // stun stars and health feathers
-    if (stunnedStars(e)) {
+    if (stunned) {
       for (let i = 0; i < 3; i++) {
         const a = t * 3 + i * 2.1;
         ctx.fillStyle = 'rgba(255,233,138,0.85)';
@@ -277,8 +277,4 @@ export class Boss {
       ctx.globalAlpha = 1;
     }
   }
-}
-
-function stunnedStars(e) {
-  return e.state === 'stun';
 }
