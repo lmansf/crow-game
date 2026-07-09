@@ -52,6 +52,10 @@ const game = {
     this.level = new Level(data);
     this.player = new Player(this.level.spawn);
     for (const a of data.initialAbilities || []) this.player.grant(a);
+    // post-game reward: True Flight carries into every district
+    if (save.getLevel('river-of-grass')?.completed && !this.player.abilities.flight) {
+      this.player.grant('flight');
+    }
     this.checkpoint = { ...this.level.spawn };
     this.shinies = 0;
     this.runTime = 0;
@@ -240,7 +244,12 @@ function render() {
   const cssH = canvas.height / dpr;
 
   const inWorld = game.level && game.mode !== 'menu';
-  background.draw(ctx, camera, cssW, cssH, game.time, inWorld ? game.level.groundY : 1500, inWorld ? game.level.data.sky : 'dusk');
+  background.draw(
+    ctx, camera, cssW, cssH, game.time,
+    inWorld ? game.level.groundY : 1500,
+    inWorld ? game.level.skyMood(game.player) : 'dusk',
+    inWorld ? game.level.data.horizon || 'city' : 'city'
+  );
 
   if (inWorld) {
     ctx.save();
@@ -254,6 +263,9 @@ function render() {
     fx.lighting(ctx, camera, cssW, cssH, game.level.data.ambient, game.level.getLights(camera, game.time, game.player));
     game.level.drawDarkness(ctx, camera, game.player, cssW, cssH);
     fx.grade(ctx, cssW, cssH, game.level.data.grade);
+    if (game.level.data.weather === 'rain') {
+      background.rain(ctx, camera, cssW, cssH, game.time);
+    }
   }
   fx.bloom(ctx, canvas, cssW, cssH, inWorld ? game.level.data.bloom ?? 0.34 : 0.3);
 

@@ -17,14 +17,19 @@ You play as a crow washed from the Everglades into the city of Miami by a hurric
 
 New traversal abilities open up previously unreachable areas, in classic metroidvania fashion.
 
-## Playable Demo: Districts 1 to 3
+## Playable Game: Districts 1 to 6
 
-`Development/` contains a full mobile-friendly demo built with vanilla HTML5 canvas and ES modules (no dependencies, no build step).
-You play a hurricane-blown crow collecting Shinies and unlocking movement abilities across three districts, rendered with a dynamic lightmap, bloom, and per-district color grading (`src/fx.js`).
+`Development/` contains the full mobile-friendly game built with vanilla HTML5 canvas and ES modules (no dependencies, no build step).
+You play a hurricane-blown crow collecting Shinies and unlocking movement abilities across six districts, rendered with a dynamic lightmap, bloom, per-district color grading (`src/fx.js`), mood skies (dusk, dawn, night, storm, and a night-to-dawn blend), and storm weather.
 
 - **District 1 - Ocean Drive Rooftops**: beach to beacon across the neon rooftops, ending at THE ROOST.
 - **District 2 - Brickell Ascent**: one tall map in three strata (storm drains, downtown streets, skyline), each hiding the skill needed to climb into the next, ending at the EVERGLADES sign on EL FARO's crown.
 - **District 3 - Wynwood Walls**: a dawn hub-and-wings map through the gallery district, ending at THE FLOCK mural atop the MUSEO.
+- **District 4 - Little Havana Nights**: a midnight festival on Calle Ocho, crossed on grindable light lines, ending at EL GALLO DE ORO above the theater (three caged songbirds hide along the way).
+- **District 5 - Skyway Mile Zero**: a storm-lashed triple-decker interchange over a flooded canal, crossed by riding gust rivers, ending at the MILE 0 arch.
+- **District 6 - River of Grass**: the Everglades finale from night into dawn, where the flock grants True Flight, ending at THE NEST. Finishing it unlocks Flight in every district.
+
+Each district also features a recognizable piece of real Miami: the Colony Hotel's blue neon blade and a South Beach lifeguard tower (D1), the Freedom Tower and Miami Tower (D2), the Wynwood Walls gate (D3), the Tower Theater fin and Domino Park (D4), the Stiltsville shacks (D5), and the Shark Valley observation tower (D6).
 
 ### Run it
 
@@ -59,6 +64,10 @@ To play on your phone, open http://YOUR-PC-IP:8123 on the same wifi.
   - Roll (gallery row): press the dash button on the ground to tumble through low shutter gaps.
   - Paint Grip (container alley): hold into a painted mural wall to climb it.
   - Talon Hook (rooftops): touch a hanging crane hook to latch on, then jump to launch across the sky.
+- The final act carries the full kit forward and grants one signature skill per district:
+  - Wire Grind (District 4): land on a festival light line to slide it, jump to hop between lines.
+  - Tailwind (District 5): glide inside a gust field to ride it as a wind highway.
+  - True Flight (District 6): hold jump in the air for sustained wingbeats while stamina lasts; stamina refills on any perch. After the credits, Flight stays unlocked in every district.
 
 ### Adding a level
 

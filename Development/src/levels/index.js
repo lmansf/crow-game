@@ -3,16 +3,14 @@
 import oceanDrive from './ocean-drive.js';
 import brickellAscent from './brickell-ascent.js';
 import wynwoodWalls from './wynwood-walls.js';
+import littleHavana from './little-havana.js';
+import skywayMileZero from './skyway-mile-zero.js';
+import riverOfGrass from './river-of-grass.js';
 
-export const LEVELS = [oceanDrive, brickellAscent, wynwoodWalls];
+export const LEVELS = [oceanDrive, brickellAscent, wynwoodWalls, littleHavana, skywayMileZero, riverOfGrass];
 
 // Shown as locked cards on the district select screen.
-// Designs for these live in Development/docs/districts-4-6.md.
-export const COMING_SOON = [
-  { district: 4, name: 'Little Havana Nights' },
-  { district: 5, name: 'Skyway Mile Zero' },
-  { district: 6, name: 'River of Grass' },
-];
+export const COMING_SOON = [];
 
 export function getLevelData(id) {
   return LEVELS.find((l) => l.id === id) || null;

@@ -163,6 +163,11 @@ export const audio = {
     whoosh({ freq: 1000, peak: 0.1, attack: 0.01, decay: 0.22, q: 1.1 });
   },
 
+  drum() {
+    tone({ freq: 150, type: 'sine', slide: -60, peak: 0.18, attack: 0.004, decay: 0.3 });
+    whoosh({ freq: 420, peak: 0.1, attack: 0.005, decay: 0.16, q: 0.8 });
+  },
+
   smash() {
     tone({ freq: 95, type: 'square', slide: -45, peak: 0.16, attack: 0.004, decay: 0.22 });
     whoosh({ freq: 240, peak: 0.18, attack: 0.004, decay: 0.24, q: 0.6 });

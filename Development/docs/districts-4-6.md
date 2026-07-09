@@ -3,6 +3,19 @@
 Design-first specs for the final act, written before implementation.
 Layout maps were shared as scaled schematics; the coordinates below are the build targets, tuned the same way districts 1 to 3 were (verify reach math in the debug harness before shipping).
 
+**Status: built and harness-verified end to end.**
+All three districts shipped in `src/levels/` (little-havana.js, skyway-mile-zero.js, river-of-grass.js); the built files are the source of truth where they differ from this spec.
+Notable revisions made during the harness pass:
+
+- Reach math correction: jump plus flap tops out at ~263px (157 + 106), not the ~400 assumed in places here; ledges and gates were retuned accordingly.
+- True Flight stamina shipped at 3.0s (not 2.5s) so the gate-one climb keeps an honest margin, and the D6 gate-one opening was lowered to 1200-1700.
+- D4's plaza is sealed on the west by stage scaffolding with a slot only a light-line hop can thread; a plain fence there was flyable-over via drum bounces and hook launches.
+- D4's flytower climbs a zigzag pinata ladder (alternating launches) into a rigging cable that springs you out the roof gap; a straight vertical hook ladder cannot be climbed with horizontal hook launches.
+- D5's gust rivers fill the whole gap column (deck to water) and untrained wings cannot glide anywhere inside a gust; both were needed to make the Tailwind gate hold.
+- D5's skyway guardrails start past the ride landing zones so touchdown never auto-snaps you into a grind aimed at a live coil.
+- D6's guy-wire passes directly through the TRUE FLIGHT pickup inside the flock thermal, with the thermal as the backup route.
+- Every district in the game now anchors on real Miami architecture: Colony Hotel neon and a lifeguard tower (D1), Freedom Tower and Miami Tower (D2), the Wynwood Walls gate (D3), the Tower Theater fin and Domino Park pergola (D4), Stiltsville (D5), Shark Valley tower (D6).
+
 ## Arc decisions
 
 - The final act grants ONE signature skill per district instead of three, and remixes the full existing kit hard.

@@ -30,12 +30,17 @@ const ROLL_TIME = 0.42;
 const ROLL_SPEED = 480;
 const CLIMB_SPEED = 230;
 const HOOK_RADIUS = 85;
+const GRIND_BASE = 380;
+const GRIND_MAX = 940;
+const GRIND_SNAP = 20;
+const FLY_RISE = -300;
+const STAMINA_MAX = 3;
 
 export class Player {
   constructor(spawn) {
     this.w = 30;
     this.h = 26;
-    this.abilities = { flap: false, glide: false, swoop: false, break: false, launch: false, soar: false, roll: false, grip: false, hook: false };
+    this.abilities = { flap: false, glide: false, swoop: false, break: false, launch: false, soar: false, roll: false, grip: false, hook: false, grind: false, wind: false, flight: false };
     this.respawnAt(spawn);
     this.facing = 1;
     this.animT = Math.random() * 10;
@@ -70,6 +75,11 @@ export class Player {
     this.climbing = false;
     this.hooked = null;
     this.hookCd = 0;
+    this.grindRail = null;
+    this.grindCd = 0;
+    this.windZone = null;
+    this.flying = false;
+    this.stamina = STAMINA_MAX;
     this.ghosts = [];
     this._ghostTick = 0;
   }
@@ -99,6 +109,7 @@ export class Player {
     if (this.dashCd > 0) this.dashCd -= dt;
     if (this.wallLock > 0) this.wallLock -= dt;
     if (this.hookCd > 0) this.hookCd -= dt;
+    if (this.grindCd > 0) this.grindCd -= dt;
     if (this.rolling > 0) {
       this.rolling -= dt;
       this.rollPhase += dt * 15;
@@ -136,6 +147,7 @@ export class Player {
       this.y = this.hooked.y + 16;
       this.vx = 0;
       this.vy = 0;
+      this.stamina = STAMINA_MAX;
       if (input.consumeJump()) {
         const dir = input.moveX !== 0 ? input.moveX : this.facing;
         this.facing = dir >= 0 ? 1 : -1;
@@ -150,6 +162,43 @@ export class Player {
         this.flapT = 1;
         audio.launch();
         particles.feathers(this.x, this.y, 3, this.facing);
+      } else {
+        return;
+      }
+    }
+
+    // grinding a wire: slide along it until the crow hops off or it ends
+    if (this.grindRail) {
+      const r = this.grindRail;
+      // gravity feeds downhill runs and bleeds uphill ones
+      this.grindSpeed += r.uy * this.grindDir * G * 0.9 * dt;
+      this.grindSpeed = Math.min(this.grindSpeed, GRIND_MAX);
+      this.grindPos += this.grindSpeed * this.grindDir * dt;
+      const offEnd = this.grindPos < 0 || this.grindPos > r.len;
+      const at = Math.max(0, Math.min(r.len, this.grindPos));
+      this.x = r.x1 + r.ux * at;
+      this.y = r.y1 + r.uy * at - this.h / 2 - 3;
+      this.vx = r.ux * this.grindSpeed * this.grindDir;
+      this.vy = r.uy * this.grindSpeed * this.grindDir;
+      if (this.vx !== 0) this.facing = this.vx > 0 ? 1 : -1;
+      this.usedFlap = false;
+      this.dashReady = true;
+      this.stamina = STAMINA_MAX;
+      if (Math.random() < 0.55) {
+        particles.trail(this.x - this.facing * 8, this.y + this.h / 2 + 3, 'rgba(242,233,99,0.8)');
+      }
+      if (input.consumeJump()) {
+        this.grindRail = null;
+        this.grindCd = 0.25;
+        this.vy = -560;
+        this.flapT = 1;
+        audio.jump();
+        particles.dust(this.x, this.y + this.h / 2);
+      } else if (offEnd || this.grindSpeed < 90) {
+        // flew off the end, or stalled out on an uphill stretch
+        this.grindRail = null;
+        this.grindCd = 0.2;
+        if (offEnd) this.vy -= 90;
       } else {
         return;
       }
@@ -170,9 +219,11 @@ export class Player {
       // brief lockout after a wall kick so it actually launches
     } else if (move !== 0) {
       const accel = this.grounded ? ACCEL_GROUND : ACCEL_AIR;
-      this.vx += move * accel * dt;
-      // steering never hard-clamps launch/kick momentum: excess speed decays
+      // steering never hard-clamps launch/kick momentum: excess speed decays.
+      // The cap comes from the speed BEFORE this frame's accel, otherwise
+      // steering input would outrun the decay and accelerate forever.
       const cap = Math.max(MOVE, Math.abs(this.vx) - 900 * dt);
+      this.vx += move * accel * dt;
       this.vx = Math.max(-cap, Math.min(cap, this.vx));
     } else if (this.grounded) {
       const s = Math.sign(this.vx);
@@ -250,17 +301,33 @@ export class Player {
         if (this.vy < -VENT_MAX_RISE) this.vy = -VENT_MAX_RISE;
         this.usedFlap = false;
         this.dashReady = true;
+        this.stamina = STAMINA_MAX;
       }
     }
 
-    // ---- gravity, mural climb, glide, wall slide ----
+    // ---- wind zones (gusts act on airborne birds only) ----
+    this.windZone = null;
+    if (!this.grounded) {
+      const wr = this.rect();
+      for (const wz of level.winds) {
+        if (wr.x < wz.x + wz.w && wr.x + wr.w > wz.x && wr.y < wz.y + wz.h && wr.y + wr.h > wz.y) {
+          this.windZone = wz;
+          break;
+        }
+      }
+    }
+
+    // ---- gravity, mural climb, flight, glide, wall slide ----
     const pushingWall = this.wall !== 0 && move === this.wall;
     this.gliding = false;
     this.climbing = false;
+    this.flying = false;
     if (this.dashing <= 0) {
       this.vy += G * dt;
       const onMural = !this.grounded && pushingWall && this.abilities.grip &&
         level.muralAt(this.x + this.wall * this.w / 2, this.y, this.wall);
+      const ridingWind = this.windZone && this.abilities.wind && this.abilities.glide &&
+        !this.grounded && input.holdingJump && this.rolling <= 0 && !onMural;
       if (onMural) {
         this.climbing = true;
         this.vy = Math.max(this.vy - G * 3.4 * dt, -CLIMB_SPEED);
@@ -272,12 +339,42 @@ export class Player {
         if (Math.random() < 0.35) {
           particles.trail(this.x + this.wall * this.w / 2, this.y + 8, `hsla(${Math.floor((this.animT * 140) % 360)}, 90%, 65%, 0.7)`);
         }
+      } else if (ridingWind) {
+        // Tailwind: the gust becomes a laminar highway. Falling is
+        // arrested hard (the hold must overpower gravity per frame), but
+        // upward bursts from jumps and flaps are allowed to play out.
+        this.gliding = true;
+        const target = this.windZone.dir * (this.windZone.strength || 620);
+        const lift = this.windZone.lift ?? -40;
+        this.vx += (target - this.vx) * Math.min(1, 12 * dt);
+        this.vy += (lift - this.vy) * Math.min(1, (this.vy > lift ? 60 : 4) * dt);
+        if (Math.random() < 0.4) {
+          particles.trail(this.x - this.windZone.dir * 22, this.y + (Math.random() - 0.5) * 16, 'rgba(142,240,255,0.55)');
+        }
       } else if (!this.grounded && pushingWall && this.vy > 0) {
         if (this.vy > WALL_SLIDE_MAX) this.vy = Math.max(WALL_SLIDE_MAX, this.vy - G * 3 * dt);
         if (Math.random() < 0.25) particles.trail(this.x + this.wall * this.w / 2, this.y + 8, 'rgba(190,175,210,0.4)');
-      } else if (!this.grounded && this.abilities.glide && input.holdingJump && this.vy > 0 && !this.inVent && this.rolling <= 0) {
+      } else if (!this.grounded && this.abilities.flight && input.holdingJump && this.stamina > 0 && !this.inVent && this.rolling <= 0) {
+        // True Flight: sustained wingbeats while stamina lasts. The pull
+        // toward the climb rate must overpower gravity per frame; faster
+        // upward bursts (flaps) are left to play out.
+        this.flying = true;
+        this.stamina -= dt;
+        this.vy += (FLY_RISE - this.vy) * Math.min(1, (this.vy > FLY_RISE ? 60 : 4) * dt);
+        if (Math.random() < 0.3) particles.trail(this.x - this.facing * 16, this.y + 8, 'rgba(255,255,255,0.45)');
+      } else if (!this.grounded && this.abilities.glide && input.holdingJump && this.vy > 0 && !this.inVent && this.rolling <= 0 &&
+                 !(this.windZone && !this.abilities.wind)) {
+        // (untrained wings cannot hold a glide inside a gust field)
         this.gliding = true;
         if (this.vy > GLIDE_FALL) this.vy = Math.max(GLIDE_FALL, this.vy - G * 2.6 * dt);
+      }
+      // gusts batter untrained wings: speed is wrenched toward a churning
+      // oscillation (never a net push forward) plus a downdraft
+      if (this.windZone && !ridingWind && !this.grounded && !onMural) {
+        const churn = Math.sin(this.animT * 7) * 240;
+        this.vx += (churn - this.vx) * Math.min(1, 5 * dt);
+        this.vy += 320 * dt;
+        if (Math.random() < 0.25) particles.trail(this.x + (Math.random() - 0.5) * 26, this.y - 10, 'rgba(160,190,220,0.35)');
       }
       if (this.vy > TERMINAL) this.vy = TERMINAL;
     }
@@ -299,7 +396,35 @@ export class Player {
         }
       }
     }
-    audio.glide(this.gliding || (this.inVent && !this.grounded));
+
+    // ---- wire grind: snap onto a rail when falling across it ----
+    if (this.abilities.grind && !this.grounded && !this.hooked && this.grindCd <= 0 &&
+        this.dashing <= 0 && this.rolling <= 0 && this.vy > -60) {
+      const fx = this.x;
+      const fy = this.y + this.h / 2;
+      for (const r of level.rails) {
+        const u = Math.max(0, Math.min(1, ((fx - r.x1) * (r.x2 - r.x1) + (fy - r.y1) * (r.y2 - r.y1)) / (r.len * r.len)));
+        const px = r.x1 + (r.x2 - r.x1) * u;
+        const py = r.y1 + (r.y2 - r.y1) * u;
+        const dx = fx - px;
+        const dy = fy - py;
+        if (dx * dx + dy * dy < GRIND_SNAP * GRIND_SNAP) {
+          const along = this.vx * r.ux + this.vy * r.uy;
+          this.grindDir = Math.abs(along) > 40 ? Math.sign(along) : (this.facing * r.ux >= 0 ? 1 : -1);
+          this.grindSpeed = Math.max(GRIND_BASE, Math.abs(along));
+          this.grindPos = u * r.len;
+          this.grindRail = r;
+          this.gliding = false;
+          this.flying = false;
+          this.x = px;
+          this.y = py - this.h / 2 - 3;
+          audio.wallGrab();
+          particles.burst(px, py, { count: 7, color: '#f2e963', speed: 110, life: 0.3, size: 1.8 });
+          break;
+        }
+      }
+    }
+    audio.glide(this.gliding || this.flying || (this.inVent && !this.grounded));
 
     // ---- integrate + collide ----
     const wasGrounded = this.grounded;
@@ -367,7 +492,23 @@ export class Player {
       }
     }
     for (const p of level.oneWays) {
+      if (p.disabled) continue;
       if (this.vy >= 0 && overlap(rr, p) && prevBottom <= p.y + 6) {
+        if (p.bounce) {
+          // drum skins and the like: spring instead of land
+          this.y = p.y - this.h / 2;
+          this.vy = -p.bounce;
+          this.grounded = false;
+          this.usedFlap = false;
+          this.dashReady = true;
+          this.stamina = STAMINA_MAX;
+          this.flapT = 1;
+          this.launchT = 0.22;
+          audio.drum();
+          particles.burst(this.x, p.y, { count: 8, color: '#ffb45e', speed: 140, angle: -Math.PI / 2, spread: 1.4, life: 0.35, size: 2 });
+          rr = this.rect();
+          continue;
+        }
         this.y = p.y - this.h / 2;
         this.vy = 0;
         this.grounded = true;
@@ -387,6 +528,7 @@ export class Player {
       this.coyote = COYOTE;
       this.usedFlap = false;
       this.dashReady = true;
+      this.stamina = STAMINA_MAX;
       this.runPhase += Math.abs(this.vx) * dt * 0.06;
     } else {
       this.coyote -= dt;
@@ -413,6 +555,17 @@ export class Player {
       }
     }
 
+    // ---- open water: one splash and the current takes you ----
+    if (this.invuln <= 0 && this.dead <= 0) {
+      for (const w of level.waters) {
+        if (this.x > w.x && this.x < w.x + w.w && this.y + this.h / 2 > w.y + 10) {
+          particles.burst(this.x, w.y + 6, { count: 12, color: 'rgba(140,220,220,0.9)', speed: 170, angle: -Math.PI / 2, spread: 1.2, life: 0.5, size: 2.4, gravity: 500 });
+          this.die(game);
+          break;
+        }
+      }
+    }
+
     // world bounds
     if (this.x < this.w / 2) { this.x = this.w / 2; this.vx = Math.max(0, this.vx); }
     if (this.x > level.width - this.w / 2) { this.x = level.width - this.w / 2; this.vx = Math.min(0, this.vx); }
@@ -432,6 +585,7 @@ export class Player {
 
   grant(ability) {
     this.abilities[ability] = true;
+    if (ability === 'flight') this.stamina = STAMINA_MAX;
   }
 
   // ------------------------------------------------ drawing
@@ -517,6 +671,15 @@ export class Player {
       bodyRot = Math.sin(t * 2) * 0.08;
       wingAngle = 1.0;
       wingLen = 19;
+    } else if (this.grindRail) {
+      bodyRot = Math.max(-0.3, Math.min(0.3, this.vy / (Math.abs(this.vx) + 80))) * this.facing;
+      wingAngle = 0.62;
+      wingLen = 23;
+    } else if (this.flying) {
+      bodyRot = -0.14;
+      wingAngle = -1.05 + Math.sin(t * 13) * 0.95;
+      wingLen = 32;
+      wingBend = 0.1;
     } else if (this.dashing > 0) {
       bodyRot = 0.08;
       wingAngle = 0.55;
@@ -658,6 +821,23 @@ export class Player {
 
     ctx.restore();
     ctx.globalAlpha = 1;
+
+    // stamina ring while True Flight is spent (refills on any perch)
+    if (this.abilities.flight && this.stamina < STAMINA_MAX - 0.03) {
+      const k = Math.max(0, this.stamina / STAMINA_MAX);
+      const low = k < 0.3;
+      ctx.strokeStyle = 'rgba(20,14,34,0.6)';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y - 30, 11, -Math.PI * 0.5, Math.PI * 1.5);
+      ctx.stroke();
+      ctx.strokeStyle = low ? `rgba(255,110,110,${0.7 + Math.sin(t * 12) * 0.3})` : 'rgba(255,255,255,0.85)';
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y - 30, 11, -Math.PI * 0.5, -Math.PI * 0.5 + Math.PI * 2 * k);
+      ctx.stroke();
+    }
   }
 }
 

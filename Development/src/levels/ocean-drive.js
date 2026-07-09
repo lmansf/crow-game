@@ -64,7 +64,8 @@ export default {
   spawn: { x: 300, y: 1470 },
 
   buildings: [
-    { x: 640, w: 430, h: 400, style: 'deco', hue: 340, sign: 'FLAMINGO' },
+    // the Colony Hotel: Ocean Drive's blue neon blade, recognizable anywhere
+    { x: 640, w: 430, h: 400, style: 'deco', hue: 210, blade: 'COLONY' },
     { x: 1190, w: 470, h: 560, style: 'deco', hue: 185, sign: 'AZUL', flicker: true },
     { x: 1780, w: 400, h: 690, style: 'deco', hue: 45, sign: 'CORSAIR' },
     { x: 2440, w: 520, h: 760, style: 'block', hue: 275, sign: 'PALMERA' },

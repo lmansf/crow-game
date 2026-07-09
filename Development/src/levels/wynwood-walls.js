@@ -66,6 +66,11 @@ export default {
   spawn: { x: 3000, y: 2170 },
   initialAbilities: ['flap', 'glide', 'swoop'],
 
+  // the real WYNWOOD WALLS entrance gate anchors the hub courtyard
+  landmarks: [
+    { type: 'wynwoodgate', x: 2830, w: 340 },
+  ],
+
   buildings: [
     { x: 800, w: 600, h: 1100, style: 'deco', hue: 275, sign: 'MUSEO' },    // top 1100, goal roof
     { x: 4700, w: 900, h: 900, style: 'block', hue: 15, sign: 'GALERIA', muralArt: true },  // top 1300, the great mural

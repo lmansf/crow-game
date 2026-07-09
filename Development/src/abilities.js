@@ -56,4 +56,22 @@ export const ABILITIES = {
     toast: 'touch a hanging hook to latch on, then {JUMP} to launch',
     icon: '<svg viewBox="0 0 24 24"><path d="M12 3 L12 12 M12 12 a4.5 4.5 0 1 0 4.5 4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
   },
+  grind: {
+    name: 'WIRE GRIND',
+    color: '#f2e963',
+    toast: 'land on a glowing wire to slide it, {JUMP} to hop off',
+    icon: '<svg viewBox="0 0 24 24"><path d="M3 15 Q12 19 21 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="13.2" r="3" fill="currentColor"/><path d="M12 10.2 L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  },
+  wind: {
+    name: 'TAILWIND',
+    color: '#8ef0ff',
+    toast: 'glide inside a gust to ride the wind highway',
+    icon: '<svg viewBox="0 0 24 24"><path d="M3 8 H14 a3 3 0 1 0 -3 -3 M3 13 H19 a3 3 0 1 1 -3 3 M3 18 H11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  },
+  flight: {
+    name: 'TRUE FLIGHT',
+    color: '#ffffff',
+    toast: 'hold {JUMP} in the air to climb while your wings hold out',
+    icon: '<svg viewBox="0 0 24 24"><path d="M12 20 L12 9 M4 12 Q12 2 20 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M6.5 16 Q12 9 17.5 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  },
 };

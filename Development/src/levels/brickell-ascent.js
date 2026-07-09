@@ -69,6 +69,12 @@ export default {
   spawn: { x: 290, y: 3140 },
   initialAbilities: ['flap', 'glide', 'swoop'],
 
+  // real downtown silhouettes behind the playable towers
+  landmarks: [
+    { type: 'freedomtower', x: 1000, w: 190, h: 1300 },   // the Freedom Tower's cupola crown
+    { type: 'miamitower', x: 1690, w: 260, h: 1700 },     // Miami Tower's color-washed tiers
+  ],
+
   buildings: [
     { x: 40, w: 360, h: 1250, style: 'deco', hue: 190, sign: 'VIZCAYA' },   // top 1150
     { x: 660, w: 300, h: 900, style: 'block', hue: 320, sign: 'METRO' },    // top 1500

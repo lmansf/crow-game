@@ -140,7 +140,9 @@ export class UI {
     } else {
       this.nextLevelId = null;
       btn.disabled = true;
-      btn.textContent = `DISTRICT ${levelData.district + 1} - COMING SOON`;
+      btn.textContent = COMING_SOON.length
+        ? `DISTRICT ${levelData.district + 1} - COMING SOON`
+        : 'HOME AT LAST';
     }
     this.show('complete');
   }
