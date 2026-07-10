@@ -1,0 +1,130 @@
+id,medium,category,tier,status,width,height,clip,timing,biomes,dead,usage_refs,note
+assets/apple-touch-icon.png,file,ui_icon,P2,pending,180,180,,,menu,False,index.html;sw.js,PWA icon (generated)
+assets/card-1.jpg,file,ui_panel,P2,pending,832,468,,,menu,False,src/ui.js;sw.js,Canva menu art
+assets/card-2.jpg,file,ui_panel,P2,pending,832,468,,,menu,False,src/ui.js;sw.js,Canva menu art
+assets/card-3.jpg,file,ui_panel,P2,pending,832,468,,,menu,False,src/ui.js;sw.js,Canva menu art
+assets/card-4.jpg,file,ui_panel,P2,pending,832,468,,,menu,False,src/ui.js;sw.js,Canva menu art
+assets/card-5.jpg,file,ui_panel,P2,pending,832,468,,,menu,False,src/ui.js;sw.js,Canva menu art
+assets/card-6.jpg,file,ui_panel,P2,pending,832,468,,,menu,False,src/ui.js;sw.js,Canva menu art
+assets/icon-192.png,file,ui_icon,P2,pending,192,192,,,menu,False,manifest.webmanifest;sw.js,PWA icon (generated)
+assets/icon-512.png,file,ui_icon,P2,pending,512,512,,,menu,False,manifest.webmanifest;sw.js,PWA icon (generated)
+assets/menu-bg.jpg,file,ui_panel,P2,pending,1600,900,,,menu,False,style.css;sw.js,Canva menu art
+src/background.js::drawPalmSil,procedural,background_layer,P0,pending,,,PalmSil,"continuous (code-driven, no frames)",shared,False,src/background.js,
+src/boss.js::drawGullKing,procedural,boss_anim,P0,pending,,,gullking,"continuous (code-driven, no frames)",ocean-drive,False,src/boss.js,
+src/boss.js::drawRatKing,procedural,boss_anim,P1,pending,,,ratking,"continuous (code-driven, no frames)",brickell-ascent,False,src/boss.js,
+src/boss.js::drawIguanodon,procedural,boss_anim,P1,pending,,,iguanodon,"continuous (code-driven, no frames)",wynwood-walls,False,src/boss.js,
+src/boss.js::drawPinataBull,procedural,boss_anim,P1,pending,,,pinatabull,"continuous (code-driven, no frames)",little-havana,False,src/boss.js,
+src/boss.js::drawKingCrab,procedural,boss_anim,P1,pending,,,kingcrab,"continuous (code-driven, no frames)",skyway-mile-zero,False,src/boss.js,
+src/boss.js::drawSnapper,procedural,boss_anim,P1,pending,,,snapper,"continuous (code-driven, no frames)",river-of-grass,False,src/boss.js,
+src/enemies.js::drawGull,procedural,enemy_anim,P0,pending,,,gull,"continuous (code-driven, no frames)",ocean-drive,False,src/enemies.js,
+src/enemies.js::drawRat,procedural,enemy_anim,P1,pending,,,rat,"continuous (code-driven, no frames)",brickell-ascent,False,src/enemies.js,
+src/enemies.js::drawIguana,procedural,enemy_anim,P1,pending,,,iguana,"continuous (code-driven, no frames)",wynwood-walls,False,src/enemies.js,
+src/enemies.js::drawImp,procedural,enemy_anim,P1,pending,,,imp,"continuous (code-driven, no frames)",little-havana,False,src/enemies.js,
+src/enemies.js::drawCrab,procedural,enemy_anim,P1,pending,,,crab,"continuous (code-driven, no frames)",skyway-mile-zero,False,src/enemies.js,
+src/enemies.js::drawSnake,procedural,enemy_anim,P1,pending,,,snake,"continuous (code-driven, no frames)",river-of-grass,False,src/enemies.js,
+src/level.js::renderBuilding,procedural,prop_static,P2,pending,,,Building,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawBlock,procedural,tileset,P0,pending,,,Block,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawBackdrop,procedural,tileset,P0,pending,,,Backdrop,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawSteel,procedural,prop_static,P2,pending,,,Steel,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawShutterWall,procedural,prop_static,P2,pending,,,ShutterWall,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawCrateBlock,procedural,prop_static,P2,pending,,,CrateBlock,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawContainer,procedural,prop_static,P2,pending,,,Container,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawMural,procedural,prop_animated,P2,pending,,,Mural,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawHook,procedural,prop_animated,P2,pending,,,Hook,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawPlatform,procedural,prop_animated,P2,pending,,,Platform,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawCable,procedural,prop_animated,P2,pending,,,Cable,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawVent,procedural,prop_animated,P2,pending,,,Vent,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawThermal,procedural,prop_animated,P2,pending,,,Thermal,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawWireHazard,procedural,prop_animated,P2,pending,,,WireHazard,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawShiny,procedural,prop_animated,P2,pending,,,Shiny,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawPickup,procedural,prop_animated,P2,pending,,,Pickup,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawPerch,procedural,prop_animated,P2,pending,,,Perch,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawGoal,procedural,prop_animated,P2,pending,,,Goal,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawPalm,procedural,prop_animated,P0,pending,,,palm,"continuous (code-driven, no frames)",brickell-ascent;hallways;little-havana;ocean-drive;wynwood-walls,False,src/level.js,
+src/level.js::drawCar,procedural,prop_static,P0,pending,,,car,"continuous (code-driven, no frames)",brickell-ascent;hallways;little-havana;ocean-drive;skyway-mile-zero;wynwood-walls,False,src/level.js,
+src/level.js::drawGrass,procedural,prop_animated,P0,pending,,,grass,"continuous (code-driven, no frames)",ocean-drive,False,src/level.js,
+src/level.js::drawLamp,procedural,prop_static,P1,pending,,,lamp,"continuous (code-driven, no frames)",brickell-ascent;hallways;little-havana;rookery;skyway-mile-zero;wynwood-walls,False,src/level.js,
+src/level.js::drawMast,procedural,prop_static,P1,pending,,,mast,"continuous (code-driven, no frames)",hallways;wynwood-walls,False,src/level.js,
+src/level.js::drawBigPipe,procedural,prop_static,P1,pending,,,bigpipe,"continuous (code-driven, no frames)",brickell-ascent;hallways;rookery;wynwood-walls,False,src/level.js,
+src/level.js::drawSewerWater,procedural,tileset,P1,pending,,,sewerwater,"continuous (code-driven, no frames)",brickell-ascent;hallways,False,src/level.js,
+src/level.js::drawTimedHazard,procedural,prop_animated,P2,pending,,,TimedHazard,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawWater,procedural,tileset,P0,pending,,,Water,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawRail,procedural,prop_animated,P2,pending,,,Rail,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawWind,procedural,prop_animated,P2,pending,,,Wind,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawLilyPad,procedural,prop_animated,P2,pending,,,LilyPad,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawCage,procedural,prop_animated,P2,pending,,,Cage,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawThornVine,procedural,prop_animated,P2,pending,,,ThornVine,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawGrateBeam,procedural,prop_animated,P1,pending,,,grate,"continuous (code-driven, no frames)",brickell-ascent;hallways,False,src/level.js,
+src/level.js::drawFence,procedural,prop_static,P2,pending,,,Fence,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawCart,procedural,prop_static,P2,pending,,,Cart,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawConcrete,procedural,prop_static,P2,pending,,,Concrete,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawBarge,procedural,prop_animated,P2,pending,,,Barge,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawTrunk,procedural,prop_static,P2,pending,,,Trunk,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawCanopy,procedural,prop_static,P2,pending,,,Canopy,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawRoot,procedural,prop_static,P2,pending,,,Root,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawTheaterFacade,procedural,prop_animated,P2,pending,,,TheaterFacade,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawLanternString,procedural,prop_animated,P1,pending,,,lantern,"continuous (code-driven, no frames)",hallways;little-havana;rookery,False,src/level.js,
+src/level.js::drawRooster,procedural,prop_static,P1,pending,,,rooster,"continuous (code-driven, no frames)",hallways;little-havana,False,src/level.js,
+src/level.js::drawPergola,procedural,prop_static,P1,pending,,,pergola,"continuous (code-driven, no frames)",little-havana,False,src/level.js,
+src/level.js::drawPylon,procedural,prop_static,P1,pending,,,pylon,"continuous (code-driven, no frames)",hallways;skyway-mile-zero,False,src/level.js,
+src/level.js::drawRadioMast,procedural,prop_animated,P1,pending,,,radiomast,"continuous (code-driven, no frames)",skyway-mile-zero,False,src/level.js,
+src/level.js::drawOsprey,procedural,prop_animated,P1,pending,,,osprey,"continuous (code-driven, no frames)",skyway-mile-zero,False,src/level.js,
+src/level.js::drawTruck,procedural,prop_animated,P1,pending,,,truck,"continuous (code-driven, no frames)",hallways;skyway-mile-zero,False,src/level.js,
+src/level.js::drawReeds,procedural,prop_animated,P1,pending,,,reed,"continuous (code-driven, no frames)",hallways;river-of-grass,False,src/level.js,
+src/level.js::drawBoardwalk,procedural,prop_static,P1,pending,,,boardwalk,"continuous (code-driven, no frames)",hallways;river-of-grass,False,src/level.js,
+src/level.js::drawFlock,procedural,prop_animated,P1,pending,,,flock,"continuous (code-driven, no frames)",hallways;river-of-grass,False,src/level.js,
+src/level.js::drawArchLegs,procedural,prop_static,P1,pending,,,archlegs,"continuous (code-driven, no frames)",skyway-mile-zero,False,src/level.js,
+src/level.js::drawBargeCrane,procedural,prop_animated,P1,pending,,,crane,"continuous (code-driven, no frames)",skyway-mile-zero,False,src/level.js,
+src/level.js::drawPinata,procedural,prop_animated,P2,pending,,,Pinata,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawExitDoor,procedural,prop_animated,P2,pending,,,ExitDoor,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawShopStall,procedural,prop_animated,P2,pending,,,ShopStall,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawPuzzleSwitch,procedural,prop_animated,P2,pending,,,PuzzleSwitch,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawPuzzleDisplay,procedural,prop_animated,P2,pending,,,PuzzleDisplay,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawBeam,procedural,prop_animated,P2,pending,,,Beam,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawCurio,procedural,prop_animated,P2,pending,,,Curio,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawCurioIcon,procedural,prop_animated,P2,pending,,,CurioIcon,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawSpecimen,procedural,prop_animated,P1,pending,,,specimen,"continuous (code-driven, no frames)",ufo,False,src/level.js,
+src/level.js::drawLandmark,procedural,prop_animated,P2,pending,,,Landmark,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawMiamiTower,procedural,prop_animated,P2,pending,,,MiamiTower,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawWynwoodGate,procedural,prop_static,P2,pending,,,WynwoodGate,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawStiltHouse,procedural,prop_animated,P2,pending,,,StiltHouse,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawCruiseShip,procedural,prop_animated,P2,pending,,,CruiseShip,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawSharkValleyTower,procedural,prop_animated,P2,pending,,,SharkValleyTower,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/level.js::drawFreedomTower,procedural,prop_animated,P2,pending,,,FreedomTower,"continuous (code-driven, no frames)",shared,False,src/level.js,
+src/player.js::drawWing,procedural,player_anim,P0,pending,,,Wing,"continuous (code-driven, no frames)",all,False,src/player.js,
+src/background.js::draw,procedural,background_layer,P0,pending,,,sky:dusk,"continuous (code-driven, no frames)",shared,False,src/background.js,"dusk sky palette: gradient, stars, sun/moon, clouds, haze bands"
+src/background.js::draw,procedural,background_layer,P0,pending,,,sky:dawn,"continuous (code-driven, no frames)",shared,False,src/background.js,"dawn sky palette: gradient, stars, sun/moon, clouds, haze bands"
+src/background.js::draw,procedural,background_layer,P0,pending,,,sky:night,"continuous (code-driven, no frames)",shared,False,src/background.js,"night sky palette: gradient, stars, sun/moon, clouds, haze bands"
+src/background.js::draw,procedural,background_layer,P0,pending,,,sky:storm,"continuous (code-driven, no frames)",shared,False,src/background.js,"storm sky palette: gradient, stars, sun/moon, clouds, haze bands"
+src/background.js::drawLayer,procedural,background_layer,P0,pending,,,city:far,"continuous (code-driven, no frames)",shared,False,src/background.js,city skyline silhouette band (parallax)
+src/background.js::drawLayer,procedural,background_layer,P1,pending,,,glades:far,"continuous (code-driven, no frames)",river-of-grass,False,src/background.js,everglades silhouette band (parallax)
+src/background.js::drawLayer,procedural,background_layer,P0,pending,,,city:mid,"continuous (code-driven, no frames)",shared,False,src/background.js,city skyline silhouette band (parallax)
+src/background.js::drawLayer,procedural,background_layer,P1,pending,,,glades:mid,"continuous (code-driven, no frames)",river-of-grass,False,src/background.js,everglades silhouette band (parallax)
+src/background.js::drawLayer,procedural,background_layer,P0,pending,,,city:near,"continuous (code-driven, no frames)",shared,False,src/background.js,city skyline silhouette band (parallax)
+src/background.js::drawLayer,procedural,background_layer,P1,pending,,,glades:near,"continuous (code-driven, no frames)",river-of-grass,False,src/background.js,everglades silhouette band (parallax)
+src/background.js::foreground,procedural,background_layer,P1,pending,,,foreground-occluders,"continuous (code-driven, no frames)",shared,False,src/background.js,"near-camera parallax fringe, city + glades variants"
+src/background.js::rain,procedural,vfx_frames,P1,pending,,,rain-overlay,"continuous (code-driven, no frames)",skyway-mile-zero,False,src/background.js,storm rain streaks
+src/particles.js::burst,procedural,vfx_frames,P1,pending,,,burst,"continuous (code-driven, no frames)",shared,False,src/particles.js,"radial spark burst (collect, impacts, boss hits)"
+src/particles.js::feathers,procedural,vfx_frames,P1,pending,,,feathers,"continuous (code-driven, no frames)",shared,False,src/particles.js,crow feather puffs
+src/particles.js::dust,procedural,vfx_frames,P1,pending,,,dust,"continuous (code-driven, no frames)",shared,False,src/particles.js,landing dust
+src/particles.js::trail,procedural,vfx_frames,P1,pending,,,trail,"continuous (code-driven, no frames)",shared,False,src/particles.js,"drifting trail motes (vents, curios)"
+src/fx.js::lighting,procedural,vfx_frames,P1,pending,,,lighting,"continuous (code-driven, no frames)",shared,False,src/fx.js,dynamic lightmap composite
+src/fx.js::bloom,procedural,vfx_frames,P1,pending,,,bloom,"continuous (code-driven, no frames)",shared,False,src/fx.js,neon bloom
+src/fx.js::grain,procedural,vfx_frames,P1,pending,,,grain,"continuous (code-driven, no frames)",shared,False,src/fx.js,film grain
+src/fx.js::chroma,procedural,vfx_frames,P1,pending,,,chroma,"continuous (code-driven, no frames)",shared,False,src/fx.js,chromatic hit pulse
+src/fx.js::grade,procedural,vfx_frames,P1,pending,,,grade,"continuous (code-driven, no frames)",shared,False,src/fx.js,per-district color grade
+src/player.js::clip:idle,procedural,player_anim,P0,pending,,,idle,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:run,procedural,player_anim,P0,pending,,,run,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:hop,procedural,player_anim,P0,pending,,,hop,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:flap,procedural,player_anim,P0,pending,,,flap,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:glide,procedural,player_anim,P0,pending,,,glide,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:swoop,procedural,player_anim,P0,pending,,,swoop,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:roll,procedural,player_anim,P0,pending,,,roll,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:grind,procedural,player_anim,P0,pending,,,grind,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:hook-hang,procedural,player_anim,P0,pending,,,hook-hang,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:wall-grip,procedural,player_anim,P0,pending,,,wall-grip,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:flight,procedural,player_anim,P0,pending,,,flight,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+src/player.js::clip:death,procedural,player_anim,P0,pending,,,death,"continuous (state machine, no frames)",all,False,src/player.js,crow body/wing pose blend for this state
+index.html::inline-svg-icons,svg-inline,ui_icon,P2,pending,,,,,menu,False,index.html,"9 inline SVG glyphs (HUD shiny, mute, pause, touch pad, favicon)"
+style.css::screens-and-hud,css,ui_panel,P2,pending,,,,,menu,False,index.html,all menus/HUD are DOM+CSS; no panel images anywhere
+font-stack,system-font,font/text,P2,pending,,,,,all,False,style.css;src/level.js,"""Segoe UI"", system-ui - no font files shipped"
