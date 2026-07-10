@@ -656,7 +656,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -680,7 +680,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -704,7 +704,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -728,7 +728,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -752,8 +752,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 05 review)"
   },
   {
    "id": "src/level.js::drawHook",
@@ -1396,8 +1396,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 05 review)"
   },
   {
    "id": "src/level.js::drawCart",
@@ -1420,7 +1420,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1444,8 +1444,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 05 review)"
   },
   {
    "id": "src/level.js::drawBarge",
@@ -1468,7 +1468,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1492,7 +1492,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1516,7 +1516,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1540,8 +1540,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 05 review)"
   },
   {
    "id": "src/level.js::drawTheaterFacade",
@@ -1564,8 +1564,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 05 review)"
   },
   {
    "id": "src/level.js::drawLanternString",
@@ -1908,8 +1908,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "authored to master style this cycle (hub rework)"
   },
   {
    "id": "src/level.js::drawShopStall",
@@ -1932,8 +1932,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "authored to master style this cycle (hub rework)"
   },
   {
    "id": "src/level.js::drawPuzzleSwitch",
@@ -2292,8 +2292,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "dusk sky palette: gradient, stars, sun/moon, clouds, haze bands"
+   "status": "conformed",
+   "note": "dusk sky palette: gradient, stars, sun/moon, clouds, haze bands \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::draw",
@@ -2316,8 +2316,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "dawn sky palette: gradient, stars, sun/moon, clouds, haze bands"
+   "status": "conformed",
+   "note": "dawn sky palette: gradient, stars, sun/moon, clouds, haze bands \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::draw",
@@ -2340,8 +2340,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "night sky palette: gradient, stars, sun/moon, clouds, haze bands"
+   "status": "conformed",
+   "note": "night sky palette: gradient, stars, sun/moon, clouds, haze bands \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::draw",
@@ -2364,8 +2364,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "storm sky palette: gradient, stars, sun/moon, clouds, haze bands"
+   "status": "conformed",
+   "note": "storm sky palette: gradient, stars, sun/moon, clouds, haze bands \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2388,8 +2388,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "city skyline silhouette band (parallax)"
+   "status": "conformed",
+   "note": "city skyline silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2412,8 +2412,8 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "everglades silhouette band (parallax)"
+   "status": "conformed",
+   "note": "everglades silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2436,8 +2436,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "city skyline silhouette band (parallax)"
+   "status": "conformed",
+   "note": "city skyline silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2460,8 +2460,8 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "everglades silhouette band (parallax)"
+   "status": "conformed",
+   "note": "everglades silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2484,8 +2484,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "city skyline silhouette band (parallax)"
+   "status": "conformed",
+   "note": "city skyline silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2508,8 +2508,8 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "everglades silhouette band (parallax)"
+   "status": "conformed",
+   "note": "everglades silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::foreground",
@@ -2532,8 +2532,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "near-camera parallax fringe, city + glades variants"
+   "status": "conformed",
+   "note": "near-camera parallax fringe, city + glades variants \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::rain",
@@ -2556,8 +2556,8 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "storm rain streaks"
+   "status": "conformed",
+   "note": "storm rain streaks \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/particles.js::burst",

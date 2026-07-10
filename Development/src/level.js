@@ -1617,6 +1617,28 @@ function drawSteel(ctx, s) {
     }
   }
   ctx.stroke();
+  // rivet lines along the long edges, an oil sheen, and an ink edge
+  ctx.fillStyle = 'rgba(150,140,180,0.35)';
+  if (s.w >= s.h) {
+    for (let x = s.x + 14; x < s.x + s.w - 6; x += 42) {
+      ctx.beginPath();
+      ctx.arc(x, s.y + 5, 1.2, 0, Math.PI * 2);
+      ctx.arc(x, s.y + s.h - 5, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else {
+    for (let y = s.y + 14; y < s.y + s.h - 6; y += 42) {
+      ctx.beginPath();
+      ctx.arc(s.x + 5, y, 1.2, 0, Math.PI * 2);
+      ctx.arc(s.x + s.w - 5, y, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.fillStyle = 'rgba(120,160,200,0.07)';
+  ctx.fillRect(s.x + s.w * 0.2, s.y, s.w * 0.16, s.h);
+  ctx.strokeStyle = 'rgba(6,4,12,0.5)';
+  ctx.lineWidth = 1.4;
+  ctx.strokeRect(s.x + 0.7, s.y + 0.7, s.w - 1.4, s.h - 1.4);
   ctx.fillStyle = 'rgba(255,255,255,0.08)';
   ctx.fillRect(s.x, s.y, s.w, 3);
 }
@@ -1635,6 +1657,15 @@ function drawShutterWall(ctx, s) {
     ctx.lineTo(s.x + s.w, y);
   }
   ctx.stroke();
+  // every fourth slat catches the light
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  for (let y = s.y + 4; y < s.y + s.h - 8; y += 40) {
+    ctx.fillRect(s.x, y, s.w, 2);
+  }
+  // guide rails either side
+  ctx.fillStyle = '#171226';
+  ctx.fillRect(s.x - 3, s.y, 3, s.h);
+  ctx.fillRect(s.x + s.w, s.y, 3, s.h);
   // bottom rail with handle: reads as a half-open rolling door
   ctx.fillStyle = '#171226';
   ctx.fillRect(s.x - 3, s.y + s.h - 8, s.w + 6, 8);
@@ -1643,8 +1674,21 @@ function drawShutterWall(ctx, s) {
 }
 
 function drawCrateBlock(ctx, s) {
-  ctx.fillStyle = '#5a4432';
+  const g = ctx.createLinearGradient(0, s.y, 0, s.y + s.h);
+  g.addColorStop(0, '#6b5240');
+  g.addColorStop(0.5, '#5a4432');
+  g.addColorStop(1, '#453325');
+  ctx.fillStyle = g;
   ctx.fillRect(s.x, s.y, s.w, s.h);
+  // plank seams
+  ctx.strokeStyle = 'rgba(20,12,8,0.35)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let y = s.y + s.h / 4; y < s.y + s.h - 4; y += s.h / 4) {
+    ctx.moveTo(s.x + 3, y);
+    ctx.lineTo(s.x + s.w - 3, y);
+  }
+  ctx.stroke();
   ctx.strokeStyle = 'rgba(20,12,8,0.5)';
   ctx.lineWidth = 3;
   ctx.strokeRect(s.x + 1.5, s.y + 1.5, s.w - 3, s.h - 3);
@@ -1654,6 +1698,17 @@ function drawCrateBlock(ctx, s) {
   ctx.moveTo(s.x + s.w, s.y);
   ctx.lineTo(s.x, s.y + s.h);
   ctx.stroke();
+  // corner brackets and a freight stencil
+  ctx.fillStyle = 'rgba(150,140,180,0.35)';
+  for (const [cx2, cy2] of [[s.x + 4, s.y + 4], [s.x + s.w - 4, s.y + 4], [s.x + 4, s.y + s.h - 4], [s.x + s.w - 4, s.y + s.h - 4]]) {
+    ctx.beginPath();
+    ctx.arc(cx2, cy2, 1.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = 'rgba(20,12,8,0.4)';
+  ctx.font = '800 9px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('WYN', s.x + s.w * 0.3, s.y + s.h * 0.32);
   ctx.fillStyle = 'rgba(255,255,255,0.07)';
   ctx.fillRect(s.x, s.y, s.w, 3);
 }
@@ -1673,6 +1728,26 @@ function drawContainer(ctx, s) {
     ctx.lineTo(x, s.y + s.h - 5);
   }
   ctx.stroke();
+  // corrugation catch-light beside each groove
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  for (let x = s.x + 14.5; x < s.x + s.w - 6; x += 14) {
+    ctx.moveTo(x, s.y + 5);
+    ctx.lineTo(x, s.y + s.h - 5);
+  }
+  ctx.stroke();
+  // door-end lock bars and a shipping code
+  ctx.fillStyle = `hsl(${hue}, 35%, 14%)`;
+  ctx.fillRect(s.x + s.w - 9, s.y + 4, 2.4, s.h - 8);
+  ctx.fillRect(s.x + s.w - 5, s.y + 4, 2.4, s.h - 8);
+  ctx.fillStyle = 'rgba(240,236,224,0.4)';
+  ctx.font = '700 8px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('MIA-' + ((s.x | 0) % 90 + 10), s.x + 6, s.y + 13);
+  // rust drip off the roof seam
+  ctx.fillStyle = 'rgba(90,40,20,0.35)';
+  ctx.fillRect(s.x + s.w * 0.32, s.y + 3, 3, s.h * 0.3);
   ctx.strokeStyle = `hsl(${hue}, 40%, 16%)`;
   ctx.lineWidth = 3;
   ctx.strokeRect(s.x + 1.5, s.y + 1.5, s.w - 3, s.h - 3);
@@ -3145,6 +3220,25 @@ function drawCart(ctx, s) {
     ctx.fillStyle = stripes[(i / 16) % 2 | 0];
     ctx.fillRect(s.x + i, s.y, Math.min(16, s.w - i), 10);
   }
+  // canopy scallops with inked undersides
+  for (let i = 8; i < s.w; i += 16) {
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.beginPath();
+    ctx.arc(s.x + i, s.y + 10, 8, 0, Math.PI);
+    ctx.fill();
+  }
+  // stacked produce under the canopy
+  ctx.fillStyle = '#e8a13c';
+  ctx.beginPath();
+  ctx.arc(s.x + s.w * 0.3, s.y + 20, 4, 0, Math.PI * 2);
+  ctx.arc(s.x + s.w * 0.42, s.y + 21, 4, 0, Math.PI * 2);
+  ctx.arc(s.x + s.w * 0.36, s.y + 15, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#a4f26b';
+  ctx.beginPath();
+  ctx.arc(s.x + s.w * 0.66, s.y + 19, 4.4, 0, Math.PI * 2);
+  ctx.arc(s.x + s.w * 0.76, s.y + 21, 4, 0, Math.PI * 2);
+  ctx.fill();
   ctx.fillStyle = '#241f33';
   ctx.beginPath();
   ctx.arc(s.x + s.w * 0.25, s.y + s.h - 8, 9, 0, Math.PI * 2);
@@ -3204,6 +3298,20 @@ function drawBarge(ctx, s, t) {
   ctx.fill();
   ctx.fillStyle = '#8a5a3a';
   ctx.fillRect(s.x - 8, s.y, s.w + 16, 5);
+  // hull plating seams and a waterline stain
+  ctx.strokeStyle = 'rgba(16,10,8,0.45)';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  for (let x = s.x + 24; x < s.x + s.w - 12; x += 48) {
+    ctx.moveTo(x, s.y + 6);
+    ctx.lineTo(x - 3, s.y + s.h - 3);
+  }
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(30,50,44,0.4)';
+  ctx.fillRect(s.x + 4, s.y + s.h - 9, s.w - 8, 9);
+  // deck cleat
+  ctx.fillStyle = '#33201a';
+  ctx.fillRect(s.x + s.w * 0.5 - 7, s.y - 4, 14, 4);
   // tire fenders
   ctx.strokeStyle = '#191325';
   ctx.lineWidth = 5;
@@ -3234,13 +3342,19 @@ function drawTrunk(ctx, s) {
     }
   }
   ctx.stroke();
-  // moss tufts on the flanks
+  // moss tufts on the flanks, and dawn light catching one edge
   ctx.fillStyle = 'rgba(90,140,70,0.3)';
   for (let y = s.y + 26; y < s.y + s.h; y += 90) {
     ctx.beginPath();
     ctx.ellipse(s.x + 4, y, 7, 14, 0.4, 0, Math.PI * 2);
     ctx.fill();
   }
+  ctx.strokeStyle = 'rgba(255,209,102,0.14)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(s.x + 2.5, s.y + 4);
+  ctx.lineTo(s.x + 2.5, s.y + s.h - 8);
+  ctx.stroke();
   // root flare at the base
   ctx.fillStyle = '#33261c';
   ctx.beginPath();
@@ -3261,6 +3375,14 @@ function drawCanopy(ctx, s) {
     const u = (i + 0.5) / 4;
     ctx.beginPath();
     ctx.ellipse(s.x + s.w * u, s.y + 4, s.w * 0.19, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // under-shadow grounding each foliage cloud on the bough
+  ctx.fillStyle = 'rgba(10,14,8,0.35)';
+  for (let i = 0; i < 4; i++) {
+    const u = (i + 0.5) / 4;
+    ctx.beginPath();
+    ctx.ellipse(s.x + s.w * u, s.y + 13, s.w * 0.15, 5, 0, 0, Math.PI);
     ctx.fill();
   }
   ctx.fillStyle = 'rgba(150,200,110,0.22)';

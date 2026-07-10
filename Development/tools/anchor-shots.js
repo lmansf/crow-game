@@ -61,6 +61,13 @@ const ANCHORS = [
   { id: 'prop-crane-mast', level: 'hall-glideway', player: [280, 620], rect: [140, 380, 340, 340] },
   { id: 'prop-radiomast-osprey', level: 'skyway-mile-zero', player: [4505, 1400], rect: [4360, 860, 320, 340] },
   { id: 'prop-archlegs', level: 'skyway-mile-zero', player: [7560, 1500], rect: [7460, 1120, 420, 320] },
+  // batch 05: structural tiles + interiors
+  { id: 'tile-steel', level: 'ocean-drive', player: [350, 620], rect: [150, 460, 420, 290] },
+  { id: 'tile-shutter-crate', level: 'wynwood-walls', player: [2350, 2100], rect: [2240, 1960, 400, 240] },
+  { id: 'tile-container', level: 'wynwood-walls', player: [4450, 2000], rect: [4220, 1740, 420, 320] },
+  { id: 'tile-cart', level: 'little-havana', player: [6250, 1960], rect: [6040, 1760, 360, 260] },
+  { id: 'tile-barge', level: 'skyway-mile-zero', player: [2650, 2250], rect: [2480, 2240, 360, 200] },
+  { id: 'tile-trunk-canopy', level: 'river-of-grass', player: [6300, 1900], rect: [6140, 1480, 400, 320] },
 ];
 
 (async () => {
