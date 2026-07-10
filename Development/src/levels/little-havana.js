@@ -73,10 +73,13 @@ export default {
   entries: {
     east: { x: 7310, y: 1970 },
     west: { x: 640, y: 1970 },
+    hub: { x: 7330, y: 1970 },
   },
   exits: [
     { x: 7368, y: 1850, w: 50, h: 150, to: 'hall-underpass', entry: 'east', label: 'WYNWOOD', dir: 1 },
     { x: 505, y: 1850, w: 70, h: 150, to: 'hall-toll', entry: 'west', label: 'THE SKYWAY', dir: -1 },
+    // the Rookery flyway, tucked between the sparkler and the paseo's end
+    { x: 7205, y: 1850, w: 56, h: 150, to: 'the-rookery', entry: 'little-havana', label: 'THE ROOKERY', linger: true, vdir: 1 },
   ],
 
   // inert junk only the ray gun can lift

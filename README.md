@@ -21,7 +21,7 @@ New traversal abilities open up previously unreachable areas, in classic metroid
 
 `Development/` contains the full mobile-friendly game built with vanilla HTML5 canvas and ES modules (no dependencies, no build step).
 You play a hurricane-blown crow collecting Shinies and unlocking movement abilities across six districts, rendered with a dynamic lightmap, bloom, per-district color grading (`src/fx.js`), mood skies (dusk, dawn, night, storm, and a night-to-dawn blend), and storm weather.
-A presentation layer on top adds trauma-based camera shake, a chromatic hit pulse, film grain, a foreground occluder parallax fringe, and directional room wipes on zone doors (all gated by the quality tiers in `src/gfx.js`; see `docs/graphics-audit.md` and `docs/art-bible.md`).
+A presentation layer on top adds trauma-based camera shake, a chromatic hit pulse, film grain, a foreground occluder parallax fringe, and seamless camera-pan seam crossings between zones (all gated by the quality tiers in `src/gfx.js`; see `docs/graphics-audit.md` and `docs/art-bible.md`).
 
 - **District 1 - Ocean Drive Rooftops**: beach to beacon across the neon rooftops, ending at THE ROOST.
 - **District 2 - Brickell Ascent**: one tall map in three strata (storm drains, downtown streets, skyline), each hiding the skill needed to climb into the next, ending at the EVERGLADES sign on EL FARO's crown.
@@ -32,13 +32,22 @@ A presentation layer on top adds trauma-based camera shake, a chromatic hit puls
 
 Each district also features a recognizable piece of real Miami: the Colony Hotel's blue neon blade and a South Beach lifeguard tower (D1), the Freedom Tower and Miami Tower (D2), the Wynwood Walls gate (D3), the Tower Theater fin and Domino Park (D4), the Stiltsville shacks (D5), and the Shark Valley observation tower (D6).
 
-The title screen and district select cards are dressed with a uniform synthwave art set (`Development/assets/`), generated in Canva to the game's palette; in-game rendering stays fully procedural.
+The title screen and the city map's district nodes are dressed with a uniform synthwave art set (`Development/assets/`), generated in Canva to the game's palette; in-game rendering stays fully procedural.
 
 ### One connected world
 
 The six districts are stitched into a single mega map by five short, themed connector hallways with glowing zone doors at both ends: the Storm Drain Mouth (D1-D2), the Glide-Way (D2-D3, dusk turns to dawn as you cross), the Painted Underpass (D3-D4), the Toll Ramp (D4-D5, the rain starts halfway), and the Last Causeway (D5-D6).
-Walking through a door fades out, swaps the zone, and fades back in; every ability you have earned walks through with you, and you can backtrack the whole world in either direction.
+Crossing a seam never fades to black: the outgoing view and the incoming zone tile edge-to-edge and slide together as one short camera pan (a dissolve for the tractor beam), your momentum carries across, and every ability you have earned walks through with you - the city plays as one continuous place.
 The complete screen's NEXT button follows the same path.
+
+### The Rookery (hub) and the Magpie's shop
+
+Beneath the city sits **THE ROOKERY**, a crow-run night market and the world's hub. Every district hides a low flyway gate near its start (the first one is sunk into the Ocean Drive dune); stand inside a gate and hold still for a beat, and the flyway carries you down to the market. From the Rookery, six gates lead back out - one per district.
+Only the Ocean Drive gate starts open. The **Magpie's stall** in the middle of the market sells **map fragments** for shinies (every shiny you collect anywhere also lands in a persistent wallet): each fragment charts a district on the city map *and* unseals its Rookery gate, so shinies buy early access and fast travel across the whole city.
+
+### One city map
+
+The menu shows the whole world as a single map: the route snakes beach-to-glades through all six districts with the Rookery hanging beneath, dashed flyway lines marking which hub gates are open. Districts you have never visited (and hold no fragment for) stay uncharted silhouettes; visit a place or buy its fragment and it fills in with its art, name, and your best run.
 
 ### The three-room structure
 
@@ -105,7 +114,7 @@ A runtime autoscaler still sheds effects under sustained frame-time pressure, so
 
 Levels are plain data files.
 Copy `Development/src/levels/ocean-drive.js`, edit the geometry and entities, and register the new file in `Development/src/levels/index.js`.
-The district select screen, save data, and HUD pick it up automatically.
+The save data and HUD pick it up automatically; to put it on the city map, give it a spot in `MAP_SPOTS` (`Development/src/ui.js`) and, if it should hang off the hub, a gate in `Development/src/levels/rookery.js`.
 
 The original prototype is preserved as `Development/prototype-v0.html`.
 

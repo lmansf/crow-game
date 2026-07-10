@@ -106,14 +106,17 @@ export default {
     drops: 'hook',
   },
 
-  // mega-map doors at both street ends
+  // mega-map doors at both street ends, plus the Rookery flyway off the
+  // hub courtyard
   entries: {
     west: { x: 250, y: 2170 },
     east: { x: 5640, y: 2170 },
+    hub: { x: 2760, y: 2170 },
   },
   exits: [
     { x: 0, y: 2050, w: 70, h: 150, to: 'hall-glideway', entry: 'east', label: 'THE GLIDE-WAY', dir: -1 },
     { x: 5730, y: 2050, w: 70, h: 150, to: 'hall-underpass', entry: 'west', label: 'CALLE OCHO', dir: 1 },
+    { x: 2650, y: 2050, w: 64, h: 150, to: 'the-rookery', entry: 'wynwood-walls', label: 'THE ROOKERY', linger: true, vdir: 1 },
   ],
 
   buildings: [

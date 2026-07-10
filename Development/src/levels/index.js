@@ -10,6 +10,7 @@ import skywayMileZero from './skyway-mile-zero.js';
 import riverOfGrass from './river-of-grass.js';
 import { hallDrain, hallGlideway, hallUnderpass, hallToll, hallCauseway } from './hallways.js';
 import ufo from './ufo.js';
+import rookery from './rookery.js';
 
 export const LEVELS = [
   oceanDrive,
@@ -24,10 +25,8 @@ export const LEVELS = [
   hallCauseway,
   riverOfGrass,
   ufo, // hidden: reachable only through the green light
+  rookery, // the hub under everything, off the linear itinerary
 ];
-
-// Shown as locked cards on the district select screen.
-export const COMING_SOON = [];
 
 export function getLevelData(id) {
   return LEVELS.find((l) => l.id === id) || null;

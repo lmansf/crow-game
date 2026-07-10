@@ -60,11 +60,22 @@
   <div class="fineprint">best in landscape, sound on</div>
 </div>
 
-<!-- Level select -->
-<div id="screen-levels" class="screen hidden">
-  <h2 class="screen-heading">DISTRICTS</h2>
-  <div id="level-cards"></div>
-  <button id="btn-levels-back" class="ghost-btn">back</button>
+<!-- The city map: one Miami, six districts, one hub under it all -->
+<div id="screen-map" class="screen hidden">
+  <h2 class="screen-heading">THE CITY</h2>
+  <div id="map-wallet" class="wallet-chip"></div>
+  <div id="city-map"></div>
+  <div class="fineprint" id="map-hint">one city, one map — fragments of it are sold at the Rookery</div>
+  <button id="btn-map-back" class="ghost-btn">back</button>
+</div>
+
+<!-- The Magpie's stall -->
+<div id="screen-shop" class="screen overlay hidden">
+  <h2 class="screen-heading gold-glow">THE MAGPIE</h2>
+  <div class="fineprint">"maps, dear. genuine stolen city maps. shinies only."</div>
+  <div id="shop-wallet" class="wallet-chip"></div>
+  <div id="shop-items"></div>
+  <button id="btn-shop-close" class="big-btn">BACK TO THE MARKET</button>
 </div>
 
 <!-- Story intro -->
