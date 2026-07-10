@@ -68,6 +68,18 @@ const ANCHORS = [
   { id: 'tile-cart', level: 'little-havana', player: [6250, 1960], rect: [6040, 1760, 360, 260] },
   { id: 'tile-barge', level: 'skyway-mile-zero', player: [2650, 2250], rect: [2480, 2240, 360, 200] },
   { id: 'tile-trunk-canopy', level: 'river-of-grass', player: [6300, 1900], rect: [6140, 1480, 400, 320] },
+  // batch 06: final sweep - interactives and landmarks
+  { id: 'int-puzzle', level: 'ocean-drive', player: [3120, 1300], rect: [2940, 1040, 400, 300] },
+  { id: 'int-hooks', level: 'wynwood-walls', player: [2600, 1480], rect: [2360, 1220, 480, 420] },
+  { id: 'int-rails', level: 'little-havana', player: [6500, 1250], rect: [6260, 1030, 460, 280] },
+  { id: 'int-wind', level: 'skyway-mile-zero', player: [5000, 1300], rect: [4640, 1140, 560, 320] },
+  { id: 'int-cage-vine', level: 'river-of-grass', player: [6900, 2200], rect: [6680, 2140, 560, 300] },
+  { id: 'int-beam-curio', level: 'brickell-ascent', player: [340, 1300], rect: [120, 1040, 400, 300] },
+  { id: 'lm-brickell', level: 'brickell-ascent', player: [1400, 2300], rect: [900, 1860, 900, 480] },
+  { id: 'lm-wynwoodgate', level: 'wynwood-walls', player: [3000, 2000], rect: [2790, 1830, 420, 380] },
+  { id: 'lm-stilthouse', level: 'skyway-mile-zero', player: [2100, 2300], rect: [1920, 2120, 420, 320] },
+  { id: 'lm-sharktower', level: 'river-of-grass', player: [4800, 1900], rect: [4620, 1520, 400, 460] },
+  { id: 'int-specimens', level: 'ufo', player: [1240, 800], rect: [940, 620, 640, 280] },
 ];
 
 (async () => {

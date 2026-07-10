@@ -23,8 +23,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "PWA icon (generated)"
+   "status": "conformed",
+   "note": "PWA icon (generated) \u00b7 generated this cycle to master palette"
   },
   {
    "id": "assets/card-1.jpg",
@@ -48,8 +48,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/card-2.jpg",
@@ -73,8 +73,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/card-3.jpg",
@@ -98,8 +98,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/card-4.jpg",
@@ -123,8 +123,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/card-5.jpg",
@@ -148,8 +148,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/card-6.jpg",
@@ -173,8 +173,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/icon-192.png",
@@ -198,8 +198,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "PWA icon (generated)"
+   "status": "conformed",
+   "note": "PWA icon (generated) \u00b7 generated this cycle to master palette"
   },
   {
    "id": "assets/icon-512.png",
@@ -223,8 +223,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "PWA icon (generated)"
+   "status": "conformed",
+   "note": "PWA icon (generated) \u00b7 generated this cycle to master palette"
   },
   {
    "id": "assets/menu-bg.jpg",
@@ -248,8 +248,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "src/background.js::drawPalmSil",
@@ -776,8 +776,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawPlatform",
@@ -1203,8 +1203,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawWater",
@@ -1251,8 +1251,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawWind",
@@ -1275,8 +1275,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawLilyPad",
@@ -1299,8 +1299,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawCage",
@@ -1323,8 +1323,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawThornVine",
@@ -1347,8 +1347,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawGrateBeam",
@@ -1956,8 +1956,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawPuzzleDisplay",
@@ -1980,8 +1980,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawBeam",
@@ -2004,8 +2004,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawCurio",
@@ -2028,8 +2028,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawCurioIcon",
@@ -2052,8 +2052,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawSpecimen",
@@ -2076,8 +2076,8 @@
     "ufo"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawLandmark",
@@ -2100,8 +2100,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawMiamiTower",
@@ -2124,8 +2124,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawWynwoodGate",
@@ -2148,8 +2148,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawStiltHouse",
@@ -2172,8 +2172,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawCruiseShip",
@@ -2196,8 +2196,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawSharkValleyTower",
@@ -2220,8 +2220,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawFreedomTower",
@@ -2244,8 +2244,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/player.js::drawWing",
@@ -2580,8 +2580,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "radial spark burst (collect, impacts, boss hits)"
+   "status": "conformed",
+   "note": "radial spark burst (collect, impacts, boss hits) \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/particles.js::feathers",
@@ -2604,8 +2604,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "crow feather puffs"
+   "status": "conformed",
+   "note": "crow feather puffs \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/particles.js::dust",
@@ -2628,8 +2628,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "landing dust"
+   "status": "conformed",
+   "note": "landing dust \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/particles.js::trail",
@@ -2652,8 +2652,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "drifting trail motes (vents, curios)"
+   "status": "conformed",
+   "note": "drifting trail motes (vents, curios) \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/fx.js::lighting",
@@ -2676,8 +2676,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "dynamic lightmap composite"
+   "status": "conformed",
+   "note": "dynamic lightmap composite \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/fx.js::bloom",
@@ -2700,8 +2700,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "neon bloom"
+   "status": "conformed",
+   "note": "neon bloom \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/fx.js::grain",
@@ -2724,8 +2724,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "film grain"
+   "status": "conformed",
+   "note": "film grain \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/fx.js::chroma",
@@ -2748,8 +2748,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "chromatic hit pulse"
+   "status": "conformed",
+   "note": "chromatic hit pulse \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/fx.js::grade",
@@ -2772,8 +2772,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "per-district color grade"
+   "status": "conformed",
+   "note": "per-district color grade \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/player.js::clip:idle",
@@ -3084,8 +3084,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "9 inline SVG glyphs (HUD shiny, mute, pause, touch pad, favicon)"
+   "status": "conformed",
+   "note": "9 inline SVG glyphs (HUD shiny, mute, pause, touch pad, favicon) \u00b7 DOM/CSS UI reworked to master style this cycle (city map, shop)"
   },
   {
    "id": "style.css::screens-and-hud",
@@ -3108,8 +3108,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "all menus/HUD are DOM+CSS; no panel images anywhere"
+   "status": "conformed",
+   "note": "all menus/HUD are DOM+CSS; no panel images anywhere \u00b7 DOM/CSS UI reworked to master style this cycle (city map, shop)"
   },
   {
    "id": "font-stack",
@@ -3133,8 +3133,8 @@
     "all"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "\"Segoe UI\", system-ui - no font files shipped"
+   "status": "conformed",
+   "note": "\"Segoe UI\", system-ui - no font files shipped \u00b7 DOM/CSS UI reworked to master style this cycle (city map, shop)"
   }
  ]
 }
