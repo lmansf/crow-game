@@ -330,27 +330,39 @@ function drawGullKing(ctx, e, t, stunned) {
   ctx.scale(e.facing * S, S);
   if (stunned) ctx.rotate(0.5);
   const flap = e.state === 'dive' ? -0.6 : stunned ? 0.9 : Math.sin(t * (e.state === 'aim' ? 20 : 7)) * 0.7;
-  ctx.strokeStyle = '#e0dac8';
-  ctx.lineWidth = 5.5;
-  ctx.lineCap = 'round';
+  // far wing: filled shape with ragged grey primaries befitting an old king
+  ctx.fillStyle = '#c2bba8';
   ctx.beginPath();
-  ctx.moveTo(-2, -2);
-  ctx.quadraticCurveTo(-11, -6 - flap * 9, -22, -4 - flap * 15);
-  ctx.moveTo(2, -2);
-  ctx.quadraticCurveTo(9, -6 - flap * 9, 18, -4 - flap * 13);
-  ctx.stroke();
-  ctx.strokeStyle = '#7a7262';
-  ctx.lineWidth = 3.8;
-  ctx.beginPath();
-  ctx.moveTo(-22, -4 - flap * 15);
+  ctx.moveTo(-2, -3);
+  ctx.quadraticCurveTo(-12, -8 - flap * 9, -22, -4 - flap * 15);
   ctx.lineTo(-29, -2 - flap * 17);
-  ctx.stroke();
+  ctx.quadraticCurveTo(-13, 1 - flap * 3, -1, 2.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#7a7262';
+  ctx.beginPath();
+  ctx.moveTo(-21, -4.5 - flap * 15);
+  ctx.lineTo(-30.5, -1.5 - flap * 17.5);
+  ctx.lineTo(-18, -1 - flap * 12);
+  ctx.closePath();
+  ctx.fill();
+  // ink silhouette under the main mass
+  ctx.fillStyle = 'rgba(6,4,12,0.45)';
+  ctx.beginPath();
+  ctx.ellipse(0.5, 0, 15.2, 10, 0.05, 0, Math.PI * 2);
+  ctx.fill();
+  // body: three values, weathered mantle
   const g = ctx.createLinearGradient(0, -9, 0, 9);
   g.addColorStop(0, '#f4f0e4');
+  g.addColorStop(0.55, '#ddd6c4');
   g.addColorStop(1, '#a8a292');
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(0, 0, 14, 9, 0.05, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(150,142,124,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(-3, -4, 8.5, 3.6, 0.08, Math.PI, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = 'rgba(122,114,98,0.6)';
   ctx.lineWidth = 1;
@@ -369,6 +381,33 @@ function drawGullKing(ctx, e, t, stunned) {
   ctx.moveTo(15.5, -7.5);
   ctx.lineTo(24, -4.5);
   ctx.lineTo(15.5, -2.5);
+  ctx.fill();
+  // gonys spot and a battle scar over the brow
+  ctx.fillStyle = '#c9503c';
+  ctx.beginPath();
+  ctx.arc(19.4, -3.4, 1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(122,114,98,0.7)';
+  ctx.lineWidth = 0.9;
+  ctx.beginPath();
+  ctx.moveTo(8, -10.5);
+  ctx.lineTo(10.5, -8);
+  ctx.stroke();
+  // near wing: lighter fill over the body
+  ctx.fillStyle = '#efe9d8';
+  ctx.beginPath();
+  ctx.moveTo(2, -3);
+  ctx.quadraticCurveTo(9, -8 - flap * 9, 18, -4 - flap * 13);
+  ctx.lineTo(23, -2 - flap * 14.5);
+  ctx.quadraticCurveTo(11, 1 - flap * 3, 3, 2.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#8a8272';
+  ctx.beginPath();
+  ctx.moveTo(17.5, -4.5 - flap * 13);
+  ctx.lineTo(24, -1.5 - flap * 15);
+  ctx.lineTo(16, -1 - flap * 10);
+  ctx.closePath();
   ctx.fill();
   crown(ctx, 7.5, -11);
   ctx.fillStyle = e.state === 'aim' || e.state === 'dive' ? '#e83c4b' : '#191325';
@@ -403,15 +442,21 @@ function drawRatKing(ctx, e, t, stunned) {
   ctx.moveTo(-11, 2);
   ctx.quadraticCurveTo(-22, 5 - scurry, -30, -3 + scurry);
   ctx.stroke();
-  // body
+  // ink silhouette under the main mass
+  ctx.fillStyle = 'rgba(6,4,12,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(1, -0.5, 15, 9.6, 0.1, 0, Math.PI * 2);
+  ctx.fill();
+  // body: three values of sewer-king grey
   const g = ctx.createLinearGradient(0, -9, 0, 8);
-  g.addColorStop(0, '#6a5f70');
-  g.addColorStop(1, '#3c3444');
+  g.addColorStop(0, '#75687c');
+  g.addColorStop(0.5, '#584d62');
+  g.addColorStop(1, '#352d3e');
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(0, 0, 13.5, 8.5, 0.08, 0, Math.PI * 2);
   ctx.fill();
-  // mangy scars
+  // mangy scars and matted fur tufts
   ctx.strokeStyle = 'rgba(20,14,24,0.5)';
   ctx.lineWidth = 1;
   ctx.beginPath();
@@ -419,6 +464,19 @@ function drawRatKing(ctx, e, t, stunned) {
   ctx.lineTo(-2, -1);
   ctx.moveTo(2, 3);
   ctx.lineTo(6, 5);
+  ctx.moveTo(-9, 1);
+  ctx.lineTo(-6, 2.6);
+  ctx.moveTo(-2, -6.5);
+  ctx.lineTo(1, -4.8);
+  ctx.stroke();
+  // ragged tail notches
+  ctx.strokeStyle = 'rgba(20,14,24,0.6)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(-18, 3.2);
+  ctx.lineTo(-19.4, 1.4);
+  ctx.moveTo(-24, 1.4);
+  ctx.lineTo(-25.2, -0.6);
   ctx.stroke();
   // head, notched ear, snout with teeth
   ctx.fillStyle = g;
@@ -475,15 +533,27 @@ function drawIguanodon(ctx, e, t, stunned) {
   ctx.quadraticCurveTo(-24, -3 + Math.sin(t * 2) * 3, -34, 5);
   ctx.stroke();
   ctx.setLineDash([]);
-  // body
+  // ink silhouette under the main mass
+  ctx.fillStyle = 'rgba(6,4,12,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(1.5, -0.5, 15.6, 8.4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // body: three ancient greens with scale speckles
   const g = ctx.createLinearGradient(0, -9, 0, 9);
-  g.addColorStop(0, '#5e9e50');
-  g.addColorStop(1, '#2c5228');
+  g.addColorStop(0, '#6cae5c');
+  g.addColorStop(0.5, '#47803d');
+  g.addColorStop(1, '#24451f');
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(0, 0, 14.5, 7.5, 0, 0, Math.PI * 2);
   ctx.fill();
-  // tall spines
+  ctx.fillStyle = 'rgba(160,210,130,0.35)';
+  for (const [sx2, sy2] of [[-8, -1], [-4, 3], [1, -2.4], [6, 1.6], [9, -1]]) {
+    ctx.beginPath();
+    ctx.arc(sx2, sy2, 1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // tall spines rising from an inked ridge
   ctx.fillStyle = '#8ec26e';
   for (let i = -2; i <= 2; i++) {
     ctx.beginPath();
@@ -492,16 +562,33 @@ function drawIguanodon(ctx, e, t, stunned) {
     ctx.lineTo(i * 5.4 + 2.4, -6);
     ctx.fill();
   }
-  // head with grand dewlap
+  ctx.strokeStyle = 'rgba(26,42,22,0.6)';
+  ctx.lineWidth = 1.1;
+  ctx.beginPath();
+  ctx.moveTo(-13, -5.6);
+  ctx.lineTo(13, -5.6);
+  ctx.stroke();
+  // head with grand dewlap (lit from the dawn above)
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(13.5, -2.5, 6.6, 5, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = '#e8a13c';
+  const dg = ctx.createLinearGradient(0, 2, 0, 12);
+  dg.addColorStop(0, '#f2b654');
+  dg.addColorStop(1, '#b8771e');
+  ctx.fillStyle = dg;
   ctx.beginPath();
   ctx.moveTo(10.5, 2);
   ctx.quadraticCurveTo(13.5, 12, 17.5, 2);
   ctx.fill();
+  ctx.strokeStyle = 'rgba(120,70,20,0.5)';
+  ctx.lineWidth = 0.9;
+  ctx.beginPath();
+  ctx.moveTo(12, 3.5);
+  ctx.lineTo(13.2, 8);
+  ctx.moveTo(15.5, 3.5);
+  ctx.lineTo(14.6, 8);
+  ctx.stroke();
   crown(ctx, 10, -8.5);
   ctx.fillStyle = e.state === 'charge' || e.state === 'aim' ? '#e83c4b' : '#191325';
   ctx.beginPath();
@@ -515,13 +602,28 @@ function drawPinataBull(ctx, e, t, stunned) {
   if (stunned) ctx.rotate(0.4);
   const rear = e.state === 'aim' ? -0.25 : 0;
   ctx.rotate(rear);
-  // fringed body in festival bands
-  const stripes = ['#ff4fa3', '#ffd166', '#35e0e0', '#a4f26b'];
+  // ink silhouette under the papier-mache
+  ctx.fillStyle = 'rgba(6,4,12,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(0, -1, 15.4, 11.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // fringed body in festival bands, shaded and paper-torn
+  const stripes = [['#ff4fa3', '#c23a80'], ['#ffd166', '#cfa03e'], ['#35e0e0', '#22a3a3'], ['#a4f26b', '#76bd45']];
   for (let i = 0; i < 4; i++) {
-    ctx.fillStyle = stripes[i];
+    const bg2 = ctx.createLinearGradient(0, -11 + i * 3.4, 0, -1 + i * 3.4);
+    bg2.addColorStop(0, stripes[i][0]);
+    bg2.addColorStop(1, stripes[i][1]);
+    ctx.fillStyle = bg2;
     ctx.beginPath();
     ctx.ellipse(0, -6 + i * 3.4, 14 - i * 1.2, 5, 0, 0, Math.PI * 2);
     ctx.fill();
+    ctx.strokeStyle = 'rgba(6,4,12,0.3)';
+    ctx.lineWidth = 1.1;
+    ctx.setLineDash([1.8, 2]);
+    ctx.beginPath();
+    ctx.ellipse(0, -6 + i * 3.4, 14 - i * 1.2, 5, 0, Math.PI * 0.15, Math.PI * 0.85);
+    ctx.stroke();
+    ctx.setLineDash([]);
   }
   // sturdy legs
   ctx.strokeStyle = '#c9366f';
@@ -581,24 +683,44 @@ function drawKingCrab(ctx, e, t, stunned) {
     ctx.lineTo(s * 18, 10 - skit * s);
   }
   ctx.stroke();
-  // barnacled shell
+  // ink silhouette under the shell
+  ctx.fillStyle = 'rgba(6,4,12,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(0, -2, 14.4, 10, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // barnacled shell: three storm-wet values with a rain sheen
   const g = ctx.createLinearGradient(0, -10, 0, 8);
-  g.addColorStop(0, '#e86a4d');
-  g.addColorStop(1, '#93321f');
+  g.addColorStop(0, '#f07a5a');
+  g.addColorStop(0.5, '#c44a30');
+  g.addColorStop(1, '#7e2a18');
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(0, -2, 13, 9, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = 'rgba(240,236,224,0.5)';
-  for (const [bx, by] of [[-5, -6], [3, -8], [7, -3]]) {
+  ctx.strokeStyle = 'rgba(190,235,255,0.35)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(-1, -4, 10, Math.PI * 1.2, Math.PI * 1.6);
+  ctx.stroke();
+  // barnacles: ringed, not just dots
+  for (const [bx, by] of [[-5, -6], [3, -8], [7, -3], [-9, -2]]) {
+    ctx.fillStyle = 'rgba(240,236,224,0.5)';
     ctx.beginPath();
     ctx.arc(bx, by, 1.4, 0, Math.PI * 2);
     ctx.fill();
+    ctx.strokeStyle = 'rgba(94,31,18,0.6)';
+    ctx.lineWidth = 0.7;
+    ctx.beginPath();
+    ctx.arc(bx, by, 2.1, 0, Math.PI * 2);
+    ctx.stroke();
   }
-  // royal claws
-  ctx.fillStyle = '#e86a4d';
+  // royal claws with serrated pincers
   for (const s of [-1, 1]) {
     const cy = clawUp ? -15 : -7;
+    const cg = ctx.createLinearGradient(0, cy - 4.2, 0, cy + 4.2);
+    cg.addColorStop(0, '#f07a5a');
+    cg.addColorStop(1, '#93321f');
+    ctx.fillStyle = cg;
     ctx.beginPath();
     ctx.ellipse(s * 13, cy, 5.4, 4.2, s * 0.4, 0, Math.PI * 2);
     ctx.fill();
@@ -607,6 +729,13 @@ function drawKingCrab(ctx, e, t, stunned) {
     ctx.beginPath();
     ctx.moveTo(s * 16, cy - 3);
     ctx.lineTo(s * 18.5, cy);
+    ctx.moveTo(s * 15.2, cy - 1);
+    ctx.lineTo(s * 17, cy + 1);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(6,4,12,0.45)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.ellipse(s * 13, cy, 5.4, 4.2, s * 0.4, 0, Math.PI * 2);
     ctx.stroke();
   }
   crown(ctx, -3.4, -10.5);
@@ -645,14 +774,25 @@ function drawSnapper(ctx, e, t, stunned) {
   ctx.moveTo(7, 6);
   ctx.lineTo(9 - pad, 11);
   ctx.stroke();
-  // ancient shell with moss
+  // ink silhouette under the shell
+  ctx.fillStyle = 'rgba(6,4,12,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(0, -2, 15.4, 10.6, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // ancient shell: three mossy values with a dawn-gold rim
   const g = ctx.createLinearGradient(0, -11, 0, 8);
-  g.addColorStop(0, '#5a6e44');
-  g.addColorStop(1, '#33402a');
+  g.addColorStop(0, '#68804e');
+  g.addColorStop(0.5, '#48593a');
+  g.addColorStop(1, '#2a3522');
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(0, -2, 14, 9.5, 0, 0, Math.PI * 2);
   ctx.fill();
+  ctx.strokeStyle = 'rgba(255,209,102,0.3)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.ellipse(0, -2, 12.6, 8.2, 0, Math.PI * 1.1, Math.PI * 1.7);
+  ctx.stroke();
   // scute plates
   ctx.strokeStyle = 'rgba(20,26,16,0.6)';
   ctx.lineWidth = 1.4;
@@ -664,10 +804,22 @@ function drawSnapper(ctx, e, t, stunned) {
   ctx.moveTo(-12, -3);
   ctx.lineTo(12, -3);
   ctx.stroke();
+  // moss and hanging algae wisps
   ctx.fillStyle = 'rgba(90,140,70,0.4)';
   ctx.beginPath();
   ctx.ellipse(-6, -8, 4, 2.4, 0.3, 0, Math.PI * 2);
   ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(5, -9.5, 3, 1.8, -0.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(90,140,70,0.45)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-11, 4);
+  ctx.quadraticCurveTo(-11.6, 7, -10.6, 9);
+  ctx.moveTo(-3, 6.6);
+  ctx.quadraticCurveTo(-3.4, 9, -2.6, 10.6);
+  ctx.stroke();
   // beaked head
   ctx.fillStyle = '#6a7c50';
   ctx.beginPath();

@@ -40,6 +40,18 @@ const ANCHORS = [
   { id: 'prop-lamp', level: 'the-rookery', player: [470, 660], rect: [380, 480, 260, 240] },
   { id: 'prop-cable', level: 'hall-glideway', player: [500, 620], rect: [360, 480, 300, 200] },
   { id: 'vent-grill', level: 'ocean-drive', player: [3600, 740], rect: [3460, 560, 260, 240] },
+  // batch 03: the bestiary (enemies at spawn pose, bosses idle in their dens)
+  { id: 'enemy-rat', level: 'brickell-ascent', player: [700, 3140], rect: [500, 3080, 220, 160] },
+  { id: 'enemy-iguana', level: 'wynwood-walls', player: [2780, 2170], rect: [2580, 2080, 220, 160] },
+  { id: 'enemy-imp', level: 'little-havana', player: [7300, 1970], rect: [7050, 1870, 220, 170] },
+  { id: 'enemy-crab', level: 'skyway-mile-zero', player: [500, 2370], rect: [600, 2280, 220, 160] },
+  { id: 'enemy-snake', level: 'river-of-grass', player: [650, 2470], rect: [750, 2370, 220, 170] },
+  { id: 'boss-gullking', level: 'ocean-drive', player: [5150, 560], rect: [5020, 330, 320, 260] },
+  { id: 'boss-ratking', level: 'brickell-ascent', player: [1950, 3140], rect: [1940, 3020, 330, 240] },
+  { id: 'boss-iguanodon', level: 'wynwood-walls', player: [3750, 1660], rect: [3740, 1520, 330, 240] },
+  { id: 'boss-pinatabull', level: 'little-havana', player: [3850, 1950], rect: [3840, 1810, 330, 240] },
+  { id: 'boss-kingcrab', level: 'skyway-mile-zero', player: [3850, 2360], rect: [3840, 2210, 330, 240] },
+  { id: 'boss-snapper', level: 'river-of-grass', player: [5150, 2450], rect: [5140, 2310, 330, 240] },
 ];
 
 (async () => {
