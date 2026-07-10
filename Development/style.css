@@ -230,17 +230,27 @@ html, body {
 
 /* ---------- touch controls ---------- */
 #touch-controls { position: fixed; inset: 0; z-index: 22; pointer-events: none; }
+/* The pads own the pointer events (input.js routes each touch to the
+   nearest button), and their padding is the invisible grab zone around
+   the visible circles. Anchors subtract the padding so the buttons stay
+   in place. */
 .pad-left {
-  position: absolute; left: calc(16px + var(--sa-l)); bottom: calc(18px + var(--sa-b));
+  position: absolute; left: calc(-6px + var(--sa-l)); bottom: calc(-4px + var(--sa-b));
+  padding: 22px;
   display: flex; gap: 14px;
+  pointer-events: auto; touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .pad-right {
-  position: absolute; right: calc(16px + var(--sa-r)); bottom: calc(18px + var(--sa-b));
+  position: absolute; right: calc(-6px + var(--sa-r)); bottom: calc(-4px + var(--sa-b));
+  padding: 22px;
   display: flex; gap: 14px; align-items: flex-end;
+  pointer-events: auto; touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .tbtn {
-  pointer-events: auto;
-  width: 68px; height: 68px;
+  pointer-events: none;
+  width: 74px; height: 74px;
   border-radius: 50%;
   border: 1.5px solid rgba(232, 226, 242, 0.35);
   background: rgba(24, 14, 42, 0.42);

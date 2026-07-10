@@ -96,29 +96,94 @@ export function initInput() {
     }
   }, { capture: true });
 
-  bindHoldButton('btn-left', () => { input.left = true; }, () => { input.left = false; });
-  bindHoldButton('btn-right', () => { input.right = true; }, () => { input.right = false; });
-  bindHoldButton('btn-jump', () => { input.pressJump(); }, () => { input.jumpHeld = false; });
-  bindHoldButton('btn-dash', () => { input.pressDash(); }, () => {});
+  bindPad('.pad-left', {
+    'btn-left': { down: () => { input.left = true; }, up: () => { input.left = false; } },
+    'btn-right': { down: () => { input.right = true; }, up: () => { input.right = false; } },
+  });
+  bindPad('.pad-right', {
+    'btn-dash': { down: () => { input.pressDash(); }, up: () => {} },
+    'btn-jump': { down: () => { input.pressJump(); }, up: () => { input.jumpHeld = false; } },
+  });
 }
 
-function bindHoldButton(id, onDown, onUp) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const down = (e) => {
-    e.preventDefault();
-    el.setPointerCapture?.(e.pointerId);
-    el.classList.add('pressed');
-    onDown();
+// Each pad routes its own pointers so thumbs are forgiven everything:
+// a touch anywhere near a button snaps to the nearest one, sliding
+// between buttons switches the hold without lifting, and drifting off
+// a held button keeps it held until the finger lifts.
+const GRAB_RANGE = 44;    // how far outside a button a fresh tap still lands
+const SWITCH_RANGE = 16;  // how close to a neighbor a slide must get to switch
+
+function distToRect(x, y, r) {
+  const dx = Math.max(r.left - x, 0, x - r.right);
+  const dy = Math.max(r.top - y, 0, y - r.bottom);
+  return Math.hypot(dx, dy);
+}
+
+function bindPad(sel, actions) {
+  const pad = document.querySelector(sel);
+  if (!pad) return;
+  const btns = Object.keys(actions)
+    .map((id) => document.getElementById(id))
+    .filter(Boolean);
+  const owner = new Map();  // pointerId -> button element
+  const holds = new Map();  // button element -> Set of pointerIds
+
+  const pick = (x, y, limit) => {
+    let best = null;
+    let bestD = Infinity;
+    for (const el of btns) {
+      if (el.classList.contains('locked')) continue;
+      const d = distToRect(x, y, el.getBoundingClientRect());
+      if (d < bestD) { bestD = d; best = el; }
+    }
+    return bestD <= limit ? best : null;
   };
-  const up = (e) => {
-    e.preventDefault();
-    el.classList.remove('pressed');
-    onUp();
+
+  const press = (id, el) => {
+    owner.set(id, el);
+    let set = holds.get(el);
+    if (!set) { set = new Set(); holds.set(el, set); }
+    set.add(id);
+    if (set.size === 1) {
+      el.classList.add('pressed');
+      actions[el.id].down();
+    }
   };
-  el.addEventListener('pointerdown', down);
-  el.addEventListener('pointerup', up);
-  el.addEventListener('pointercancel', up);
-  el.addEventListener('lostpointercapture', up);
-  el.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  const release = (id) => {
+    const el = owner.get(id);
+    if (!el) return;
+    owner.delete(id);
+    const set = holds.get(el);
+    set?.delete(id);
+    if (!set || set.size === 0) {
+      el.classList.remove('pressed');
+      actions[el.id].up();
+    }
+  };
+
+  pad.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    try { pad.setPointerCapture?.(e.pointerId); } catch { /* capture is a nicety, never a requirement */ }
+    const el = pick(e.clientX, e.clientY, GRAB_RANGE);
+    if (el) press(e.pointerId, el);
+  });
+
+  pad.addEventListener('pointermove', (e) => {
+    if (!owner.has(e.pointerId)) return;
+    e.preventDefault();
+    const el = pick(e.clientX, e.clientY, SWITCH_RANGE);
+    if (el && el !== owner.get(e.pointerId)) {
+      release(e.pointerId);
+      press(e.pointerId, el);
+    }
+  });
+
+  const lift = (e) => {
+    e.preventDefault();
+    release(e.pointerId);
+  };
+  pad.addEventListener('pointerup', lift);
+  pad.addEventListener('pointercancel', lift);
+  pad.addEventListener('contextmenu', (e) => e.preventDefault());
 }
