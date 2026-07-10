@@ -272,8 +272,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/boss.js::drawGullKing",
@@ -1127,7 +1127,7 @@
     "wynwood-walls"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1154,7 +1154,7 @@
     "wynwood-walls"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1372,8 +1372,8 @@
     "hallways"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawFence",
@@ -1590,8 +1590,8 @@
     "rookery"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawRooster",
@@ -1615,7 +1615,7 @@
     "little-havana"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1639,7 +1639,7 @@
     "little-havana"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1664,7 +1664,7 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1688,8 +1688,8 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawOsprey",
@@ -1712,8 +1712,8 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawTruck",
@@ -1737,7 +1737,7 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1762,7 +1762,7 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1787,7 +1787,7 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1812,8 +1812,8 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawArchLegs",
@@ -1836,7 +1836,7 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1860,7 +1860,7 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1884,8 +1884,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawExitDoor",

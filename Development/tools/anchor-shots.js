@@ -52,6 +52,15 @@ const ANCHORS = [
   { id: 'boss-pinatabull', level: 'little-havana', player: [3850, 1950], rect: [3840, 1810, 330, 240] },
   { id: 'boss-kingcrab', level: 'skyway-mile-zero', player: [3850, 2360], rect: [3840, 2210, 330, 240] },
   { id: 'boss-snapper', level: 'river-of-grass', player: [5150, 2450], rect: [5140, 2310, 330, 240] },
+  // batch 04: district props
+  { id: 'prop-rooster', level: 'hall-underpass', player: [1200, 660], rect: [1120, 540, 260, 190] },
+  { id: 'prop-pergola', level: 'little-havana', player: [3960, 1960], rect: [3760, 1800, 420, 230] },
+  { id: 'prop-truck-pylon', level: 'hall-toll', player: [900, 660], rect: [580, 440, 680, 290] },
+  { id: 'prop-boardwalk-reeds', level: 'hall-causeway', player: [420, 660], rect: [180, 480, 560, 250] },
+  { id: 'prop-bigpipe', level: 'hall-drain', player: [700, 660], rect: [520, 320, 460, 220] },
+  { id: 'prop-crane-mast', level: 'hall-glideway', player: [280, 620], rect: [140, 380, 340, 340] },
+  { id: 'prop-radiomast-osprey', level: 'skyway-mile-zero', player: [4505, 1400], rect: [4360, 860, 320, 340] },
+  { id: 'prop-archlegs', level: 'skyway-mile-zero', player: [7560, 1500], rect: [7460, 1120, 420, 320] },
 ];
 
 (async () => {

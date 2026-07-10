@@ -2629,11 +2629,24 @@ function drawMast(ctx, d, groundY) {
     ctx.lineTo(x1 - 4, y);
   }
   ctx.stroke();
-  // operator cab near the top
-  ctx.fillStyle = '#4a4458';
+  // operator cab near the top, its window still warm
+  const cg2 = ctx.createLinearGradient(0, d.y0 + 46, 0, d.y0 + 80);
+  cg2.addColorStop(0, '#565068');
+  cg2.addColorStop(1, '#3d3850');
+  ctx.fillStyle = cg2;
   ctx.fillRect(x0 - 10, d.y0 + 46, d.w + 20, 34);
-  ctx.fillStyle = 'rgba(255,220,150,0.5)';
+  ctx.strokeStyle = 'rgba(6,4,12,0.5)';
+  ctx.lineWidth = 1.2;
+  ctx.strokeRect(x0 - 9.5, d.y0 + 46.5, d.w + 19, 33);
+  ctx.fillStyle = 'rgba(255,220,150,0.55)';
   ctx.fillRect(x0 - 4, d.y0 + 54, 16, 12);
+  ctx.globalCompositeOperation = 'lighter';
+  const cwg = ctx.createRadialGradient(x0 + 4, d.y0 + 60, 2, x0 + 4, d.y0 + 60, 26);
+  cwg.addColorStop(0, 'rgba(255,220,150,0.18)');
+  cwg.addColorStop(1, 'rgba(255,220,150,0)');
+  ctx.fillStyle = cwg;
+  ctx.fillRect(x0 - 22, d.y0 + 34, 52, 52);
+  ctx.globalCompositeOperation = 'source-over';
   // base plates
   ctx.fillStyle = '#332e42';
   ctx.fillRect(x0 - 8, groundY - 12, d.w + 16, 12);
@@ -2652,6 +2665,15 @@ function drawBigPipe(ctx, d) {
   ctx.fillStyle = '#211c30';
   for (let px = d.x + 40; px < d.x + d.w - 20; px += 120) {
     ctx.fillRect(px, d.y - 2, 8, h + 4);
+    // collar bolts and a drip line below each joint
+    ctx.fillStyle = 'rgba(150,140,180,0.4)';
+    ctx.beginPath();
+    ctx.arc(px + 4, d.y + 4, 1.2, 0, Math.PI * 2);
+    ctx.arc(px + 4, d.y + h - 4, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(20,40,44,0.4)';
+    ctx.fillRect(px + 2, d.y + h + 2, 4, 8);
+    ctx.fillStyle = '#211c30';
   }
   ctx.fillStyle = 'rgba(255,255,255,0.06)';
   ctx.fillRect(d.x + 4, d.y + 4, d.w - 8, 3);
@@ -3398,10 +3420,20 @@ function drawLanternString(ctx, d, t) {
 
 function drawRooster(ctx, x, baseY) {
   // one of the painted roosters of Calle Ocho
-  ctx.fillStyle = '#59526e';
+  const pg = ctx.createLinearGradient(0, baseY - 12, 0, baseY);
+  pg.addColorStop(0, '#6a6280');
+  pg.addColorStop(1, '#453f58');
+  ctx.fillStyle = pg;
   ctx.fillRect(x - 20, baseY - 12, 40, 12);
+  ctx.fillStyle = 'rgba(6,4,12,0.4)';
+  ctx.fillRect(x - 20, baseY - 2, 40, 2);
   ctx.save();
   ctx.translate(x, baseY - 12);
+  // ink silhouette under the statue
+  ctx.fillStyle = 'rgba(6,4,12,0.45)';
+  ctx.beginPath();
+  ctx.ellipse(-2, -26, 18.4, 15.4, -0.2, 0, Math.PI * 2);
+  ctx.fill();
   // body
   const g = ctx.createLinearGradient(0, -52, 0, 0);
   g.addColorStop(0, '#c94f7c');
@@ -3411,6 +3443,13 @@ function drawRooster(ctx, x, baseY) {
   ctx.beginPath();
   ctx.ellipse(-2, -26, 17, 14, -0.2, 0, Math.PI * 2);
   ctx.fill();
+  // mosaic paint chips over the flank
+  for (const [mx, my, mh] of [[-9, -30, 45], [-4, -21, 185], [4, -30, 150], [1, -34, 320]]) {
+    ctx.fillStyle = `hsla(${mh}, 80%, 60%, 0.5)`;
+    ctx.beginPath();
+    ctx.arc(mx, my, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
   // tail plumes
   for (let i = 0; i < 4; i++) {
     ctx.strokeStyle = `hsl(${[185, 45, 320, 150][i]}, 80%, 55%)`;
@@ -3472,18 +3511,32 @@ function drawPergola(ctx, d, groundY) {
   const top = groundY - 130;
   ctx.fillStyle = '#8a4a3a';
   ctx.fillRect(x - 8, top, w + 16, 10);
+  // barrel-tile scallops along the roofline
   ctx.fillStyle = '#c9705e';
   ctx.fillRect(x - 8, top, w + 16, 4);
+  for (let sx = x - 4; sx < x + w + 8; sx += 14) {
+    ctx.beginPath();
+    ctx.arc(sx + 7, top, 7, Math.PI, 0);
+    ctx.fill();
+  }
+  ctx.fillStyle = 'rgba(20,12,10,0.4)';
+  for (let sx = x - 4; sx < x + w + 8; sx += 14) {
+    ctx.fillRect(sx + 12.5, top - 5, 1.5, 5);
+  }
   // slats
   ctx.fillStyle = 'rgba(20,12,10,0.5)';
   for (let sx = x + 8; sx < x + w; sx += 22) {
     ctx.fillRect(sx, top + 2, 8, 8);
   }
-  // columns
+  // columns with capitals, flutes, and the roof's shadow
   for (let ci = 0; ci <= 3; ci++) {
     const cx = x + (w / 3) * ci;
     ctx.fillStyle = '#e8dcc2';
     ctx.fillRect(cx - 6, top + 10, 12, groundY - top - 10);
+    ctx.fillStyle = 'rgba(120,100,60,0.35)';
+    ctx.fillRect(cx + 2.5, top + 15, 2, groundY - top - 25);
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.fillRect(cx - 6, top + 10, 12, 9);
     ctx.fillStyle = '#b8a878';
     ctx.fillRect(cx - 8, top + 10, 16, 5);
   }
@@ -3514,6 +3567,8 @@ function drawPylon(ctx, d) {
   ctx.fillStyle = '#4e4860';
   ctx.fillRect(d.x - 8, d.y0, d.w + 16, 14);
   ctx.fillRect(d.x - 6, d.y1 - 12, d.w + 12, 12);
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(d.x - 8, d.y0, d.w + 16, 2.4);
   // streaks and a high-water stain
   ctx.fillStyle = 'rgba(10,6,16,0.35)';
   for (let x = d.x + 8; x < d.x + d.w; x += 22) {
@@ -3521,6 +3576,9 @@ function drawPylon(ctx, d) {
   }
   ctx.fillStyle = 'rgba(90,140,140,0.2)';
   ctx.fillRect(d.x, d.y1 - 90, d.w, 8);
+  ctx.strokeStyle = 'rgba(6,4,12,0.45)';
+  ctx.lineWidth = 1.4;
+  ctx.strokeRect(d.x + 0.7, d.y0 + 0.7, d.w - 1.4, d.y1 - d.y0 - 1.4);
 }
 
 function drawRadioMast(ctx, d, t) {
@@ -3638,19 +3696,43 @@ function drawOsprey(ctx, d, t) {
 
 function drawTruck(ctx, x, baseY, hue, t) {
   const y = baseY - 1;
-  // box truck idling in the storm
-  ctx.fillStyle = `hsl(${hue}, 25%, 30%)`;
+  // box truck idling in the storm: three values, rain streaks, marker lights
+  const tg = ctx.createLinearGradient(0, y - 52, 0, y - 8);
+  tg.addColorStop(0, `hsl(${hue}, 25%, 36%)`);
+  tg.addColorStop(0.5, `hsl(${hue}, 25%, 28%)`);
+  tg.addColorStop(1, `hsl(${hue}, 28%, 18%)`);
+  ctx.fillStyle = tg;
   ctx.fillRect(x, y - 52, 92, 44);
+  ctx.fillStyle = 'rgba(10,6,16,0.3)';
+  for (let rx = x + 12; rx < x + 84; rx += 18) ctx.fillRect(rx, y - 46, 2.4, 34);
+  ctx.strokeStyle = 'rgba(6,4,12,0.5)';
+  ctx.lineWidth = 1.4;
+  ctx.strokeRect(x + 0.5, y - 51.5, 91, 43);
   ctx.fillStyle = `hsl(${hue}, 30%, 22%)`;
   ctx.fillRect(x + 92, y - 38, 34, 30);
   ctx.fillStyle = 'rgba(140,220,255,0.3)';
   ctx.fillRect(x + 112, y - 34, 12, 12);
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fillRect(x + 92, y - 38, 34, 2);
+  // roof marker lights
+  ctx.fillStyle = '#ffb84d';
+  for (const mx of [x + 8, x + 44, x + 80]) {
+    ctx.beginPath();
+    ctx.arc(mx, y - 53.5, 1.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.fillStyle = '#0c0917';
   ctx.beginPath();
   ctx.arc(x + 22, y, 9, 0, Math.PI * 2);
   ctx.arc(x + 72, y, 9, 0, Math.PI * 2);
   ctx.arc(x + 112, y, 9, 0, Math.PI * 2);
   ctx.fill();
+  ctx.fillStyle = 'rgba(150,140,180,0.4)';
+  for (const wx of [x + 22, x + 72, x + 112]) {
+    ctx.beginPath();
+    ctx.arc(wx, y, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
   // headlight cone
   ctx.globalCompositeOperation = 'lighter';
   const g = ctx.createLinearGradient(x + 126, 0, x + 190, 0);
@@ -3682,11 +3764,15 @@ function drawReeds(ctx, x, baseY, t) {
     ctx.moveTo(gx, baseY + 2);
     ctx.quadraticCurveTo(gx + sway * 0.5, baseY - h * 0.6, gx + sway, baseY - h);
     ctx.stroke();
-    // seed head
+    // seed head with a moonlit tip
     if (i % 3 === 0) {
       ctx.fillStyle = '#8a7a58';
       ctx.beginPath();
       ctx.ellipse(gx + sway, baseY - h - 4, 2.4, 7, sway * 0.02, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(220,235,190,0.35)';
+      ctx.beginPath();
+      ctx.ellipse(gx + sway - 0.8, baseY - h - 7, 1, 2.6, sway * 0.02, 0, Math.PI * 2);
       ctx.fill();
     }
   }
@@ -3705,13 +3791,30 @@ function drawBoardwalk(ctx, d, groundY) {
     ctx.lineTo(px + lean * 40, groundY - 54 - ((px * 13) % 18));
   }
   ctx.stroke();
-  ctx.fillStyle = '#5a4a38';
+  // water stain climbing the post bases
+  ctx.fillStyle = 'rgba(30,50,44,0.4)';
+  for (let px = x; px < x + w; px += 46) {
+    ctx.fillRect(px - 4, groundY - 12, 8, 12);
+  }
   for (let px = x; px < x + w - 40; px += 46) {
     if ((px / 46) % 3 === 2) continue; // missing plank
     ctx.save();
     ctx.translate(px + 23, groundY - 58);
     ctx.rotate(((px * 11) % 8 - 4) * 0.05);
+    const wg2 = ctx.createLinearGradient(0, 0, 0, 7);
+    wg2.addColorStop(0, '#6b5844');
+    wg2.addColorStop(1, '#493a2c');
+    ctx.fillStyle = wg2;
     ctx.fillRect(-26, 0, 52, 7);
+    ctx.strokeStyle = 'rgba(6,4,12,0.45)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(-26, 0, 52, 7);
+    // nail heads
+    ctx.fillStyle = 'rgba(20,14,10,0.7)';
+    ctx.beginPath();
+    ctx.arc(-20, 3.5, 1, 0, Math.PI * 2);
+    ctx.arc(20, 3.5, 1, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
   }
 }
@@ -3754,6 +3857,13 @@ function drawArchLegs(ctx, d, groundY) {
     ctx.closePath();
     ctx.fill();
   }
+  // weather streaks down each leg
+  ctx.fillStyle = 'rgba(10,6,16,0.3)';
+  for (const side of [0, 1]) {
+    const x = d.x + side * (d.w - 46);
+    ctx.fillRect(x + 14, d.y0 + 24, 4, 130);
+    ctx.fillRect(x + 26, d.y0 + 60, 3, 100);
+  }
   // crossbrace glow strip
   ctx.fillStyle = 'rgba(142,240,255,0.4)';
   ctx.fillRect(d.x + 8, d.y0 + 6, d.w - 16, 3);
@@ -3774,8 +3884,23 @@ function drawBargeCrane(ctx, d, t) {
   ctx.moveTo(d.x, d.y0 + 20);
   ctx.lineTo(d.x + (d.reach || 90) * 0.6, d.y1 - 10);
   ctx.stroke();
+  // hanging hook block off the jib tip
+  const jx = d.x + (d.reach || 90);
+  ctx.strokeStyle = '#332e42';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(jx, d.y0);
+  ctx.lineTo(jx, d.y0 + 26 + Math.sin(t * 1.3 + d.x) * 2);
+  ctx.stroke();
+  ctx.fillStyle = '#453a63';
+  ctx.fillRect(jx - 3.4, d.y0 + 26 + Math.sin(t * 1.3 + d.x) * 2, 6.8, 8);
+  // counterweight and base
+  ctx.fillStyle = '#453a63';
+  ctx.fillRect(d.x - 16, d.y0 + 14, 14, 12);
   ctx.fillStyle = '#332e42';
   ctx.fillRect(d.x - 12, d.y1 - 8, 24, 8);
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(d.x - 12, d.y1 - 8, 24, 2);
 }
 
 function drawPinata(ctx, hk, t, hasAbility) {
