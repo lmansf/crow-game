@@ -263,7 +263,8 @@ function frame(now) {
         game.player.update(STEP, game.level, game);
         game.level.update(STEP, game.player, game, game.time);
         acc -= STEP;
-        if (game.mode !== 'play') break;
+        // a seam swap mid-substep freezes the world for the pan
+        if (game.mode !== 'play' || game.pan) break;
       }
       if (game.player.dead <= 0) game.runTime += dt;
       camera.follow(game.player, game.level, dt);
