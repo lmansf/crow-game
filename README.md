@@ -88,6 +88,17 @@ To play on your phone, open http://YOUR-PC-IP:8123 on the same wifi.
 Add `?gfx=off|low|medium|high` to the URL to pick a graphics quality tier (default `high`); the choice persists in localStorage, and `?gfx=off` renders the exact pre-overhaul presentation.
 A runtime autoscaler still sheds effects under sustained frame-time pressure, so weak devices stay smooth without touching this.
 
+### Install it on a phone or iPad (no app store)
+
+The game is a full PWA: a `manifest.webmanifest` plus a service worker (`Development/sw.js`) that precaches the whole game and serves it stale-while-revalidate, so once installed it launches instantly and plays fully offline; updates arrive silently one launch later.
+
+- **iPhone / iPad**: open the game's URL in Safari, tap **Share → Add to Home Screen**. It gets its own icon and runs fullscreen like a native app.
+- **Android**: Chrome offers **Install app** from the ⋮ menu (or an install banner); it lands in the launcher and app drawer.
+- **Desktop**: Chrome and Edge show an install icon in the address bar.
+
+Installing requires the site to be served over https (any Vercel/Netlify/Pages deploy qualifies); plain-http LAN testing still works in the browser, just without offline installs.
+When shipping a change, bump `CACHE` in `Development/sw.js` if you want old precache entries evicted eagerly; the runtime cache refreshes itself either way.
+
 ### Controls
 
 - Desktop: A / D or arrows move, SPACE hops (press again mid-air to flap, hold while falling to glide), SHIFT swoops, ESC pauses, M mutes.
@@ -115,6 +126,7 @@ A runtime autoscaler still sheds effects under sustained frame-time pressure, so
 Levels are plain data files.
 Copy `Development/src/levels/ocean-drive.js`, edit the geometry and entities, and register the new file in `Development/src/levels/index.js`.
 The save data and HUD pick it up automatically; to put it on the city map, give it a spot in `MAP_SPOTS` (`Development/src/ui.js`) and, if it should hang off the hub, a gate in `Development/src/levels/rookery.js`.
+Add the new file to the `SHELL` list in `Development/sw.js` too, so a fresh install can play it offline from the first launch (the runtime cache would pick it up on the second launch regardless).
 
 The original prototype is preserved as `Development/prototype-v0.html`.
 

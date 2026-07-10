@@ -86,6 +86,13 @@ export function initInput() {
     else if (JUMP_KEYS.includes(e.code)) input.jumpHeld = false;
   });
 
+  // The browser's zoom gestures must never fight the game: no double-tap
+  // zoom on rapid button presses, no pinch zoom mid-flight (Safari fires
+  // proprietary gesture* events for pinches that ignore touch-action).
+  document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
+  document.addEventListener('gesturestart', (e) => e.preventDefault());
+  document.addEventListener('gesturechange', (e) => e.preventDefault());
+
   // Reveal touch controls the moment a finger touches the screen.
   addEventListener('pointerdown', (e) => {
     input.onAny?.();
@@ -127,6 +134,13 @@ function bindPad(sel, actions) {
     .filter(Boolean);
   const owner = new Map();  // pointerId -> button element
   const holds = new Map();  // button element -> Set of pointerIds
+
+  // No hold may outlive its finger. Every path a mobile browser can take
+  // away from us - app switch, notification shade, gesture navigation,
+  // Safari stealing the touch - lands in one of the releases below.
+  const releaseAll = () => {
+    for (const id of [...owner.keys()]) release(id);
+  };
 
   const pick = (x, y, limit) => {
     let best = null;
@@ -180,13 +194,25 @@ function bindPad(sel, actions) {
   });
 
   const lift = (e) => {
-    e.preventDefault();
+    if (!owner.has(e.pointerId)) return; // someone else's pointer: hands off
+    if (e.cancelable) e.preventDefault();
     release(e.pointerId);
   };
-  pad.addEventListener('pointerup', lift);
-  pad.addEventListener('pointercancel', lift);
+  // ups and cancels are watched on the window, not the pad: if pointer
+  // capture failed (or was torn away) and the finger lifts outside the pad,
+  // the pad never hears the up and the button sticks. release() is a no-op
+  // for pointers this pad does not own.
+  addEventListener('pointerup', lift);
+  addEventListener('pointercancel', lift);
   // if capture is torn away without an up/cancel, never leave a hold stuck
   // (release() is a no-op for pointers already lifted)
   pad.addEventListener('lostpointercapture', lift);
   pad.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // leaving the page in any way drops every hold
+  addEventListener('blur', releaseAll);
+  addEventListener('pagehide', releaseAll);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) releaseAll();
+  });
 }
