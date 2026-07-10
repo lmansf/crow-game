@@ -5,11 +5,19 @@
 export class FX {
   constructor() {
     this.quality = 2; // 2 full, 1 lightmap only, 0 off
+    this.cap = 2;     // manual tier ceiling (gfx.fxCap)
     this._slow = 0;
     this._fast = 0;
+    this._pulse = 0;  // chromatic hit pulse, 1 -> 0
     this._light = document.createElement('canvas');
     this._bloomA = document.createElement('canvas');
     this._bloomB = document.createElement('canvas');
+    this._grain = null;
+  }
+
+  // momentary chromatic feedback on impacts; never persistent
+  pulse(strength = 1) {
+    this._pulse = Math.max(this._pulse, Math.min(1, strength));
   }
 
   ensure(cssW, cssH) {
@@ -45,6 +53,65 @@ export class FX {
       this._fast = 0;
       this._slow = 0;
     }
+    if (this.quality > this.cap) this.quality = this.cap;
+    if (this._pulse > 0) this._pulse = Math.max(0, this._pulse - dtMs / 140);
+  }
+
+  // Quarter-res RGB split, drawn additively for a brief hit shock.
+  // Cost lives at bloomA resolution, so it rides the existing budget.
+  chroma(ctx, canvas, cssW, cssH) {
+    if (this._pulse <= 0 || this.quality < 1) return;
+    this.ensure(cssW, cssH);
+    const k = this._pulse;
+    const A = this._bloomA;
+    const a = A.getContext('2d');
+    const off = 5 * k;
+    a.globalCompositeOperation = 'source-over';
+    a.drawImage(canvas, 0, 0, A.width, A.height);
+    a.globalCompositeOperation = 'multiply';
+    a.fillStyle = '#ff2a3c';
+    a.fillRect(0, 0, A.width, A.height);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 0.30 * k;
+    ctx.drawImage(A, -off, 0, cssW, cssH);
+    a.globalCompositeOperation = 'source-over';
+    a.drawImage(canvas, 0, 0, A.width, A.height);
+    a.globalCompositeOperation = 'multiply';
+    a.fillStyle = '#2ad4ff';
+    a.fillRect(0, 0, A.width, A.height);
+    ctx.drawImage(A, off, 0, cssW, cssH);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+    a.globalCompositeOperation = 'source-over';
+  }
+
+  // Static-free film grain: one pre-rendered noise tile, re-offset each
+  // frame, overlaid at 3% so it reads as texture rather than snow.
+  grain(ctx, cssW, cssH) {
+    if (this.quality < 2) return;
+    if (!this._grain) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 160;
+      const g = c.getContext('2d');
+      const img = g.createImageData(160, 160);
+      for (let i = 0; i < img.data.length; i += 4) {
+        const v = 90 + (Math.random() * 150) | 0;
+        img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+        img.data[i + 3] = 255;
+      }
+      g.putImageData(img, 0, 0);
+      this._grain = c;
+      this._grainPat = ctx.createPattern(c, 'repeat');
+    }
+    ctx.save();
+    ctx.globalCompositeOperation = 'overlay';
+    ctx.globalAlpha = 0.03;
+    ctx.translate(-((Math.random() * 160) | 0), -((Math.random() * 160) | 0));
+    ctx.fillStyle = this._grainPat;
+    ctx.fillRect(0, 0, cssW + 160, cssH + 160);
+    ctx.restore();
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   // Multiply an ambient tint over the frame, carving out additive lights.

@@ -2,6 +2,7 @@
 // (see src/levels/) and renders the world.
 
 import { audio } from './audio.js';
+import { gfx } from './gfx.js';
 import { particles } from './particles.js';
 import { save } from './save.js';
 import { ABILITIES } from './abilities.js';
@@ -247,11 +248,11 @@ export class Level {
     return out;
   }
 
-  // Sparse drifting ambience particles per district.
+  // Sparse drifting ambience particles per district, density tiered by gfx.
   ambience(dt, cam) {
     const kind = this.data.ambience;
     if (!kind) return;
-    const rate = kind === 'petals' ? 5 : kind === 'motes' ? 4 : kind === 'sparks' ? 6 : 3;
+    const rate = (kind === 'petals' ? 5 : kind === 'motes' ? 4 : kind === 'sparks' ? 6 : 3) * gfx.ambientScale;
     if (Math.random() > dt * rate) return;
     const x = cam.x + Math.random() * cam.viewW;
     if (kind === 'sparks') {

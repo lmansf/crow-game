@@ -8,8 +8,7 @@ export class Camera {
     this.viewW = 900;
     this.viewH = 560;
     this.lookX = 0;
-    this.shakeT = 0;
-    this.shakeMag = 0;
+    this.trauma = 0;
   }
 
   resize(cssW, cssH) {
@@ -40,7 +39,7 @@ export class Camera {
     this.y += (ty - this.y) * ky;
     this.clamp(world);
 
-    if (this.shakeT > 0) this.shakeT -= dt;
+    if (this.trauma > 0) this.trauma = Math.max(0, this.trauma - 2.4 * dt);
   }
 
   easeTo(px, py, world, dt) {
@@ -59,15 +58,23 @@ export class Camera {
     }
   }
 
+  // Trauma pool: impacts add trauma, amplitude follows trauma squared so a
+  // shake blooms hard and settles soft instead of decaying linearly.
+  // Same signature as before, so every caller keeps working.
   shake(mag = 4, t = 0.18) {
-    this.shakeMag = mag;
-    this.shakeT = t;
+    this.trauma = Math.min(1, this.trauma + Math.min(0.65, mag / 15) + t * 0.2);
   }
 
-  applyShake(ctx) {
-    if (this.shakeT > 0) {
-      const m = this.shakeMag * (this.shakeT / 0.18);
-      ctx.translate((Math.random() - 0.5) * m, (Math.random() - 0.5) * m);
-    }
+  applyShake(ctx, time = 0) {
+    if (!(this.trauma > 0)) return;
+    const s = this.trauma * this.trauma;
+    const m = 13 * s;
+    const t = time * 33;
+    // layered incommensurate sines: smooth wander, no strobing
+    const nx = Math.sin(t) * 0.62 + Math.sin(t * 1.73 + 4.2) * 0.38;
+    const ny = Math.sin(t * 1.31 + 1.7) * 0.62 + Math.sin(t * 2.17 + 2.9) * 0.38;
+    const rot = (Math.sin(t * 0.91 + 0.6) * 0.5 + Math.sin(t * 1.51) * 0.5) * 0.005 * s;
+    ctx.translate(nx * m, ny * m);
+    ctx.rotate(rot);
   }
 }

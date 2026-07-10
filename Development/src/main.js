@@ -8,6 +8,7 @@ import { particles } from './particles.js';
 import { Camera } from './camera.js';
 import { Background } from './background.js';
 import { FX } from './fx.js';
+import { gfx } from './gfx.js';
 import { Player } from './player.js';
 import { Level } from './level.js';
 import { getLevelData } from './levels/index.js';
@@ -36,6 +37,7 @@ const game = {
 
   hitstop(t) {
     this.freeze = Math.max(this.freeze, t);
+    if (gfx.chroma) fx.pulse(Math.min(1, t * 5));
   },
 
   flash(strength = 0.5) {
@@ -110,6 +112,7 @@ const game = {
   beginExit(exit) {
     if (this.fadeT > 0 || this.mode !== 'play') return;
     this.exitPending = exit;
+    this.fadeDir = exit.dir || 0; // directional wipe follows the travel
     this.fadeT = 0.7;
     input.locked = true;
     audio.glide(false);
@@ -310,7 +313,7 @@ function render() {
 
   if (inWorld) {
     ctx.save();
-    camera.applyShake(ctx);
+    camera.applyShake(ctx, game.time);
     ctx.scale(camera.scale, camera.scale);
     ctx.translate(-camera.x, -camera.y);
     game.level.draw(ctx, camera, game.time, game.player);
@@ -320,11 +323,16 @@ function render() {
     fx.lighting(ctx, camera, cssW, cssH, game.level.data.ambient, game.level.getLights(camera, game.time, game.player));
     game.level.drawDarkness(ctx, camera, game.player, cssW, cssH);
     fx.grade(ctx, cssW, cssH, game.level.data.grade);
+    if (gfx.foreground && fx.quality >= 1) {
+      background.foreground(ctx, camera, cssW, cssH, game.level.data.horizon || 'city');
+    }
     if (game.level.data.weather === 'rain') {
       background.rain(ctx, camera, cssW, cssH, game.time);
     }
+    if (gfx.chroma) fx.chroma(ctx, canvas, cssW, cssH);
   }
   fx.bloom(ctx, canvas, cssW, cssH, inWorld ? game.level.data.bloom ?? 0.34 : 0.3);
+  if (gfx.grain) fx.grain(ctx, cssW, cssH);
 
   // vignette
   const v = ctx.createRadialGradient(cssW / 2, cssH / 2, Math.min(cssW, cssH) * 0.42, cssW / 2, cssH / 2, Math.max(cssW, cssH) * 0.72);
@@ -333,16 +341,38 @@ function render() {
   ctx.fillStyle = v;
   ctx.fillRect(0, 0, cssW, cssH);
 
-  // zone-door fade (out, swap at the midpoint, back in)
+  // zone-door transition: a directional wipe when the door has a travel
+  // direction, the classic fade otherwise. The screen is fully covered at
+  // the fadeT=0.35 midpoint, where the zone swap happens.
   if (game.fadeT > 0) {
-    const k = game.fadeT > 0.35 ? (0.7 - game.fadeT) / 0.35 : game.fadeT / 0.35;
-    ctx.fillStyle = `rgba(5,2,12,${Math.min(1, k * 1.15)})`;
-    ctx.fillRect(0, 0, cssW, cssH);
+    const out = game.fadeT > 0.35;
+    const k = out ? (0.7 - game.fadeT) / 0.35 : game.fadeT / 0.35;
+    const d = gfx.tier > 0 ? game.fadeDir || 0 : 0;
+    if (d) {
+      const p = out ? k / 2 : 1 - k / 2;   // sweep progress 0 -> 1
+      const soft = 150;
+      const span = cssW + soft * 2 + 40;   // 40px opaque margin at full cover
+      const start = d > 0 ? cssW + soft : -soft - span;
+      const lead = start - d * p * 2 * span;
+      const g = ctx.createLinearGradient(lead, 0, lead + span, 0);
+      const e = soft / span;
+      g.addColorStop(0, 'rgba(5,2,12,0)');
+      g.addColorStop(e, 'rgba(5,2,12,1)');
+      g.addColorStop(1 - e, 'rgba(5,2,12,1)');
+      g.addColorStop(1, 'rgba(5,2,12,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(lead, 0, span, cssH);
+    } else {
+      ctx.fillStyle = `rgba(5,2,12,${Math.min(1, k * 1.15)})`;
+      ctx.fillRect(0, 0, cssW, cssH);
+    }
   }
 }
 
 // ------------------------------------------------ boot
 
+gfx.init();
+fx.cap = gfx.fxCap;
 initInput();
 game.camera = camera;
 game.ui = new UI(game);

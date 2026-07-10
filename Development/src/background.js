@@ -522,6 +522,67 @@ export class Background {
     ctx.fillRect(0, y + h - 1, cssW, 600);
   }
 
+  // Foreground occluder: a near-black silhouette fringe that scrolls
+  // faster than the world and passes in front of the player, selling
+  // depth. Kept to the bottom fifth of the screen so it never hides
+  // gameplay, and cached once per horizon style.
+  foreground(ctx, cam, cssW, cssH, horizonStyle) {
+    const key = horizonStyle === 'glades' ? 'glades' : 'city';
+    if (!this._fg) this._fg = {};
+    if (!this._fg[key]) {
+      const c = document.createElement('canvas');
+      c.width = 1200;
+      c.height = 190;
+      const g = c.getContext('2d');
+      const rand = rng(key === 'glades' ? 9091 : 8081);
+      g.fillStyle = '#06020c';
+      if (key === 'glades') {
+        // dense sawgrass tufts with a few taller reeds
+        for (let i = 0; i < 220; i++) {
+          const x = rand() * 1200;
+          const h = 26 + rand() * 96;
+          const lean = (rand() - 0.5) * 26;
+          g.beginPath();
+          g.moveTo(x - 2.2, 190);
+          g.quadraticCurveTo(x + lean * 0.4, 190 - h * 0.6, x + lean, 190 - h);
+          g.quadraticCurveTo(x + lean * 0.5, 190 - h * 0.55, x + 2.2, 190);
+          g.fill();
+        }
+      } else {
+        // palm crowns rising past the bottom edge, plus scattered fronds
+        for (const px of [140, 480, 760, 1080]) {
+          drawPalmSil(g, px + (rand() - 0.5) * 60, 320, 210 + rand() * 60, '#06020c', rand);
+        }
+        g.fillStyle = '#06020c';
+        for (let i = 0; i < 120; i++) {
+          const x = rand() * 1200;
+          const h = 18 + rand() * 52;
+          const lean = (rand() - 0.5) * 30;
+          g.beginPath();
+          g.moveTo(x - 2, 190);
+          g.quadraticCurveTo(x + lean * 0.5, 190 - h * 0.7, x + lean, 190 - h);
+          g.quadraticCurveTo(x + lean * 0.4, 190 - h * 0.5, x + 2, 190);
+          g.fill();
+        }
+      }
+      // a soft ground-shadow band anchors the fringe to the screen edge
+      const gg = g.createLinearGradient(0, 158, 0, 190);
+      gg.addColorStop(0, 'rgba(6,2,12,0)');
+      gg.addColorStop(1, 'rgba(6,2,12,0.9)');
+      g.fillStyle = gg;
+      g.fillRect(0, 158, 1200, 32);
+      this._fg[key] = c;
+    }
+    const strip = this._fg[key];
+    const h = Math.min(150, cssH * 0.19);
+    const w = strip.width * (h / strip.height);
+    const ox = ((cam.x * 1.28 * cam.scale) % w + w) % w;
+    const y = cssH - h;
+    ctx.globalAlpha = 0.88;
+    for (let x = -ox; x < cssW; x += w) ctx.drawImage(strip, x, y, w, h);
+    ctx.globalAlpha = 1;
+  }
+
   // Screen-space rain pass, drawn over the world during storms.
   rain(ctx, cam, cssW, cssH, t) {
     ctx.save();
