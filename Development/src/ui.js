@@ -92,7 +92,9 @@ export class UI {
       if (lvl.connector) continue; // hallways live between the cards
       const stats = save.getLevel(lvl.id);
       const card = document.createElement('button');
-      card.className = 'level-card';
+      card.className = 'level-card arted';
+      card.style.backgroundImage =
+        `linear-gradient(rgba(11,6,20,0.62), rgba(11,6,20,0.38) 30%, rgba(11,6,20,0.88)), url("assets/card-${lvl.district}.jpg")`;
       card.innerHTML = `
         <div class="num">DISTRICT ${lvl.district}</div>
         <div class="name">${lvl.name}</div>

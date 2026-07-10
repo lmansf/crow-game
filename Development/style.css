@@ -45,6 +45,15 @@ html, body {
 }
 .screen.overlay { background: rgba(8, 4, 16, 0.72); backdrop-filter: blur(6px); }
 
+/* the title screen sits on the Canva skyline; the radial overlay keeps
+   the neon title and buttons readable over the art */
+#screen-title {
+  background:
+    radial-gradient(120% 90% at 50% 8%, rgba(58, 18, 84, 0.30), rgba(11, 6, 20, 0.78) 70%),
+    url("assets/menu-bg.jpg") center / cover no-repeat,
+    var(--bg);
+}
+
 .neon-title {
   font-size: clamp(44px, 11vw, 96px);
   font-weight: 800;
@@ -146,6 +155,18 @@ html, body {
 .level-card .name { font-weight: 700; font-size: 17px; margin: 6px 0 8px; line-height: 1.25; }
 .level-card .meta { color: var(--dim); font-size: 12px; line-height: 1.5; }
 .level-card .meta .done { color: var(--gold); }
+/* district art cards: ui.js layers a dark gradient over assets/card-N.jpg */
+.level-card.arted {
+  background-size: cover;
+  background-position: center;
+  border-color: rgba(53, 224, 224, 0.75);
+}
+.level-card.arted .num,
+.level-card.arted .name,
+.level-card.arted .meta {
+  text-shadow: 0 1px 6px rgba(11, 6, 20, 0.95);
+}
+.level-card.arted .meta { color: rgba(220, 212, 236, 0.88); }
 .level-card.locked {
   border-color: rgba(141, 131, 163, 0.35);
   box-shadow: none;

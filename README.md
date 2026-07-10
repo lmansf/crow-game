@@ -31,6 +31,8 @@ You play a hurricane-blown crow collecting Shinies and unlocking movement abilit
 
 Each district also features a recognizable piece of real Miami: the Colony Hotel's blue neon blade and a South Beach lifeguard tower (D1), the Freedom Tower and Miami Tower (D2), the Wynwood Walls gate (D3), the Tower Theater fin and Domino Park (D4), the Stiltsville shacks (D5), and the Shark Valley observation tower (D6).
 
+The title screen and district select cards are dressed with a uniform synthwave art set (`Development/assets/`), generated in Canva to the game's palette; in-game rendering stays fully procedural.
+
 ### One connected world
 
 The six districts are stitched into a single mega map by five short, themed connector hallways with glowing zone doors at both ends: the Storm Drain Mouth (D1-D2), the Glide-Way (D2-D3, dusk turns to dawn as you cross), the Painted Underpass (D3-D4), the Toll Ramp (D4-D5, the rain starts halfway), and the Last Causeway (D5-D6).
