@@ -6,7 +6,11 @@
 <meta name="theme-color" content="#0b0614">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Crow Game">
 <title>Crow Game - Ocean Drive</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%230b0614'/><path d='M8 20 Q13 10 24 9 L20 13 Q26 13 27 11 Q25 17 18 18 L21 24 L17 21 L15 24 L14 19 Q10 20 8 20Z' fill='%23a98fff'/></svg>">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -111,5 +115,13 @@
 <div id="flash"></div>
 
 <script type="module" src="src/main.js?v=2"></script>
+<script>
+// installable app: the service worker caches everything for offline play
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {
+    // http:// LAN testing or an old browser: the game still runs, just not offline
+  });
+}
+</script>
 </body>
 </html>

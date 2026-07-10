@@ -1,0 +1,16 @@
+{
+  "name": "Crow Game",
+  "short_name": "Crow Game",
+  "description": "A Miami metroidvania: play a hurricane-blown crow across the neon rooftops.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0b0614",
+  "theme_color": "#0b0614",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

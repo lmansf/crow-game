@@ -29,6 +29,11 @@ html, body {
 
 #game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
 
+/* rapid taps on menu UI must never read as double-tap zoom; the touch pads
+   declare their stricter touch-action: none themselves */
+button, .screen, #hud { touch-action: manipulation; }
+#shop-items { touch-action: pan-y; } /* the one place a touch may scroll */
+
 .hidden { display: none !important; }
 .dim { color: var(--dim); }
 
