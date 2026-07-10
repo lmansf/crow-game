@@ -21,6 +21,7 @@ New traversal abilities open up previously unreachable areas, in classic metroid
 
 `Development/` contains the full mobile-friendly game built with vanilla HTML5 canvas and ES modules (no dependencies, no build step).
 You play a hurricane-blown crow collecting Shinies and unlocking movement abilities across six districts, rendered with a dynamic lightmap, bloom, per-district color grading (`src/fx.js`), mood skies (dusk, dawn, night, storm, and a night-to-dawn blend), and storm weather.
+A presentation layer on top adds trauma-based camera shake, a chromatic hit pulse, film grain, a foreground occluder parallax fringe, and directional room wipes on zone doors (all gated by the quality tiers in `src/gfx.js`; see `docs/graphics-audit.md` and `docs/art-bible.md`).
 
 - **District 1 - Ocean Drive Rooftops**: beach to beacon across the neon rooftops, ending at THE ROOST.
 - **District 2 - Brickell Ascent**: one tall map in three strata (storm drains, downtown streets, skyline), each hiding the skill needed to climb into the next, ending at the EVERGLADES sign on EL FARO's crown.
@@ -74,6 +75,9 @@ python -m http.server 8123 --directory "Crow Game/Development"
 
 Then open http://localhost:8123 (ES modules require http, not file://).
 To play on your phone, open http://YOUR-PC-IP:8123 on the same wifi.
+
+Add `?gfx=off|low|medium|high` to the URL to pick a graphics quality tier (default `high`); the choice persists in localStorage, and `?gfx=off` renders the exact pre-overhaul presentation.
+A runtime autoscaler still sheds effects under sustained frame-time pressure, so weak devices stay smooth without touching this.
 
 ### Controls
 
