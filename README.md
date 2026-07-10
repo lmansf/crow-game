@@ -29,6 +29,7 @@ A presentation layer on top adds trauma-based camera shake, a chromatic hit puls
 - **District 4 - Little Havana Nights**: a midnight festival on Calle Ocho, crossed on grindable light lines, ending at EL GALLO DE ORO above the theater (three caged songbirds hide along the way).
 - **District 5 - Skyway Mile Zero**: a storm-lashed triple-decker interchange over a flooded canal, crossed by riding gust rivers, ending at the MILE 0 arch.
 - **District 6 - River of Grass**: the Everglades finale from night into dawn, where the flock grants True Flight, ending at THE NEST. Finishing it unlocks Flight in every district.
+- **District 7 - The Sleeping Port** (epilogue): PortMiami at three in the morning — container-yard climbs, a customs-scanner combo, a hook-and-rail gantry quay over open harbor water, and a cargo ship whose foredeck belongs to the Night Heron. No hallway reaches it: enter through the Rookery's seventh flyway (the Magpie's 150✦ fragment) or press on past THE NEST. Ends at BON VOYAGE, atop the bridge castle.
 
 Each district also features a recognizable piece of real Miami: the Colony Hotel's blue neon blade and a South Beach lifeguard tower (D1), the Freedom Tower and Miami Tower (D2), the Wynwood Walls gate (D3), the Tower Theater fin and Domino Park (D4), the Stiltsville shacks (D5), and the Shark Valley observation tower (D6).
 
@@ -43,7 +44,7 @@ The complete screen's NEXT button follows the same path.
 ### The Rookery (hub) and the Magpie's shop
 
 Beneath the city sits **THE ROOKERY**, a crow-run night market and the world's hub. Every district hides a low flyway gate near its start (the first one is sunk into the Ocean Drive dune); stand inside a gate and hold still for a beat, and the flyway carries you down to the market. From the Rookery, six gates lead back out - one per district.
-Only the Ocean Drive gate starts open. The **Magpie's stall** in the middle of the market sells **map fragments** for shinies (every shiny you collect anywhere also lands in a persistent wallet): each fragment charts a district on the city map *and* unseals its Rookery gate, so shinies buy early access and fast travel across the whole city.
+Only the Ocean Drive gate starts open. The **Magpie's stall** in the middle of the market sells **map fragments** for shinies (every shiny you collect anywhere also lands in a persistent wallet): each fragment charts a district on the city map *and* unseals its Rookery gate, so shinies buy early access and fast travel across the whole city. The seventh gate — THE PORT, at the market's dark end — is the only road to District 7.
 
 ### One city map
 

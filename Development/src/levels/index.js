@@ -9,6 +9,7 @@ import littleHavana from './little-havana.js';
 import skywayMileZero from './skyway-mile-zero.js';
 import riverOfGrass from './river-of-grass.js';
 import { hallDrain, hallGlideway, hallUnderpass, hallToll, hallCauseway } from './hallways.js';
+import theSleepingPort from './the-sleeping-port.js';
 import ufo from './ufo.js';
 import rookery from './rookery.js';
 
@@ -24,6 +25,7 @@ export const LEVELS = [
   skywayMileZero,
   hallCauseway,
   riverOfGrass,
+  theSleepingPort, // the epilogue: no hallway reaches it, only the flyway
   ufo, // hidden: reachable only through the green light
   rookery, // the hub under everything, off the linear itinerary
 ];

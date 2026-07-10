@@ -86,6 +86,14 @@ export function initInput() {
     else if (JUMP_KEYS.includes(e.code)) input.jumpHeld = false;
   });
 
+  // a keyup lost to alt-tab / app switch must never leave a key held: any
+  // path off the page clears the whole intent state (the pads re-clear
+  // their own holds via releaseAll below and re-assert on the next event)
+  addEventListener('blur', () => input.clear());
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) input.clear();
+  });
+
   // The browser's zoom gestures must never fight the game: no double-tap
   // zoom on rapid button presses, no pinch zoom mid-flight (Safari fires
   // proprietary gesture* events for pinches that ignore touch-action).
@@ -154,6 +162,10 @@ function bindPad(sel, actions) {
   };
 
   const press = (id, el) => {
+    // browsers reuse pointer ids: if a lost pointerup ever stranded this id,
+    // a fresh press with it must first release the stale hold, or the old
+    // button's hold-set never empties and the button locks down
+    if (owner.has(id)) release(id);
     owner.set(id, el);
     let set = holds.get(el);
     if (!set) { set = new Set(); holds.set(el, set); }
@@ -185,6 +197,11 @@ function bindPad(sel, actions) {
 
   pad.addEventListener('pointermove', (e) => {
     if (!owner.has(e.pointerId)) return;
+    // a mouse drag whose mouseup was swallowed reports buttons === 0
+    if (e.pointerType === 'mouse' && e.buttons === 0) {
+      release(e.pointerId);
+      return;
+    }
     e.preventDefault();
     const el = pick(e.clientX, e.clientY, SWITCH_RANGE);
     if (el && el !== owner.get(e.pointerId)) {
