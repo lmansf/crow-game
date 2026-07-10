@@ -185,5 +185,8 @@ function bindPad(sel, actions) {
   };
   pad.addEventListener('pointerup', lift);
   pad.addEventListener('pointercancel', lift);
+  // if capture is torn away without an up/cancel, never leave a hold stuck
+  // (release() is a no-op for pointers already lifted)
+  pad.addEventListener('lostpointercapture', lift);
   pad.addEventListener('contextmenu', (e) => e.preventDefault());
 }
