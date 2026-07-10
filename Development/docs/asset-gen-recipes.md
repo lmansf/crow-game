@@ -92,3 +92,4 @@ Statuses in the manifest: `pending → generated (pass written) → conformed
 | Date | Change | Applies to |
 | --- | --- | --- |
 | 2026-07-10 | Pipeline direction locked: procedural, code-only. Master style block v1. Anchor recipes v1. | anchors batch 01 |
+| 2026-07-10 | Batch 02 (Ocean Drive playfield): platform subtypes (awning stripe shading + mount arms, billboard three-value face + braces + rivets, fire-escape grate/railing/braces + lit lip, AC three-value + fan grill + drip, lifeguard hut planks/doorway/deck lip, pipe collars + damp belly), grass blade variation + neon blade, lamp base/bracket/glass housing/post rim, vent grill three values + ink, cable insulator bolts. 10 furniture renderers reviewed conformed-as-is (thermal, wires, shiny, pickup, perch, goal, water, sewer water, backdrop, car). | batch 02 |

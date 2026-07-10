@@ -15,9 +15,10 @@ const { chromium } = require('playwright-core');
 
 const OUT = process.argv[2];
 const URL = process.argv[3] || 'http://localhost:8123/index.html?debug=1&gfx=high';
+const ONLY = process.argv[4] ? process.argv[4].split(',') : null; // id filter
 const EXE = process.env.CHROMIUM || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 if (!OUT) {
-  console.error('usage: node tools/anchor-shots.js <outDir> [serverUrl]');
+  console.error('usage: node tools/anchor-shots.js <outDir> [serverUrl] [id,id,...]');
   process.exit(2);
 }
 
@@ -30,6 +31,15 @@ const ANCHORS = [
   { id: 'tile-building', level: 'ocean-drive', player: [850, 1250], rect: [620, 1090, 470, 350] },
   { id: 'tile-brick', level: 'brickell-ascent', player: [500, 3140], rect: [330, 3010, 460, 200] },
   { id: 'bg-slice', level: 'ocean-drive', player: [2500, 1120], rect: [2200, 780, 620, 340] },
+  // batch 02: Ocean Drive playfield furniture
+  { id: 'plat-awnings', level: 'ocean-drive', player: [600, 1350], rect: [500, 1150, 260, 280] },
+  { id: 'plat-billboard', level: 'ocean-drive', player: [1900, 800], rect: [1760, 560, 340, 260] },
+  { id: 'plat-fireescape', level: 'ocean-drive', player: [2230, 1100], rect: [2120, 900, 200, 300] },
+  { id: 'plat-ac', level: 'ocean-drive', player: [1560, 1000], rect: [1480, 800, 220, 180] },
+  { id: 'prop-hut', level: 'ocean-drive', player: [300, 1470], rect: [80, 1290, 240, 220] },
+  { id: 'prop-lamp', level: 'the-rookery', player: [470, 660], rect: [380, 480, 260, 240] },
+  { id: 'prop-cable', level: 'hall-glideway', player: [500, 620], rect: [360, 480, 300, 200] },
+  { id: 'vent-grill', level: 'ocean-drive', player: [3600, 740], rect: [3460, 560, 260, 240] },
 ];
 
 (async () => {
@@ -41,6 +51,7 @@ const ANCHORS = [
   await page.waitForTimeout(600);
 
   for (const a of ANCHORS) {
+    if (ONLY && !ONLY.includes(a.id)) continue;
     await page.evaluate(({ level, player }) => {
       const cg = window.__cg;
       cg.game.launchLevel(level);

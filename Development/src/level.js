@@ -1761,19 +1761,41 @@ function drawHook(ctx, hk, t, hasAbility) {
 
 function drawPlatform(ctx, p, t) {
   if (p.type === 'awning') {
+    // canvas stripes with a lit top edge and shaded scallop underside
     const stripes = ['#ff4fa3', '#f4f0ff'];
     for (let i = 0; i < p.w; i += 18) {
-      ctx.fillStyle = stripes[(i / 18) % 2 | 0];
-      ctx.globalAlpha = 0.8;
-      ctx.fillRect(p.x + i, p.y, Math.min(18, p.w - i), 10);
+      const sw = Math.min(18, p.w - i);
+      const sg = ctx.createLinearGradient(0, p.y, 0, p.y + 10);
+      sg.addColorStop(0, stripes[(i / 18) % 2 | 0]);
+      sg.addColorStop(1, (i / 18) % 2 | 0 ? '#b8b2cc' : '#c23a80');
+      ctx.fillStyle = sg;
+      ctx.globalAlpha = 0.85;
+      ctx.fillRect(p.x + i, p.y, sw, 10);
     }
     ctx.globalAlpha = 1;
     for (let i = 9; i < p.w; i += 18) {
-      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
       ctx.beginPath();
       ctx.arc(p.x + i, p.y + 10, 9, 0, Math.PI);
       ctx.fill();
+      ctx.strokeStyle = 'rgba(6,4,12,0.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(p.x + i, p.y + 10, 9, 0, Math.PI);
+      ctx.stroke();
     }
+    // dusk light along the roll bar
+    ctx.fillStyle = 'rgba(255,190,220,0.4)';
+    ctx.fillRect(p.x, p.y - 1, p.w, 2);
+    // wall-mount arms
+    ctx.strokeStyle = '#2c2440';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(p.x + 4, p.y + 1);
+    ctx.lineTo(p.x + 12, p.y + 12);
+    ctx.moveTo(p.x + p.w - 4, p.y + 1);
+    ctx.lineTo(p.x + p.w - 12, p.y + 12);
+    ctx.stroke();
   } else if (p.type === 'billboard') {
     ctx.strokeStyle = '#2c2440';
     ctx.lineWidth = 5;
@@ -1783,8 +1805,30 @@ function drawPlatform(ctx, p, t) {
     ctx.moveTo(p.x + p.w - 14, p.y + 10);
     ctx.lineTo(p.x + p.w - 14, p.y + 74);
     ctx.stroke();
-    ctx.fillStyle = '#171226';
+    // cross-brace between the legs
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(p.x + 14, p.y + 58);
+    ctx.lineTo(p.x + p.w - 14, p.y + 72);
+    ctx.moveTo(p.x + p.w - 14, p.y + 58);
+    ctx.lineTo(p.x + 14, p.y + 72);
+    ctx.stroke();
+    // face panel: three values, seam line, rivet dots
+    const bg2 = ctx.createLinearGradient(0, p.y + 10, 0, p.y + 56);
+    bg2.addColorStop(0, '#1e1830');
+    bg2.addColorStop(0.5, '#171226');
+    bg2.addColorStop(1, '#100c1c');
+    ctx.fillStyle = bg2;
     ctx.fillRect(p.x, p.y + 10, p.w, 46);
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    ctx.fillRect(p.x, p.y + 32, p.w, 1);
+    ctx.fillStyle = 'rgba(6,4,12,0.6)';
+    for (const u of [0.08, 0.92]) {
+      ctx.beginPath();
+      ctx.arc(p.x + p.w * u, p.y + 17, 1.4, 0, Math.PI * 2);
+      ctx.arc(p.x + p.w * u, p.y + 49, 1.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
     ctx.strokeStyle = 'rgba(53,224,224,0.8)';
     ctx.lineWidth = 2;
     ctx.strokeRect(p.x + 2, p.y + 12, p.w - 4, 42);
@@ -1802,8 +1846,13 @@ function drawPlatform(ctx, p, t) {
     ctx.fillStyle = '#3a3152';
     ctx.fillRect(p.x - 3, p.y, p.w + 6, 7);
   } else if (p.type === 'fireescape') {
+    // grated deck with a lit lip, railing, and an under-brace
     ctx.fillStyle = '#2e2745';
     ctx.fillRect(p.x, p.y, p.w, 5);
+    ctx.fillStyle = 'rgba(6,4,12,0.5)';
+    for (let i = 3; i < p.w - 2; i += 7) ctx.fillRect(p.x + i, p.y + 1.5, 3, 2.5);
+    ctx.fillStyle = 'rgba(255,150,200,0.28)';
+    ctx.fillRect(p.x, p.y - 0.5, p.w, 1.4);
     ctx.strokeStyle = '#2e2745';
     ctx.lineWidth = 2.5;
     ctx.beginPath();
@@ -1814,14 +1863,37 @@ function drawPlatform(ctx, p, t) {
     ctx.moveTo(p.x, p.y - 16);
     ctx.lineTo(p.x + p.w, p.y - 16);
     ctx.stroke();
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(p.x + 3, p.y + 5);
+    ctx.lineTo(p.x + p.w * 0.35, p.y + 16);
+    ctx.moveTo(p.x + p.w - 3, p.y + 5);
+    ctx.lineTo(p.x + p.w * 0.65, p.y + 16);
+    ctx.stroke();
   } else if (p.type === 'ac') {
-    ctx.fillStyle = '#33304a';
-    ctx.fillRect(p.x, p.y, p.w, p.boxH || 40);
+    // humming rooftop unit: three values, fan grill, drip stain
+    const bh = p.boxH || 40;
+    const ag2 = ctx.createLinearGradient(0, p.y, 0, p.y + bh);
+    ag2.addColorStop(0, '#3d3a56');
+    ag2.addColorStop(0.4, '#33304a');
+    ag2.addColorStop(1, '#232032');
+    ctx.fillStyle = ag2;
+    ctx.fillRect(p.x, p.y, p.w, bh);
     ctx.fillStyle = '#221f36';
-    for (let i = 6; i < p.w - 6; i += 9) ctx.fillRect(p.x + i, p.y + 8, 4, (p.boxH || 40) - 16);
+    for (let i = 6; i < p.w - 6; i += 9) ctx.fillRect(p.x + i, p.y + 8, 4, bh - 16);
+    // fan circle behind the vanes
+    ctx.strokeStyle = 'rgba(10,8,20,0.7)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(p.x + p.w / 2, p.y + bh / 2, Math.min(p.w, bh) * 0.32, 0, Math.PI * 2);
+    ctx.stroke();
     ctx.strokeStyle = 'rgba(120,235,235,0.5)';
     ctx.lineWidth = 1.5;
-    ctx.strokeRect(p.x + 0.5, p.y + 0.5, p.w - 1, (p.boxH || 40) - 1);
+    ctx.strokeRect(p.x + 0.5, p.y + 0.5, p.w - 1, bh - 1);
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.fillRect(p.x, p.y, p.w, 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(p.x + p.w * 0.2, p.y + bh, 5, 7);
   } else if (p.type === 'antenna') {
     ctx.strokeStyle = '#453a63';
     ctx.lineWidth = 3;
@@ -1842,6 +1914,7 @@ function drawPlatform(ctx, p, t) {
       ctx.fill();
     }
   } else if (p.type === 'hut') {
+    // lifeguard tower: plank cabin, shadowed doorway, cyan deck lip
     ctx.strokeStyle = '#4a3a55';
     ctx.lineWidth = 6;
     ctx.beginPath();
@@ -1850,14 +1923,36 @@ function drawPlatform(ctx, p, t) {
     ctx.moveTo(p.x + p.w - 12, p.y + 90);
     ctx.lineTo(p.x + p.w - 22, p.y + 34);
     ctx.stroke();
-    ctx.fillStyle = '#c94f7c';
+    ctx.strokeStyle = 'rgba(6,4,12,0.4)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(p.x + 20, p.y + 60);
+    ctx.lineTo(p.x + p.w - 20, p.y + 74);
+    ctx.stroke();
+    const hg = ctx.createLinearGradient(0, p.y + 8, 0, p.y + 42);
+    hg.addColorStop(0, '#d95f8c');
+    hg.addColorStop(0.55, '#c94f7c');
+    hg.addColorStop(1, '#933759');
+    ctx.fillStyle = hg;
     ctx.fillRect(p.x + 8, p.y + 8, p.w - 16, 34);
     ctx.fillStyle = '#f4e3c2';
     ctx.fillRect(p.x + 8, p.y + 8, (p.w - 16) / 3, 34);
-    ctx.fillStyle = 'rgba(12,10,24,0.8)';
+    // plank lines across the cabin
+    ctx.fillStyle = 'rgba(6,4,12,0.22)';
+    for (let py2 = p.y + 16; py2 < p.y + 42; py2 += 8) ctx.fillRect(p.x + 8, py2, p.w - 16, 1.2);
+    // doorway with a shadowed header
+    ctx.fillStyle = 'rgba(12,10,24,0.85)';
     ctx.fillRect(p.x + p.w / 2 - 7, p.y + 16, 16, 18);
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.fillRect(p.x + p.w / 2 - 7, p.y + 16, 16, 1.6);
+    // cabin ink edge + cyan deck with lit lip
+    ctx.strokeStyle = 'rgba(6,4,12,0.5)';
+    ctx.lineWidth = 1.4;
+    ctx.strokeRect(p.x + 8, p.y + 8, p.w - 16, 34);
     ctx.fillStyle = '#35e0e0';
     ctx.fillRect(p.x - 4, p.y, p.w + 8, 8);
+    ctx.fillStyle = 'rgba(240,255,255,0.5)';
+    ctx.fillRect(p.x - 4, p.y, p.w + 8, 2);
   } else if (p.type === 'pipe') {
     // fat sewer pipe, walkable on top
     const g = ctx.createLinearGradient(0, p.y, 0, p.y + 22);
@@ -1870,9 +1965,24 @@ function drawPlatform(ctx, p, t) {
     ctx.fill();
     ctx.fillStyle = 'rgba(255,255,255,0.08)';
     ctx.fillRect(p.x - 2, p.y + 3, p.w + 4, 3);
+    // joint collars with bolt dots
     ctx.fillStyle = '#241f33';
     ctx.fillRect(p.x + 8, p.y - 2, 6, 26);
     ctx.fillRect(p.x + p.w - 14, p.y - 2, 6, 26);
+    ctx.fillStyle = 'rgba(150,140,180,0.45)';
+    for (const jx of [p.x + 11, p.x + p.w - 11]) {
+      ctx.beginPath();
+      ctx.arc(jx, p.y + 3, 1.1, 0, Math.PI * 2);
+      ctx.arc(jx, p.y + 19, 1.1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // damp underbelly
+    ctx.strokeStyle = 'rgba(20,40,44,0.5)';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(p.x + 2, p.y + 20);
+    ctx.lineTo(p.x + p.w - 2, p.y + 20);
+    ctx.stroke();
   } else if (p.type === 'drum') {
     // conga drum: taut skin on top, tapered shell below
     const h = 46;
@@ -1981,10 +2091,17 @@ function drawCable(ctx, c, t, hasLaunch) {
   ctx.quadraticCurveTo(midX, c.y + 1 + sag * 2, c.x + c.w, c.y + 1);
   ctx.stroke();
 
-  // end mounts
+  // end mounts with insulator bolts
   ctx.fillStyle = '#453a63';
   ctx.fillRect(c.x - 6, c.y - 6, 8, 14);
   ctx.fillRect(c.x + c.w - 2, c.y - 6, 8, 14);
+  ctx.fillStyle = 'rgba(190,180,220,0.5)';
+  for (const mx of [c.x - 2, c.x + c.w + 2]) {
+    ctx.beginPath();
+    ctx.arc(mx, c.y - 2, 1.2, 0, Math.PI * 2);
+    ctx.arc(mx, c.y + 4, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
   // marker tags
   ctx.fillStyle = hasLaunch ? '#a4f26b' : '#6a5f8a';
   for (const u of [0.28, 0.72]) {
@@ -2015,10 +2132,20 @@ function drawVent(ctx, v, t) {
     ctx.stroke();
   }
   ctx.globalAlpha = 1;
-  ctx.fillStyle = '#33304a';
+  // grill housing: three values with a cool rim on the intake lip
+  const vg = ctx.createLinearGradient(0, v.base - 16, 0, v.base);
+  vg.addColorStop(0, '#3d3a56');
+  vg.addColorStop(0.5, '#33304a');
+  vg.addColorStop(1, '#232032');
+  ctx.fillStyle = vg;
   ctx.fillRect(v.x - 5, v.base - 16, v.w + 10, 16);
   ctx.fillStyle = '#221f36';
   for (let i = 3; i < v.w + 6; i += 8) ctx.fillRect(v.x - 5 + i, v.base - 13, 4, 10);
+  ctx.fillStyle = 'rgba(170,215,255,0.35)';
+  ctx.fillRect(v.x - 5, v.base - 16, v.w + 10, 1.6);
+  ctx.strokeStyle = 'rgba(6,4,12,0.5)';
+  ctx.lineWidth = 1.2;
+  ctx.strokeRect(v.x - 4.5, v.base - 15.5, v.w + 9, 15);
 }
 
 function drawThermal(ctx, v, t, hasSoar) {
@@ -2404,17 +2531,25 @@ function drawCar(ctx, x, baseY, hue) {
 }
 
 function drawGrass(ctx, x, baseY, t) {
-  ctx.strokeStyle = '#2a3a34';
   ctx.lineWidth = 2;
   ctx.lineCap = 'round';
   for (let i = 0; i < 5; i++) {
     const gx = x + i * 5 - 10;
     const sway = Math.sin(t * 1.6 + gx) * 2;
+    ctx.strokeStyle = i % 2 ? '#233530' : '#2e423a';
     ctx.beginPath();
     ctx.moveTo(gx, baseY + 2);
     ctx.quadraticCurveTo(gx + sway, baseY - 8, gx + sway + i - 2, baseY - 15 - (i % 3) * 4);
     ctx.stroke();
   }
+  // one blade catches the neon
+  ctx.strokeStyle = 'rgba(255,110,180,0.25)';
+  ctx.lineWidth = 1.4;
+  const sway2 = Math.sin(t * 1.6 + x) * 2;
+  ctx.beginPath();
+  ctx.moveTo(x, baseY + 2);
+  ctx.quadraticCurveTo(x + sway2, baseY - 8, x + sway2 - 2, baseY - 19);
+  ctx.stroke();
 }
 
 function drawLamp(ctx, x, baseY) {
@@ -2425,6 +2560,27 @@ function drawLamp(ctx, x, baseY) {
   ctx.moveTo(x, baseY);
   ctx.lineTo(x, baseY - 96);
   ctx.quadraticCurveTo(x, baseY - 112, x + 20, baseY - 112);
+  ctx.stroke();
+  // post base, arm bracket, and a warm rim up the light side
+  ctx.fillStyle = '#2e2745';
+  ctx.fillRect(x - 5, baseY - 4, 10, 4);
+  ctx.strokeStyle = '#2e2745';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x, baseY - 96);
+  ctx.lineTo(x + 12, baseY - 104);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,225,160,0.22)';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(x + 2, baseY - 2);
+  ctx.lineTo(x + 2, baseY - 95);
+  ctx.stroke();
+  // glass housing around the bulb
+  ctx.strokeStyle = 'rgba(220,205,240,0.4)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.ellipse(x + 24, baseY - 110, 8.5, 6, 0, 0, Math.PI * 2);
   ctx.stroke();
   ctx.fillStyle = '#ffe9a8';
   ctx.beginPath();

@@ -632,8 +632,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
   },
   {
    "id": "src/level.js::drawSteel",
@@ -800,7 +800,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -824,7 +824,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -848,7 +848,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -872,8 +872,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
   },
   {
    "id": "src/level.js::drawWireHazard",
@@ -896,8 +896,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
   },
   {
    "id": "src/level.js::drawShiny",
@@ -920,8 +920,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
   },
   {
    "id": "src/level.js::drawPickup",
@@ -944,8 +944,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
   },
   {
    "id": "src/level.js::drawPerch",
@@ -968,8 +968,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
   },
   {
    "id": "src/level.js::drawGoal",
@@ -992,8 +992,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
   },
   {
    "id": "src/level.js::drawPalm",
@@ -1049,8 +1049,8 @@
     "wynwood-walls"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
   },
   {
    "id": "src/level.js::drawGrass",
@@ -1073,7 +1073,7 @@
     "ocean-drive"
    ],
    "tier": "P0",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1102,7 +1102,7 @@
     "wynwood-walls"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1179,8 +1179,8 @@
     "hallways"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
   },
   {
    "id": "src/level.js::drawTimedHazard",
@@ -1227,8 +1227,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
   },
   {
    "id": "src/level.js::drawRail",
