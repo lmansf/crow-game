@@ -5,6 +5,7 @@ import { audio } from './audio.js';
 import { gfx } from './gfx.js';
 import { particles } from './particles.js';
 import { save } from './save.js';
+import { sprites, drawSprite } from './sprites.js';
 import { ABILITIES } from './abilities.js';
 import { Enemies } from './enemies.js';
 import { Boss } from './boss.js';
@@ -2325,21 +2326,26 @@ function drawShiny(ctx, s, t) {
   ctx.fill();
   ctx.globalCompositeOperation = 'source-over';
   ctx.scale(0.35 + sway * 0.65, 1);
-  ctx.fillStyle = '#ffd166';
-  ctx.beginPath();
-  ctx.moveTo(0, -8);
-  ctx.lineTo(6.5, 0);
-  ctx.lineTo(0, 8);
-  ctx.lineTo(-6.5, 0);
-  ctx.closePath();
-  ctx.fill();
-  ctx.fillStyle = '#fff3d0';
-  ctx.beginPath();
-  ctx.moveTo(0, -8);
-  ctx.lineTo(6.5, 0);
-  ctx.lineTo(-6.5, 0);
-  ctx.closePath();
-  ctx.fill();
+  const paintedShiny = sprites.get('shiny');
+  if (paintedShiny) {
+    drawSprite(ctx, paintedShiny, 0, 0, 15);
+  } else {
+    ctx.fillStyle = '#ffd166';
+    ctx.beginPath();
+    ctx.moveTo(0, -8);
+    ctx.lineTo(6.5, 0);
+    ctx.lineTo(0, 8);
+    ctx.lineTo(-6.5, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#fff3d0';
+    ctx.beginPath();
+    ctx.moveTo(0, -8);
+    ctx.lineTo(6.5, 0);
+    ctx.lineTo(-6.5, 0);
+    ctx.closePath();
+    ctx.fill();
+  }
   ctx.restore();
   if (Math.sin(t * 3.1 + s.phase * 2) > 0.93) {
     ctx.strokeStyle = 'rgba(255,240,200,0.85)';
@@ -2375,19 +2381,24 @@ function drawPickup(ctx, p, t) {
   ctx.stroke();
   ctx.globalAlpha = 1;
   ctx.rotate(Math.sin(t * 1.5 + p.phase) * 0.25);
-  ctx.fillStyle = info.color;
-  ctx.beginPath();
-  ctx.moveTo(-10, 8);
-  ctx.quadraticCurveTo(-10, -10, 12, -12);
-  ctx.quadraticCurveTo(8, 2, -4, 9);
-  ctx.closePath();
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(11,6,20,0.85)';
-  ctx.lineWidth = 1.4;
-  ctx.beginPath();
-  ctx.moveTo(-8, 8);
-  ctx.lineTo(10, -10);
-  ctx.stroke();
+  const paintedFeather = sprites.get('pickup-feather');
+  if (paintedFeather) {
+    drawSprite(ctx, paintedFeather, 0, 0, 30);
+  } else {
+    ctx.fillStyle = info.color;
+    ctx.beginPath();
+    ctx.moveTo(-10, 8);
+    ctx.quadraticCurveTo(-10, -10, 12, -12);
+    ctx.quadraticCurveTo(8, 2, -4, 9);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(11,6,20,0.85)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(-8, 8);
+    ctx.lineTo(10, -10);
+    ctx.stroke();
+  }
   ctx.restore();
   if (Math.random() < 0.12) {
     particles.trail(p.x + (Math.random() - 0.5) * 44, y + (Math.random() - 0.5) * 44, info.color + 'aa');
@@ -2396,22 +2407,29 @@ function drawPickup(ctx, p, t) {
 
 function drawPerch(ctx, c, t) {
   const lit = c.active;
-  const col = lit ? '#ff4fa3' : 'rgba(120,110,150,0.9)';
-  ctx.strokeStyle = col;
-  ctx.lineWidth = 3.5;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(c.x, c.y);
-  ctx.lineTo(c.x, c.y - 44);
-  ctx.moveTo(c.x - 17, c.y - 44);
-  ctx.lineTo(c.x + 17, c.y - 44);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(c.x - 17, c.y - 48, 4, Math.PI * 0.5, Math.PI * 1.6);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(c.x + 17, c.y - 48, 4, Math.PI * 1.4, Math.PI * 0.5);
-  ctx.stroke();
+  const paintedPerch = sprites.get('perch');
+  if (paintedPerch) {
+    ctx.globalAlpha = lit ? 1 : 0.62;
+    drawSprite(ctx, paintedPerch, c.x, c.y - 28, 42);
+    ctx.globalAlpha = 1;
+  } else {
+    const col = lit ? '#ff4fa3' : 'rgba(120,110,150,0.9)';
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(c.x, c.y);
+    ctx.lineTo(c.x, c.y - 44);
+    ctx.moveTo(c.x - 17, c.y - 44);
+    ctx.lineTo(c.x + 17, c.y - 44);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(c.x - 17, c.y - 48, 4, Math.PI * 0.5, Math.PI * 1.6);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(c.x + 17, c.y - 48, 4, Math.PI * 1.4, Math.PI * 0.5);
+    ctx.stroke();
+  }
   if (lit) {
     ctx.globalCompositeOperation = 'lighter';
     const g = ctx.createRadialGradient(c.x, c.y - 46, 2, c.x, c.y - 46, 34);
@@ -4086,6 +4104,14 @@ function drawPinata(ctx, hk, t, hasAbility) {
 function drawExitDoor(ctx, e, t, locked) {
   const cx = e.x + e.w / 2;
   const archY = e.y + Math.min(30, e.h * 0.2);
+  // painted-sprite path: the arch art replaces frame + tunnel; the state
+  // layers (lock boards, linger charge, chevrons, label) draw over it
+  const paintedArch = sprites.get('gate-arch');
+  if (paintedArch) {
+    ctx.drawImage(paintedArch, e.x - 14, e.y - 10, e.w + 28, e.h + 10);
+    drawExitDoorState(ctx, e, t, locked, cx, archY);
+    return;
+  }
   // frame
   ctx.fillStyle = '#141021';
   ctx.beginPath();
@@ -4107,6 +4133,12 @@ function drawExitDoor(ctx, e, t, locked) {
   ctx.lineTo(e.x + e.w, e.y + e.h);
   ctx.closePath();
   ctx.fill();
+  drawExitDoorState(ctx, e, t, locked, cx, archY);
+}
+
+// the state layers shared by painted and procedural doors: lock boards,
+// linger charge, glow rim, drifting chevrons, and the destination label
+function drawExitDoorState(ctx, e, t, locked, cx, archY) {
   if (locked) {
     // boarded over: slats and a cold padlock, waiting on a map fragment
     ctx.strokeStyle = 'rgba(150,110,200,0.5)';

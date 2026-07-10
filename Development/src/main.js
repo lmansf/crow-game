@@ -2,6 +2,7 @@
 // States: menus (DOM screens) -> playing -> outro -> complete.
 
 import { initInput, input } from './input.js';
+import { initSprites } from './sprites.js';
 import { audio } from './audio.js';
 import { save } from './save.js';
 import { particles } from './particles.js';
@@ -399,6 +400,7 @@ function render() {
 
 gfx.init();
 fx.cap = gfx.fxCap;
+initSprites();
 initInput();
 game.camera = camera;
 game.ui = new UI(game);

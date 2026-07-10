@@ -91,6 +91,29 @@ export class UI {
     $('btn-mute').classList.toggle('muted', save.muted);
 
     input.onMute = () => $('btn-mute').click();
+
+    // ↑↑↓↓←→←→BA on the title screen: the old ways still work
+    const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+    let kProgress = 0;
+    addEventListener('keydown', (e) => {
+      if ($('screen-title').classList.contains('hidden')) { kProgress = 0; return; }
+      kProgress = e.code === KONAMI[kProgress] ? kProgress + 1 : (e.code === KONAMI[0] ? 1 : 0);
+      if (kProgress < KONAMI.length) return;
+      kProgress = 0;
+      if (!save.getFlag('konami')) {
+        save.setFlag('konami');
+        save.addWallet(100);
+      }
+      audio.unlock();
+      audio.power();
+      const tag = document.querySelector('#screen-title .tagline');
+      const original = tag.textContent;
+      tag.textContent = save.getFlag('konami-again')
+        ? 'the Magpie says once was generous'
+        : '30 lives? have 100 shinies. the old ways still work';
+      save.setFlag('konami-again');
+      setTimeout(() => { tag.textContent = original; }, 4200);
+    });
   }
 
   show(name) {
