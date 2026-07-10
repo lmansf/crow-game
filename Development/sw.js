@@ -7,7 +7,7 @@
 // after its very first load; anything not listed (a newly added level file,
 // say) is picked up by the runtime cache the first time it is fetched.
 
-const CACHE = 'crow-game-v2';
+const CACHE = 'crow-game-v3';
 
 const SHELL = [
   './',
@@ -28,6 +28,7 @@ const SHELL = [
   'src/particles.js',
   'src/player.js',
   'src/save.js',
+  'src/sprites.js',
   'src/shop.js',
   'src/ui.js',
   'src/levels/index.js',
@@ -41,6 +42,7 @@ const SHELL = [
   'src/levels/hallways.js',
   'src/levels/ufo.js',
   'src/levels/rookery.js',
+  'src/levels/world.js',
   'assets/menu-bg.jpg',
   'assets/card-1.jpg',
   'assets/card-2.jpg',

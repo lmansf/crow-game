@@ -12,6 +12,7 @@ import { hallDrain, hallGlideway, hallUnderpass, hallToll, hallCauseway } from '
 import theSleepingPort from './the-sleeping-port.js';
 import ufo from './ufo.js';
 import rookery from './rookery.js';
+import { miami } from './world.js';
 
 export const LEVELS = [
   oceanDrive,
@@ -31,5 +32,6 @@ export const LEVELS = [
 ];
 
 export function getLevelData(id) {
+  if (id === 'miami') return miami; // the composed one-world map
   return LEVELS.find((l) => l.id === id) || null;
 }

@@ -35,11 +35,12 @@ Each district also features a recognizable piece of real Miami: the Colony Hotel
 
 The title screen and the city map's district nodes are dressed with a uniform synthwave art set (`Development/assets/`), generated in Canva to the game's palette; in-game rendering stays fully procedural.
 
-### One connected world
+### One world, no doors
 
-The six districts are stitched into a single mega map by five short, themed connector hallways with glowing zone doors at both ends: the Storm Drain Mouth (D1-D2), the Glide-Way (D2-D3, dusk turns to dawn as you cross), the Painted Underpass (D3-D4), the Toll Ramp (D4-D5, the rain starts halfway), and the Last Causeway (D5-D6).
-Crossing a seam never fades to black: the outgoing view and the incoming zone tile edge-to-edge and slide together as one short camera pan (a dissolve for the tractor beam), your momentum carries across, and every ability you have earned walks through with you - the city plays as one continuous place.
-The complete screen's NEXT button follows the same path.
+The whole city is **one continuous map** (`src/levels/world.js`): every district, every connector hallway, the Sleeping Port, and the Rookery share a single coordinate space along one street line - about 57,000 pixels from the harbor cranes to the river of grass, with no zone doors and no loads. Walking east out of Ocean Drive simply *is* the Storm Drain Mouth; the drain's far end opens into a culvert that drops you into the Brickell sewers; the Glide-Way hangs as a real catwalk above a sleeping Midtown street (falling off is a detour, not a death); Little Havana is mirrored so Calle Ocho reads west-to-east; and the Rookery market sits physically under Wynwood, reachable down an open roost well punched through the street.
+Connective rooms fill the old seams - Government Cut (harbor water between the port and the beach, behind a gate the Magpie's PORT fragment unseals mid-run), the drain drop, the Midtown understreet - so the city feels like a larger place rather than a series of rooms.
+Each district keeps its own sky, light, grade, weather, and ambience, cross-faded as you cross the joins; crossing into a district announces its name once. District signs now complete **inline**: the sign lights, the run is saved, and the city keeps flowing - only THE NEST in the Everglades rolls the credits. The flyway network still works as fast travel (a camera pan, same map), and the UFO keeps its tractor-beam portal.
+Add `?world=0` to fall back to the classic chained zones (five themed hallways with camera-pan seam crossings); `?world=1` returns to the big map. Both persist.
 
 ### The Rookery (hub) and the Magpie's shop
 
