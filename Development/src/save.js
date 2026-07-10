@@ -15,6 +15,11 @@ let data = load();
 data.levels = data.levels || {};
 data.settings = data.settings || { muted: false };
 data.flags = data.flags || {};
+// the shiny wallet: spendable at the Rookery. Saves from before the
+// wallet existed get credited for the shinies they already found.
+if (typeof data.wallet !== 'number') {
+  data.wallet = Object.values(data.levels).reduce((n, l) => n + (l.bestShinies || 0), 0);
+}
 
 function persist() {
   try {
@@ -38,6 +43,23 @@ export const save = {
       bestTimeMs: prev.bestTimeMs ? Math.min(prev.bestTimeMs, timeMs) : timeMs,
     };
     persist();
+  },
+
+  get wallet() {
+    return data.wallet;
+  },
+
+  addWallet(n) {
+    data.wallet += n;
+    persist();
+  },
+
+  // spend from the wallet; returns false (and charges nothing) if short
+  spend(n) {
+    if (data.wallet < n) return false;
+    data.wallet -= n;
+    persist();
+    return true;
   },
 
   // free-form progress flags (easter eggs, curio pickups, ...)

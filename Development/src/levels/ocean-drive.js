@@ -63,12 +63,15 @@ export default {
   beachEnd: 640,
   spawn: { x: 300, y: 1470 },
 
-  // mega-map door: the storm drain at the far end of the strip
+  // mega-map doors: the storm drain at the far end of the strip, and the
+  // Rookery flyway sunk into the dune at the very start of the beach
   entries: {
     east: { x: 7078, y: 1470 },
+    hub: { x: 100, y: 1470 },
   },
   exits: [
     { x: 7110, y: 1350, w: 84, h: 150, to: 'hall-drain', entry: 'west', label: 'BRICKELL', dir: 1 },
+    { x: 6, y: 1350, w: 64, h: 150, to: 'the-rookery', entry: 'ocean-drive', label: 'THE ROOKERY', linger: true, vdir: 1 },
   ],
 
   // inert junk only the ray gun can lift

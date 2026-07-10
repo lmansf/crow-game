@@ -82,12 +82,14 @@ export default {
   spawn: { x: 450, y: 2470 },
   initialAbilities: ['flap', 'glide', 'swoop', 'break', 'launch', 'soar', 'roll', 'grip', 'hook', 'grind', 'wind'],
 
-  // mega-map door on the first hummock's western lip
+  // mega-map door on the first hummock's western lip, Rookery flyway beside it
   entries: {
     west: { x: 430, y: 2470 },
+    hub: { x: 600, y: 2470 },
   },
   exits: [
     { x: 306, y: 2350, w: 60, h: 150, to: 'hall-causeway', entry: 'east', label: 'THE SKYWAY', dir: -1 },
+    { x: 480, y: 2350, w: 60, h: 150, to: 'the-rookery', entry: 'river-of-grass', label: 'THE ROOKERY', linger: true, vdir: 1 },
   ],
 
   // open water everywhere the hummocks are not

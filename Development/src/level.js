@@ -43,6 +43,8 @@ function rng(seed) {
 }
 
 const LAUNCH_VY = 1320;
+// how long the crow must hold still inside a flyway gate before it travels
+const LINGER_TIME = 0.6;
 
 export class Level {
   constructor(data) {
@@ -214,7 +216,15 @@ export class Level {
     }
     for (const e of this.exits) {
       if (e.hidden || e.x + e.w < x0 || e.x > x1) continue;
-      out.push({ x: e.x + e.w / 2, y: e.y + e.h / 2, r: 180, color: 'rgba(140,220,255,0.4)' });
+      const sealed = e.lock && !save.getFlag(e.lock);
+      out.push({
+        x: e.x + e.w / 2, y: e.y + e.h / 2, r: sealed ? 120 : 180,
+        color: sealed ? 'rgba(150,110,200,0.25)' : 'rgba(140,220,255,0.4)',
+      });
+    }
+    if (this.data.shop) {
+      const sp = this.data.shop;
+      out.push({ x: sp.x, y: sp.y - 120, r: 260, color: 'rgba(255,205,130,0.55)' });
     }
     for (const b of this.beams) {
       if (b.x + b.w < x0 || b.x > x1) continue;
@@ -370,6 +380,7 @@ export class Level {
       if (d2 < 32 * 32 && player.dead <= 0) {
         s.got = true;
         game.shinies++;
+        save.addWallet(1); // every shiny is also coin for the Magpie
         audio.collect();
         particles.burst(s.x, s.y, { count: 8, color: '#ffd166', speed: 150, life: 0.4, size: 2.2, gravity: 100 });
         game.ui.setShinies(game.shinies, this.shinyTotal);
@@ -525,13 +536,41 @@ export class Level {
     if (this.boss) this.boss.update(dt, player, game, t);
     if (this.puzzle && !this.puzzle.solved) this.updatePuzzle(dt, player, game, t);
 
-    // zone doors
+    // zone doors: edge doors trip on contact; mid-level flyway gates ask for
+    // a short deliberate linger so passing traffic never falls through them
     if (player.dead <= 0) {
       for (const e of this.exits) {
-        if (player.x > e.x && player.x < e.x + e.w && player.y > e.y && player.y < e.y + e.h) {
-          game.beginExit(e);
-          break;
+        const inside = player.x > e.x && player.x < e.x + e.w && player.y > e.y && player.y < e.y + e.h;
+        if (!inside) {
+          e.lingerT = 0;
+          e.hinted = false;
+          continue;
         }
+        if (e.lock && !save.getFlag(e.lock)) {
+          if (!e.hinted) {
+            e.hinted = true;
+            game.ui.toast('FLYWAY SEALED', e.lockHint || 'the Magpie sells the map fragment that opens this gate');
+          }
+          continue;
+        }
+        if (e.linger) {
+          e.lingerT = (e.lingerT || 0) + dt;
+          if (e.lingerT < LINGER_TIME) continue;
+        }
+        game.beginExit(e);
+        break;
+      }
+    }
+
+    // the Magpie's stall: step up to the counter to browse
+    if (this.data.shop && player.dead <= 0) {
+      const sp = this.data.shop;
+      const near = Math.abs(player.x - sp.x) < 70 && Math.abs(player.y - (sp.y - 50)) < 100;
+      if (near && !this.shopLatch) {
+        this.shopLatch = true;
+        game.openShop();
+      } else if (!near) {
+        this.shopLatch = false;
       }
     }
 
@@ -596,8 +635,11 @@ export class Level {
     // zone doors, behind the structure blocks
     for (const e of this.exits) {
       if (e.hidden || e.x + e.w < x0 - 60 || e.x > x1 + 60) continue;
-      drawExitDoor(ctx, e, t);
+      drawExitDoor(ctx, e, t, e.lock && !save.getFlag(e.lock));
     }
+
+    // the Magpie's market stall
+    if (this.data.shop) drawShopStall(ctx, this.data.shop, t);
 
     // structure blocks (sewer masonry, breakables)
     for (const s of this.solids) {
@@ -3537,7 +3579,7 @@ function drawPinata(ctx, hk, t, hasAbility) {
 
 // ------------------------------------------------ mega-map furniture
 
-function drawExitDoor(ctx, e, t) {
+function drawExitDoor(ctx, e, t, locked) {
   const cx = e.x + e.w / 2;
   const archY = e.y + Math.min(30, e.h * 0.2);
   // frame
@@ -3552,7 +3594,7 @@ function drawExitDoor(ctx, e, t) {
   // tunnel depth
   const g = ctx.createLinearGradient(0, e.y, 0, e.y + e.h);
   g.addColorStop(0, '#0a0614');
-  g.addColorStop(1, '#1c1430');
+  g.addColorStop(1, locked ? '#171126' : '#1c1430');
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.moveTo(e.x, e.y + e.h);
@@ -3561,6 +3603,46 @@ function drawExitDoor(ctx, e, t) {
   ctx.lineTo(e.x + e.w, e.y + e.h);
   ctx.closePath();
   ctx.fill();
+  if (locked) {
+    // boarded over: slats and a cold padlock, waiting on a map fragment
+    ctx.strokeStyle = 'rgba(150,110,200,0.5)';
+    ctx.lineWidth = 5;
+    for (let i = 0; i < 3; i++) {
+      const y = e.y + e.h * (0.3 + i * 0.22);
+      ctx.beginPath();
+      ctx.moveTo(e.x + 4, y);
+      ctx.lineTo(e.x + e.w - 4, y + 8);
+      ctx.stroke();
+    }
+    const ly = e.y + e.h * 0.42;
+    ctx.strokeStyle = 'rgba(200,170,255,0.75)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(cx, ly - 4, 7, Math.PI, 0);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(200,170,255,0.75)';
+    ctx.fillRect(cx - 10, ly - 4, 20, 16);
+    if (e.label) {
+      ctx.font = '700 13px "Segoe UI", system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(170,140,220,0.7)';
+      ctx.fillText(e.label, cx, e.y - 22);
+      ctx.font = '600 10px "Segoe UI", system-ui, sans-serif';
+      ctx.fillText('map fragment required', cx, e.y - 8);
+    }
+    return;
+  }
+  // a linger gate charging up: the arch fills with light as the crow settles
+  if (e.linger && e.lingerT > 0) {
+    const k = Math.min(1, e.lingerT / LINGER_TIME);
+    ctx.globalCompositeOperation = 'lighter';
+    const lg = ctx.createLinearGradient(0, e.y + e.h, 0, e.y + e.h - e.h * k);
+    lg.addColorStop(0, 'rgba(140,220,255,0.5)');
+    lg.addColorStop(1, 'rgba(140,220,255,0.05)');
+    ctx.fillStyle = lg;
+    ctx.fillRect(e.x, e.y + e.h - e.h * k, e.w, e.h * k);
+    ctx.globalCompositeOperation = 'source-over';
+  }
   // glowing rim
   ctx.globalCompositeOperation = 'lighter';
   ctx.strokeStyle = `rgba(140,220,255,${0.5 + Math.sin(t * 2.2 + e.x) * 0.2})`;
@@ -3571,18 +3653,33 @@ function drawExitDoor(ctx, e, t) {
   ctx.arc(cx, archY, e.w / 2, Math.PI, 0);
   ctx.lineTo(e.x + e.w, e.y + e.h);
   ctx.stroke();
-  // drifting chevrons inside
+  // drifting chevrons inside (vertical gates drift upward instead)
   const dir = e.dir || 1;
-  for (let i = 0; i < 3; i++) {
-    const u = ((t * 0.5 + i / 3) % 1);
-    ctx.strokeStyle = `rgba(140,220,255,${0.5 * (1 - u)})`;
-    ctx.lineWidth = 3;
-    const px = cx + (u - 0.5) * e.w * 0.5 * dir;
-    ctx.beginPath();
-    ctx.moveTo(px - 5 * dir, e.y + e.h * 0.45 - 8);
-    ctx.lineTo(px + 4 * dir, e.y + e.h * 0.45);
-    ctx.lineTo(px - 5 * dir, e.y + e.h * 0.45 + 8);
-    ctx.stroke();
+  ctx.globalAlpha = 1;
+  if (e.vdir) {
+    for (let i = 0; i < 3; i++) {
+      const u = ((t * 0.5 + i / 3) % 1);
+      ctx.strokeStyle = `rgba(140,220,255,${0.5 * (1 - u)})`;
+      ctx.lineWidth = 3;
+      const py = e.y + e.h * 0.6 + (u - 0.5) * e.h * 0.4 * e.vdir;
+      ctx.beginPath();
+      ctx.moveTo(cx - 8, py + 5 * e.vdir);
+      ctx.lineTo(cx, py - 4 * e.vdir);
+      ctx.lineTo(cx + 8, py + 5 * e.vdir);
+      ctx.stroke();
+    }
+  } else {
+    for (let i = 0; i < 3; i++) {
+      const u = ((t * 0.5 + i / 3) % 1);
+      ctx.strokeStyle = `rgba(140,220,255,${0.5 * (1 - u)})`;
+      ctx.lineWidth = 3;
+      const px = cx + (u - 0.5) * e.w * 0.5 * dir;
+      ctx.beginPath();
+      ctx.moveTo(px - 5 * dir, e.y + e.h * 0.45 - 8);
+      ctx.lineTo(px + 4 * dir, e.y + e.h * 0.45);
+      ctx.lineTo(px - 5 * dir, e.y + e.h * 0.45 + 8);
+      ctx.stroke();
+    }
   }
   ctx.globalCompositeOperation = 'source-over';
   // where it leads
@@ -3590,8 +3687,91 @@ function drawExitDoor(ctx, e, t) {
     ctx.font = '700 13px "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillStyle = 'rgba(140,220,255,0.85)';
-    ctx.fillText((dir === -1 ? '◂ ' : '') + e.label + (dir === -1 ? '' : ' ▸'), cx, e.y - 8);
+    const tag = e.vdir ? e.label : (dir === -1 ? '◂ ' : '') + e.label + (dir === -1 ? '' : ' ▸');
+    ctx.fillText(tag, cx, e.y - 8);
   }
+}
+
+// the Magpie's stall: striped canopy, cluttered counter, one sharp-eyed bird
+function drawShopStall(ctx, s, t) {
+  const x = s.x;
+  const base = s.y;
+  const w = 190;
+  const roofY = base - 170;
+  // posts
+  ctx.fillStyle = '#39324a';
+  ctx.fillRect(x - w / 2, roofY + 10, 10, 160);
+  ctx.fillRect(x + w / 2 - 10, roofY + 10, 10, 160);
+  // counter
+  ctx.fillStyle = '#241f33';
+  ctx.fillRect(x - w / 2 - 8, base - 64, w + 16, 12);
+  ctx.fillStyle = '#39324a';
+  ctx.fillRect(x - w / 2, base - 52, w, 52);
+  // canopy scallops
+  for (let i = 0; i < 6; i++) {
+    ctx.fillStyle = i % 2 ? '#ff4fa3' : '#35e0e0';
+    const sx = x - w / 2 - 10 + (i * (w + 20)) / 6;
+    ctx.fillRect(sx, roofY - 6, (w + 20) / 6 + 1, 22);
+    ctx.beginPath();
+    ctx.arc(sx + (w + 20) / 12, roofY + 16, (w + 20) / 12, 0, Math.PI);
+    ctx.fill();
+  }
+  ctx.fillStyle = '#1c1430';
+  ctx.fillRect(x - w / 2 - 10, roofY - 14, w + 20, 10);
+  // sign over the canopy
+  ctx.font = '800 17px "Segoe UI", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = `rgba(255,209,102,${0.75 + Math.sin(t * 2.4) * 0.2})`;
+  ctx.fillText('THE MAGPIE', x, roofY - 24);
+  ctx.globalCompositeOperation = 'source-over';
+  // trinkets glinting on the counter
+  for (let i = 0; i < 5; i++) {
+    const tx = x - w / 2 + 22 + i * ((w - 44) / 4);
+    const glint = Math.sin(t * 3 + i * 1.9) > 0.55;
+    ctx.fillStyle = glint ? '#ffe9a8' : '#ffd166';
+    ctx.beginPath();
+    ctx.arc(tx, base - 70 + (i % 2) * 3, glint ? 4 : 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // hanging map scrolls under the canopy
+  ctx.fillStyle = '#d9cfae';
+  for (const u of [-0.3, 0.32]) {
+    ctx.fillRect(x + u * w - 7, roofY + 26 + Math.sin(t * 1.6 + u * 5) * 2, 14, 30);
+    ctx.strokeStyle = '#8a7a5c';
+    ctx.strokeRect(x + u * w - 7, roofY + 26 + Math.sin(t * 1.6 + u * 5) * 2, 14, 30);
+  }
+  // the Magpie herself, perched on the counter's edge
+  const my = base - 76 + Math.sin(t * 2.1) * 1.5;
+  ctx.fillStyle = '#12101c';
+  ctx.beginPath();
+  ctx.ellipse(x + w / 2 - 26, my, 12, 9, -0.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#f2ecff';
+  ctx.beginPath();
+  ctx.ellipse(x + w / 2 - 29, my + 3, 6, 4, -0.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#12101c';
+  ctx.beginPath();
+  ctx.arc(x + w / 2 - 37, my - 6, 5.5, 0, Math.PI * 2);
+  ctx.fill();
+  // long tail, beak, bright eye
+  ctx.strokeStyle = '#12101c';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(x + w / 2 - 15, my - 2);
+  ctx.lineTo(x + w / 2 + 2, my - 14);
+  ctx.stroke();
+  ctx.fillStyle = '#ffd166';
+  ctx.beginPath();
+  ctx.moveTo(x + w / 2 - 42, my - 7);
+  ctx.lineTo(x + w / 2 - 48, my - 5);
+  ctx.lineTo(x + w / 2 - 42, my - 3);
+  ctx.fill();
+  ctx.fillStyle = Math.sin(t * 0.9) > 0.94 ? '#12101c' : '#ffe9a8';
+  ctx.beginPath();
+  ctx.arc(x + w / 2 - 36, my - 7, 1.5, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 function drawPuzzleSwitch(ctx, s, t) {

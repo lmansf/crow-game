@@ -31,8 +31,7 @@ const game = {
   freeze: 0,
   outroT: 0,
   time: 0,
-  fadeT: 0,
-  exitPending: null,
+  pan: null,
   ui: null,
 
   hitstop(t) {
@@ -59,6 +58,12 @@ const game = {
     const entry = opts.entry && this.level.entries[opts.entry];
     const spawn = entry ? { ...entry } : this.level.spawn;
     this.player = new Player(spawn);
+    // seam crossings keep the crow's stride so the swap reads as one world
+    if (opts.momentum) {
+      this.player.vx = opts.momentum.vx;
+      this.player.facing = opts.momentum.facing;
+    }
+    save.setFlag(`seen:${id}`);
     for (const a of data.initialAbilities || []) this.player.grant(a);
     if (opts.carry) {
       for (const [a, owned] of Object.entries(opts.carry)) {
@@ -99,7 +104,6 @@ const game = {
     ])];
     this.ui.buildAbilitySlots(abilityOrder, this.player.abilities);
     if (opts.entry) {
-      this.ui.toast(data.name.toUpperCase(), data.blurb || '', 2600);
       // a completed district's sign stays lit and never replays its outro
       if (this.level.goal && save.getLevel(id)?.completed) {
         this.level.goal.reached = true;
@@ -108,42 +112,60 @@ const game = {
     }
   },
 
-  // walking into a zone door: fade to black, swap zones at the midpoint
+  // crossing a seam: swap zones instantly behind a short camera pan, so the
+  // city reads as one continuous place - no fade, no loading beat
   beginExit(exit) {
-    if (this.fadeT > 0 || this.mode !== 'play') return;
-    this.exitPending = exit;
-    this.fadeDir = exit.dir || 0; // directional wipe follows the travel
-    this.fadeT = 0.7;
-    input.locked = true;
+    if (this.pan || this.mode !== 'play') return;
+    const carry = { ...this.player.abilities };
+    const momentum = { vx: this.player.vx, facing: this.player.facing };
+    const snap = document.createElement('canvas');
+    snap.width = canvas.width;
+    snap.height = canvas.height;
+    snap.getContext('2d').drawImage(canvas, 0, 0);
     audio.glide(false);
+    this.launchLevel(exit.to, { entry: exit.entry, carry, momentum });
+    this.pan = { snap, t: 0, dur: 0.55, dx: exit.dir || 0, dy: exit.vdir || 0 };
+    input.locked = true;
   },
 
-  tickFade(dt) {
-    if (this.fadeT <= 0 || this.mode !== 'play') return;
-    this.fadeT -= dt;
-    if (this.exitPending && this.fadeT <= 0.35) {
-      const ex = this.exitPending;
-      this.exitPending = null;
-      this.launchLevel(ex.to, { entry: ex.entry, carry: { ...this.player.abilities } });
-      input.locked = true; // stay locked until the fade lifts
+  tickPan(dt) {
+    if (!this.pan) return;
+    this.pan.t += dt;
+    if (this.pan.t >= this.pan.dur) {
+      this.pan = null;
+      if (this.mode === 'play') input.locked = false;
     }
-    if (this.fadeT <= 0 && this.mode === 'play') input.locked = false;
   },
 
   quitToMenu() {
     this.mode = 'menu';
     this.paused = false;
-    this.fadeT = 0;
-    this.exitPending = null;
+    this.pan = null;
     audio.setPaused(false);
     input.locked = false;
     input.clear();
     this.ui.show('title');
   },
 
+  // the Magpie's stall: browsing pauses the world under the shop overlay
+  openShop() {
+    if (this.mode !== 'play' || this.paused || this.pan) return;
+    this.paused = true;
+    audio.setPaused(true);
+    audio.glide(false);
+    this.ui.showShop();
+  },
+
+  closeShop() {
+    if (this.mode !== 'play' || !this.paused) return;
+    this.paused = false;
+    audio.setPaused(false);
+    this.ui.show(null);
+  },
+
   togglePause(force) {
     if (this.mode !== 'play') return;
-    if (this.fadeT > 0) return; // no pausing mid door-transition
+    if (this.pan) return; // no pausing mid seam-crossing
     this.paused = force !== undefined ? force : !this.paused;
     audio.setPaused(this.paused);
     audio.glide(false);
@@ -200,6 +222,8 @@ function resolveHints(level) {
 const camera = new Camera();
 const background = new Background();
 const fx = new FX();
+const panCanvas = document.createElement('canvas');
+const panCtx = panCanvas.getContext('2d');
 let dpr = 1;
 
 function resize() {
@@ -226,8 +250,10 @@ function frame(now) {
   last = now;
   game.time += dt;
 
-  game.tickFade(dt);
-  if ((game.mode === 'play' || game.mode === 'outro') && !game.paused) {
+  game.tickPan(dt);
+  if (game.pan) {
+    // world holds still while the camera pans across the seam
+  } else if ((game.mode === 'play' || game.mode === 'outro') && !game.paused) {
     if (game.freeze > 0) {
       game.freeze -= dt;
     } else if (game.mode === 'play') {
@@ -341,30 +367,29 @@ function render() {
   ctx.fillStyle = v;
   ctx.fillRect(0, 0, cssW, cssH);
 
-  // zone-door transition: a directional wipe when the door has a travel
-  // direction, the classic fade otherwise. The screen is fully covered at
-  // the fadeT=0.35 midpoint, where the zone swap happens.
-  if (game.fadeT > 0) {
-    const out = game.fadeT > 0.35;
-    const k = out ? (0.7 - game.fadeT) / 0.35 : game.fadeT / 0.35;
-    const d = gfx.tier > 0 ? game.fadeDir || 0 : 0;
-    if (d) {
-      const p = out ? k / 2 : 1 - k / 2;   // sweep progress 0 -> 1
-      const soft = 150;
-      const span = cssW + soft * 2 + 40;   // 40px opaque margin at full cover
-      const start = d > 0 ? cssW + soft : -soft - span;
-      const lead = start - d * p * 2 * span;
-      const g = ctx.createLinearGradient(lead, 0, lead + span, 0);
-      const e = soft / span;
-      g.addColorStop(0, 'rgba(5,2,12,0)');
-      g.addColorStop(e, 'rgba(5,2,12,1)');
-      g.addColorStop(1 - e, 'rgba(5,2,12,1)');
-      g.addColorStop(1, 'rgba(5,2,12,0)');
-      ctx.fillStyle = g;
-      ctx.fillRect(lead, 0, span, cssH);
+  // seam crossing: the just-rendered destination and a snapshot of where we
+  // came from tile edge-to-edge and slide together, so the swap plays as one
+  // continuous camera pan across the city (a dissolve when the travel has no
+  // direction - the tractor beam).
+  if (game.pan) {
+    const p = Math.min(1, game.pan.t / game.pan.dur);
+    const e = p * p * (3 - 2 * p);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const W = canvas.width;
+    const H = canvas.height;
+    if (game.pan.dx || game.pan.dy) {
+      if (panCanvas.width !== W || panCanvas.height !== H) {
+        panCanvas.width = W;
+        panCanvas.height = H;
+      }
+      panCtx.setTransform(1, 0, 0, 1, 0, 0);
+      panCtx.drawImage(canvas, 0, 0);
+      ctx.drawImage(panCanvas, game.pan.dx * (1 - e) * W, game.pan.dy * (1 - e) * H);
+      ctx.drawImage(game.pan.snap, -game.pan.dx * e * W, -game.pan.dy * e * H);
     } else {
-      ctx.fillStyle = `rgba(5,2,12,${Math.min(1, k * 1.15)})`;
-      ctx.fillRect(0, 0, cssW, cssH);
+      ctx.globalAlpha = 1 - e;
+      ctx.drawImage(game.pan.snap, 0, 0);
+      ctx.globalAlpha = 1;
     }
   }
 }
@@ -401,8 +426,10 @@ if (location.search.includes('debug')) {
     step(dt = STEP, frames = 1) {
       for (let i = 0; i < frames; i++) {
         game.time += dt;
-        game.tickFade(dt);
-        if (game.mode === 'play' && !game.paused) {
+        game.tickPan(dt);
+        if (game.pan) {
+          // world holds still mid seam-crossing
+        } else if (game.mode === 'play' && !game.paused) {
           input.update(dt);
           game.player.update(dt, game.level, game);
           if (game.mode === 'play') game.level.update(dt, game.player, game, game.time);

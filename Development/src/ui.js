@@ -4,7 +4,20 @@ import { save } from './save.js';
 import { audio } from './audio.js';
 import { input } from './input.js';
 import { ABILITIES } from './abilities.js';
-import { LEVELS, COMING_SOON } from './levels/index.js';
+import { LEVELS } from './levels/index.js';
+import { SHOP_ITEMS } from './shop.js';
+
+// where each stop sits on the city map, in percent of the map box.
+// The route snakes beach -> glades; the Rookery hangs underneath it all.
+const MAP_SPOTS = {
+  'ocean-drive': { x: 10, y: 70 },
+  'brickell-ascent': { x: 25, y: 30 },
+  'wynwood-walls': { x: 41, y: 58 },
+  'little-havana': { x: 57, y: 24 },
+  'skyway-mile-zero': { x: 72, y: 56 },
+  'river-of-grass': { x: 89, y: 26 },
+  'the-rookery': { x: 49, y: 92 },
+};
 
 const $ = (id) => document.getElementById(id);
 
@@ -25,12 +38,16 @@ export class UI {
     $('btn-play').addEventListener('click', () => {
       audio.unlock();
       audio.ui();
-      this.show('levels');
-      this.buildLevelCards();
+      this.show('map');
+      this.buildMap();
     });
-    $('btn-levels-back').addEventListener('click', () => {
+    $('btn-map-back').addEventListener('click', () => {
       audio.ui();
       this.show('title');
+    });
+    $('btn-shop-close').addEventListener('click', () => {
+      audio.ui();
+      game.closeShop();
     });
     $('btn-story-go').addEventListener('click', () => {
       audio.unlock();
@@ -76,7 +93,7 @@ export class UI {
   }
 
   show(name) {
-    for (const s of ['title', 'levels', 'story', 'pause', 'complete']) {
+    for (const s of ['title', 'map', 'story', 'pause', 'complete', 'shop']) {
       $(`screen-${s}`).classList.toggle('hidden', s !== name);
     }
     const inGame = name === null || name === 'pause';
@@ -85,38 +102,99 @@ export class UI {
     this.updateRotateHint();
   }
 
-  buildLevelCards() {
-    const wrap = $('level-cards');
+  // The city as one map: a route snaking through the six districts with the
+  // Rookery hanging beneath. Places you have not visited (and hold no
+  // fragment for) stay uncharted silhouettes.
+  buildMap() {
+    $('map-wallet').textContent = `✦ ${save.wallet} shinies`;
+    const wrap = $('city-map');
     wrap.innerHTML = '';
-    for (const lvl of LEVELS) {
-      if (lvl.connector) continue; // hallways live between the cards
+
+    const spots = LEVELS.filter((l) => MAP_SPOTS[l.id]);
+    const revealed = (l) => l.id === 'ocean-drive' ||
+      !!(save.getFlag(`seen:${l.id}`) || save.getFlag(`frag:${l.id}`) || save.getLevel(l.id)?.completed);
+
+    const districts = spots.filter((l) => !l.hub).sort((a, b) => a.district - b.district);
+    const hub = spots.find((l) => l.hub);
+    let svg = '<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">';
+    for (let i = 0; i < districts.length - 1; i++) {
+      const a = MAP_SPOTS[districts[i].id];
+      const b = MAP_SPOTS[districts[i + 1].id];
+      const on = revealed(districts[i]) && revealed(districts[i + 1]);
+      svg += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="route${on ? ' on' : ''}"/>`;
+    }
+    for (const d of districts) {
+      const a = MAP_SPOTS[hub.id];
+      const b = MAP_SPOTS[d.id];
+      const open = revealed(hub) && (d.id === 'ocean-drive' || save.getFlag(`frag:${d.id}`));
+      svg += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="flyway${open ? ' on' : ''}"/>`;
+    }
+    svg += '</svg>';
+    wrap.insertAdjacentHTML('beforeend', svg);
+
+    for (const lvl of spots) {
+      const spot = MAP_SPOTS[lvl.id];
+      const known = revealed(lvl);
       const stats = save.getLevel(lvl.id);
-      const card = document.createElement('button');
-      card.className = 'level-card arted';
-      card.style.backgroundImage =
-        `linear-gradient(rgba(11,6,20,0.62), rgba(11,6,20,0.38) 30%, rgba(11,6,20,0.88)), url("assets/card-${lvl.district}.jpg")`;
-      card.innerHTML = `
-        <div class="num">DISTRICT ${lvl.district}</div>
-        <div class="name">${lvl.name}</div>
-        <div class="meta">${stats
-          ? `<span class="done">found</span> ${stats.bestShinies}/${stats.shinyTotal} shinies<br>best ${fmtTime(stats.bestTimeMs)}`
-          : lvl.blurb}</div>`;
-      card.addEventListener('click', () => {
-        audio.ui();
-        this.pendingLevelId = lvl.id;
-        this.showStory(lvl.intro);
-      });
-      wrap.appendChild(card);
+      const node = document.createElement('button');
+      node.className = `map-node${lvl.hub ? ' hub' : ''}${known ? '' : ' unknown'}`;
+      node.style.left = spot.x + '%';
+      node.style.top = spot.y + '%';
+      const art = known && !lvl.hub ? ` style="background-image:url('assets/card-${lvl.district}.jpg')"` : '';
+      const meta = lvl.hub
+        ? (known ? 'flyway gates · the Magpie' : 'rumors of a market under the city')
+        : !known ? 'fragment sold at the Rookery'
+        : stats ? `${stats.bestShinies}/${stats.shinyTotal} shinies · best ${fmtTime(stats.bestTimeMs)}`
+        : lvl.blurb;
+      node.innerHTML = `
+        <span class="dot"${art}>${lvl.hub ? '✦' : known ? '' : '?'}</span>
+        <span class="label">${known ? lvl.name : 'UNCHARTED'}</span>
+        <span class="meta">${meta}</span>`;
+      if (known) {
+        node.addEventListener('click', () => {
+          audio.ui();
+          this.pendingLevelId = lvl.id;
+          this.showStory(lvl.intro);
+        });
+      } else {
+        node.disabled = true;
+      }
+      wrap.appendChild(node);
     }
-    for (const cs of COMING_SOON) {
-      const card = document.createElement('div');
-      card.className = 'level-card locked';
-      card.innerHTML = `
-        <div class="num">DISTRICT ${cs.district}</div>
-        <div class="name">${cs.name}</div>
-        <div class="meta">coming soon</div>`;
-      wrap.appendChild(card);
+  }
+
+  // The Magpie's stall: map fragments for shinies. Buying re-renders in
+  // place; gates in the Rookery unlock the moment the flag lands.
+  showShop() {
+    $('shop-wallet').textContent = `✦ ${save.wallet} shinies`;
+    const wrap = $('shop-items');
+    wrap.innerHTML = '';
+    for (const item of SHOP_ITEMS) {
+      const owned = !!save.getFlag(item.flag);
+      const row = document.createElement('button');
+      row.className = `shop-item${owned ? ' owned' : ''}`;
+      row.innerHTML = `
+        <span class="what"><b>${item.name}</b><span>${item.desc}</span></span>
+        <span class="price">${owned ? 'YOURS' : `✦ ${item.price}`}</span>`;
+      if (owned) {
+        row.disabled = true;
+      } else {
+        row.addEventListener('click', () => {
+          if (!save.spend(item.price)) {
+            audio.zap();
+            row.classList.remove('nope');
+            void row.offsetWidth; // restart the shake
+            row.classList.add('nope');
+            return;
+          }
+          save.setFlag(item.flag);
+          audio.power();
+          this.showShop();
+        });
+      }
+      wrap.appendChild(row);
     }
+    this.show('shop');
   }
 
   showStory(lines) {
@@ -144,9 +222,7 @@ export class UI {
     } else {
       this.nextLevelId = null;
       btn.disabled = true;
-      btn.textContent = COMING_SOON.length
-        ? `DISTRICT ${levelData.district + 1} - COMING SOON`
-        : 'HOME AT LAST';
+      btn.textContent = 'HOME AT LAST';
     }
     this.show('complete');
   }
