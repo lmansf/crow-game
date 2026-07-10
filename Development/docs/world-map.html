@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: #0b0614; --panel: rgba(22, 12, 40, 0.85); --ink: #e8e2f2; --dim: #8d83a3;
+    --pink: #ff4fa3; --cyan: #35e0e0; --gold: #ffd166; --violet: #a98fff; --green: #7dff6a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #000; }
+  #map {
+    width: 2560px; height: 1440px; position: relative; overflow: hidden;
+    font-family: "Segoe UI", system-ui, sans-serif; color: var(--ink);
+    background:
+      radial-gradient(90% 60% at 50% 0%, rgba(58, 18, 84, 0.6), transparent 60%),
+      radial-gradient(60% 40% at 8% 100%, rgba(255, 79, 163, 0.12), transparent 70%),
+      radial-gradient(60% 40% at 92% 100%, rgba(53, 224, 224, 0.1), transparent 70%),
+      var(--bg);
+    padding: 44px 60px;
+  }
+  /* faint star field */
+  #map::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8% 12%, rgba(255,255,255,0.5), transparent 60%),
+      radial-gradient(1px 1px at 22% 6%, rgba(255,255,255,0.4), transparent 60%),
+      radial-gradient(1.5px 1.5px at 41% 10%, rgba(255,255,255,0.35), transparent 60%),
+      radial-gradient(1px 1px at 57% 5%, rgba(255,255,255,0.45), transparent 60%),
+      radial-gradient(1.5px 1.5px at 72% 11%, rgba(255,255,255,0.4), transparent 60%),
+      radial-gradient(1px 1px at 88% 7%, rgba(255,255,255,0.5), transparent 60%),
+      radial-gradient(1px 1px at 95% 14%, rgba(255,255,255,0.3), transparent 60%);
+  }
+
+  h1 { font-size: 52px; letter-spacing: 0.18em; font-weight: 800; color: var(--cyan);
+       text-shadow: 0 0 10px rgba(53,224,224,0.9), 0 0 40px rgba(53,224,224,0.45); }
+  h1 .pink { color: var(--pink); text-shadow: 0 0 10px rgba(255,79,163,0.9), 0 0 40px rgba(255,79,163,0.45); }
+  .sub { color: var(--dim); letter-spacing: 0.34em; font-size: 17px; text-transform: uppercase; margin-top: 8px; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 2; }
+  .legend { text-align: right; font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 760px; }
+  .legend b { color: var(--ink); font-weight: 600; }
+  .legend .k { color: var(--gold); }
+
+  /* ---- the mothership, hidden above Brickell ---- */
+  #ufo {
+    position: absolute; left: 468px; top: 150px; width: 420px; z-index: 3;
+    border: 1.5px dashed rgba(125,255,106,0.65); border-radius: 16px; padding: 14px 18px;
+    background: rgba(10, 24, 12, 0.72); box-shadow: 0 0 30px rgba(125,255,106,0.18);
+    font-size: 15px; line-height: 1.55; color: #cfe9c8;
+  }
+  #ufo .t { color: var(--green); font-weight: 800; letter-spacing: 0.14em; font-size: 17px; }
+  #ufo .hush { color: rgba(207,233,200,0.6); font-style: italic; }
+  #beam {
+    position: absolute; left: 650px; top: 258px; width: 46px; height: 118px; z-index: 1;
+    background: linear-gradient(180deg, rgba(125,255,106,0.4), rgba(125,255,106,0.05));
+    clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%);
+  }
+
+  /* ---- the spine: 6 districts + 5 hallways ---- */
+  #spine {
+    position: absolute; left: 60px; right: 60px; top: 385px; z-index: 2;
+    display: grid; grid-template-columns: 17fr 7fr 17fr 7fr 17fr 7fr 17fr 7fr 17fr 7fr 17fr;
+    gap: 0; align-items: stretch;
+  }
+  .district {
+    border: 1.5px solid rgba(53,224,224,0.55); border-radius: 18px; background: var(--panel);
+    box-shadow: 0 0 22px rgba(53,224,224,0.16); overflow: hidden; position: relative;
+  }
+  .district .mood { height: 12px; }
+  .district .body { padding: 14px 17px 12px; font-size: 15.5px; line-height: 1.62; }
+  .district .num { color: var(--cyan); font-size: 13px; letter-spacing: 0.3em; }
+  .district .name { font-weight: 800; font-size: 21px; margin: 2px 0 8px; }
+  .row { display: flex; gap: 8px; align-items: baseline; }
+  .row .ico { width: 22px; flex: none; text-align: center; }
+  .goal b { color: var(--pink); font-weight: 700; }
+  .boss b { color: var(--gold); font-weight: 700; }
+  .skill { color: var(--violet); }
+  .secret { color: var(--dim); }
+  .critter { color: var(--dim); }
+  .gate {
+    margin-top: 9px; border-top: 1px dashed rgba(255,209,102,0.4); padding-top: 7px;
+    color: var(--gold); font-size: 14px;
+  }
+  .gate .lock { color: var(--dim); }
+
+  .hall { display: flex; flex-direction: column; justify-content: center; padding: 0 6px; position: relative; }
+  .hall .line { height: 5px; border-radius: 3px; margin: 6px 0; }
+  .hall .hname { font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; color: var(--ink); text-align: center; line-height: 1.3; }
+  .hall .hnote { font-size: 11.5px; color: var(--dim); text-align: center; line-height: 1.35; margin-top: 3px; }
+  .hall .arrows { text-align: center; color: var(--cyan); font-size: 13px; letter-spacing: 0.2em; margin-top: 4px; }
+
+  /* flyway stubs from each district down to the Rookery */
+  .flyway {
+    position: absolute; left: 50%; bottom: -130px; width: 0; height: 130px;
+    border-left: 2px dashed rgba(255,209,102,0.55);
+  }
+  .flyway.sealed { border-left-color: rgba(141,131,163,0.4); }
+
+  /* ---- the Rookery ---- */
+  #rookery {
+    position: absolute; left: 60px; right: 60px; top: 950px; z-index: 2;
+    border: 1.5px solid rgba(255,209,102,0.6); border-radius: 20px;
+    background: linear-gradient(180deg, rgba(30,17,8,0.82), rgba(16,9,26,0.9));
+    box-shadow: 0 0 26px rgba(255,209,102,0.14); padding: 18px 26px 16px;
+  }
+  #rookery .t { color: var(--gold); font-weight: 800; letter-spacing: 0.22em; font-size: 24px;
+                text-shadow: 0 0 14px rgba(255,209,102,0.5); }
+  #rookery .tag { color: var(--dim); font-size: 15px; margin-left: 16px; }
+  #gates { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-top: 14px; }
+  .rgate {
+    border: 1.5px solid rgba(53,224,224,0.5); border-radius: 12px; padding: 9px 12px;
+    background: rgba(12, 8, 24, 0.7); font-size: 14.5px; line-height: 1.5;
+  }
+  .rgate .g { color: var(--cyan); font-weight: 700; letter-spacing: 0.08em; }
+  .rgate.sealed { border-color: rgba(141,131,163,0.45); }
+  .rgate.sealed .g { color: var(--dim); }
+  .rgate .price { color: var(--gold); font-weight: 700; }
+  .rgate .open { color: var(--green); font-weight: 700; }
+  #shop {
+    margin-top: 14px; border-top: 1px dashed rgba(255,209,102,0.35); padding-top: 11px;
+    font-size: 15.5px; line-height: 1.6;
+  }
+  #shop b { color: var(--gold); }
+  #shop .item { color: var(--ink); }
+  #shop .p { color: var(--gold); font-weight: 700; }
+
+  footer {
+    position: absolute; left: 60px; right: 60px; bottom: 34px; z-index: 2;
+    display: flex; justify-content: space-between; color: var(--dim); font-size: 14.5px; letter-spacing: 0.06em;
+  }
+  footer .k { color: var(--gold); }
+</style>
+</head>
+<body>
+<div id="map">
+  <header>
+    <div>
+      <h1>CROW <span class="pink">GAME</span> — THE CITY</h1>
+      <div class="sub">complete world map · one seamless Miami · beach to glades</div>
+    </div>
+    <div class="legend">
+      <b>How the world moves:</b> zone seams are invisible — crossing a glowing door <b>pans the camera</b> into the next area, momentum and every earned ability carried along.<br>
+      <span class="k">⌂ flyway gates</span> (one per district, near its start) drop to THE ROOKERY: <b>stand inside one for a beat</b> and it travels.
+      Every shiny collected anywhere also lands in a persistent <span class="k">✦ wallet</span>, spendable at the Magpie's stall below.
+    </div>
+  </header>
+
+  <!-- hidden zone -->
+  <div id="ufo">
+    <div class="t">THE MOTHERSHIP <span class="hush">· hidden zone</span></div>
+    A green tractor beam hums over VIZCAYA's secret roof. Fly into the light to be politely abducted;
+    quest through the ship to bring home the <b style="color:var(--green)">RAY GUN</b> — which does nothing,
+    except tractor-lift the <b>12 curios</b> scattered across Miami. Lifted curios are remembered forever.
+  </div>
+  <div id="beam"></div>
+
+  <!-- the spine -->
+  <div id="spine">
+    <div class="district">
+      <div class="mood" style="background: linear-gradient(90deg,#5b2a86,#ff4fa3);"></div>
+      <div class="body">
+        <div class="num">DISTRICT 1 · DUSK</div>
+        <div class="name">Ocean Drive Rooftops</div>
+        <div class="row goal"><span class="ico">🏁</span><span>goal: <b>THE ROOST</b></span></div>
+        <div class="row boss"><span class="ico">👑</span><span>the Gull King → <b>SWOOP</b></span></div>
+        <div class="row skill"><span class="ico">⚡</span><span>Wing Flap · Glide (pickups)</span></div>
+        <div class="row critter"><span class="ico">🐦</span><span>vice gulls · neon-combo courtyard</span></div>
+        <div class="row secret"><span class="ico">✦</span><span>teased: the penthouse vault, via the swoop-way home</span></div>
+        <div class="gate">⌂ Rookery gate: sunk in the beach dune — <b>always open</b></div>
+      </div>
+      <div class="flyway"></div>
+    </div>
+
+    <div class="hall">
+      <div class="hname">STORM DRAIN MOUTH</div>
+      <div class="line" style="background: linear-gradient(90deg,#5b2a86,#3c2f6b);"></div>
+      <div class="hnote">the fast way downtown is under the towers · sewer dark, grate light</div>
+      <div class="arrows">◂ ▸</div>
+    </div>
+
+    <div class="district">
+      <div class="mood" style="background: linear-gradient(90deg,#5b2a86,#8a5cc9);"></div>
+      <div class="body">
+        <div class="num">DISTRICT 2 · DUSK · THREE STRATA</div>
+        <div class="name">Brickell Ascent</div>
+        <div class="row goal"><span class="ico">🏁</span><span>goal: <b>EVERGLADES</b> on EL FARO's crown</span></div>
+        <div class="row boss"><span class="ico">👑</span><span>the Rat King → <b>BEAK BREAK</b></span></div>
+        <div class="row skill"><span class="ico">⚡</span><span>Line Launch · Thermal Soar (pickups)</span></div>
+        <div class="row critter"><span class="ico">🐀</span><span>drain rats · junction-box combo</span></div>
+        <div class="row secret"><span class="ico">✦</span><span>teased: the bricked stash alcove · 🛸 the beam waits above</span></div>
+        <div class="gate">⌂ Rookery gate: sewer floor, under the alcove — <span class="lock">🔒 fragment</span> <b>40✦</b></div>
+      </div>
+      <div class="flyway sealed"></div>
+    </div>
+
+    <div class="hall">
+      <div class="hname">THE GLIDE-WAY</div>
+      <div class="line" style="background: linear-gradient(90deg,#8a5cc9,#ffb37a);"></div>
+      <div class="hnote">a catwalk over the sleeping city · walk it and dusk turns to dawn</div>
+      <div class="arrows">◂ ▸</div>
+    </div>
+
+    <div class="district">
+      <div class="mood" style="background: linear-gradient(90deg,#ffb37a,#ffd9a8);"></div>
+      <div class="body">
+        <div class="num">DISTRICT 3 · DAWN</div>
+        <div class="name">Wynwood Walls</div>
+        <div class="row goal"><span class="ico">🏁</span><span>goal: <b>THE FLOCK</b> mural, atop MUSEO</span></div>
+        <div class="row boss"><span class="ico">👑</span><span>El Iguanodon → <b>TALON HOOK</b></span></div>
+        <div class="row skill"><span class="ico">⚡</span><span>Roll · Paint Grip (pickups)</span></div>
+        <div class="row critter"><span class="ico">🦎</span><span>sunning iguanas · workshop door panel</span></div>
+        <div class="row secret"><span class="ico">✦</span><span>teased: the stash off MUSEO's shoulder</span></div>
+        <div class="gate">⌂ Rookery gate: hub courtyard — <span class="lock">🔒 fragment</span> <b>60✦</b></div>
+      </div>
+      <div class="flyway sealed"></div>
+    </div>
+
+    <div class="hall">
+      <div class="hname">THE PAINTED UNDERPASS</div>
+      <div class="line" style="background: linear-gradient(90deg,#ffd9a8,#1c2454);"></div>
+      <div class="hnote">the paint runs out where the lanterns start · dawn fades to night</div>
+      <div class="arrows">◂ ▸</div>
+    </div>
+
+    <div class="district">
+      <div class="mood" style="background: linear-gradient(90deg,#1c2454,#31165a);"></div>
+      <div class="body">
+        <div class="num">DISTRICT 4 · NIGHT · CROSSED WESTWARD ◂</div>
+        <div class="name">Little Havana Nights</div>
+        <div class="row goal"><span class="ico">🏁</span><span>goal: <b>EL GALLO</b> above the theater</span></div>
+        <div class="row boss"><span class="ico">👑</span><span>the Piñata Toro → <b>WIRE GRIND</b></span></div>
+        <div class="row skill"><span class="ico">🐤</span><span>3 caged songbirds hide along the paseo</span></div>
+        <div class="row critter"><span class="ico">🎉</span><span>piñata imps · conga board combo</span></div>
+        <div class="row secret"><span class="ico">✦</span><span>teased: the rooftop azotea, ridden in on light lines</span></div>
+        <div class="gate">⌂ Rookery gate: paseo's end, past the sparkler — <span class="lock">🔒 fragment</span> <b>80✦</b></div>
+      </div>
+      <div class="flyway sealed"></div>
+    </div>
+
+    <div class="hall">
+      <div class="hname">THE TOLL RAMP</div>
+      <div class="line" style="background: linear-gradient(90deg,#31165a,#3a4a5c);"></div>
+      <div class="hnote">everyone else already evacuated · ☔ the rain starts halfway up</div>
+      <div class="arrows">◂ ▸</div>
+    </div>
+
+    <div class="district">
+      <div class="mood" style="background: linear-gradient(90deg,#3a4a5c,#56707f);"></div>
+      <div class="body">
+        <div class="num">DISTRICT 5 · STORM · RAIN</div>
+        <div class="name">Skyway Mile Zero</div>
+        <div class="row goal"><span class="ico">🏁</span><span>goal: the <b>MILE 0</b> arch</span></div>
+        <div class="row boss"><span class="ico">👑</span><span>the King Crab → <b>TAILWIND</b></span></div>
+        <div class="row skill"><span class="ico">🌀</span><span>gust rivers become wind highways</span></div>
+        <div class="row critter"><span class="ico">🦀</span><span>storm crabs · lock-gate combo · flooded canal</span></div>
+        <div class="row secret"><span class="ico">✦</span><span>teased: the osprey's old nest on the toll gantry</span></div>
+        <div class="gate">⌂ Rookery gate: towpath by the gantry — <span class="lock">🔒 fragment</span> <b>100✦</b></div>
+      </div>
+      <div class="flyway sealed"></div>
+    </div>
+
+    <div class="hall">
+      <div class="hname">THE LAST CAUSEWAY</div>
+      <div class="line" style="background: linear-gradient(90deg,#56707f,#12331f);"></div>
+      <div class="hnote">the road gives up, the river of grass does not · fireflies</div>
+      <div class="arrows">◂ ▸</div>
+    </div>
+
+    <div class="district">
+      <div class="mood" style="background: linear-gradient(90deg,#12331f,#ffb37a);"></div>
+      <div class="body">
+        <div class="num">DISTRICT 6 · NIGHT → DAWN · FINALE</div>
+        <div class="name">River of Grass</div>
+        <div class="row goal"><span class="ico">🏁</span><span>goal: <b>THE NEST</b>, home at last</span></div>
+        <div class="row boss"><span class="ico">👑</span><span>the Ancient Snapper → <b>TRUE FLIGHT</b></span></div>
+        <div class="row skill"><span class="ico">⚡</span><span>finishing unlocks Flight in every district</span></div>
+        <div class="row critter"><span class="ico">🐍</span><span>cottonmouths · cairn-stone combo · open water bites</span></div>
+        <div class="row secret"><span class="ico">✦</span><span>teased: the heron roost across the cypress crowns</span></div>
+        <div class="gate">⌂ Rookery gate: first hummock's lip — <span class="lock">🔒 fragment</span> <b>120✦</b></div>
+      </div>
+      <div class="flyway sealed"></div>
+    </div>
+  </div>
+
+  <!-- the hub -->
+  <div id="rookery">
+    <span class="t">THE ROOKERY</span>
+    <span class="tag">the crow-run night market under the city — every flyway starts here · linger in a gate to take it</span>
+    <div id="gates">
+      <div class="rgate"><span class="g">OCEAN DRIVE</span><br><span class="open">open from the start</span></div>
+      <div class="rgate sealed"><span class="g">BRICKELL</span><br>🔒 opens with fragment · <span class="price">40✦</span></div>
+      <div class="rgate sealed"><span class="g">WYNWOOD</span><br>🔒 opens with fragment · <span class="price">60✦</span></div>
+      <div class="rgate sealed"><span class="g">CALLE OCHO</span><br>🔒 opens with fragment · <span class="price">80✦</span></div>
+      <div class="rgate sealed"><span class="g">THE SKYWAY</span><br>🔒 opens with fragment · <span class="price">100✦</span></div>
+      <div class="rgate sealed"><span class="g">THE GLADES</span><br>🔒 opens with fragment · <span class="price">120✦</span></div>
+    </div>
+    <div id="shop">
+      <b>THE MAGPIE'S STALL</b> — <i>"maps, dear. genuine stolen city maps. shinies only."</i> &nbsp;
+      Each <span class="item">map fragment</span> charts its district on the city map <b>and</b> unseals its flyway gate:
+      <span class="item">BRICKELL <span class="p">40✦</span></span> ·
+      <span class="item">WYNWOOD <span class="p">60✦</span></span> ·
+      <span class="item">CALLE OCHO <span class="p">80✦</span></span> ·
+      <span class="item">SKYWAY <span class="p">100✦</span></span> ·
+      <span class="item">GLADES <span class="p">120✦</span></span>
+    </div>
+  </div>
+
+  <footer>
+    <div><span class="k">The loop:</span> each district = intro room + critters → sequence-puzzle chamber → boss arena → spend the new skill on the teased reward.</div>
+    <div>world state: seamless one-world rework · installable PWA · districts 1–6 + hub + hidden ship</div>
+  </footer>
+</div>
+</body>
+</html>

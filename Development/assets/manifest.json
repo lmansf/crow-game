@@ -1,0 +1,3140 @@
+{
+ "generated_by": "tools/asset-manifest.py",
+ "rows": [
+  {
+   "id": "assets/apple-touch-icon.png",
+   "medium": "file",
+   "path": "assets/apple-touch-icon.png",
+   "file": null,
+   "line": null,
+   "width": 180,
+   "height": 180,
+   "pivot": "n/a (DOM/CSS placement)",
+   "category": "ui_icon",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "index.html",
+    "sw.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "PWA icon (generated)"
+  },
+  {
+   "id": "assets/card-1.jpg",
+   "medium": "file",
+   "path": "assets/card-1.jpg",
+   "file": null,
+   "line": null,
+   "width": 832,
+   "height": 468,
+   "pivot": "n/a (DOM/CSS placement)",
+   "category": "ui_panel",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "src/ui.js",
+    "sw.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "Canva menu art"
+  },
+  {
+   "id": "assets/card-2.jpg",
+   "medium": "file",
+   "path": "assets/card-2.jpg",
+   "file": null,
+   "line": null,
+   "width": 832,
+   "height": 468,
+   "pivot": "n/a (DOM/CSS placement)",
+   "category": "ui_panel",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "src/ui.js",
+    "sw.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "Canva menu art"
+  },
+  {
+   "id": "assets/card-3.jpg",
+   "medium": "file",
+   "path": "assets/card-3.jpg",
+   "file": null,
+   "line": null,
+   "width": 832,
+   "height": 468,
+   "pivot": "n/a (DOM/CSS placement)",
+   "category": "ui_panel",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "src/ui.js",
+    "sw.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "Canva menu art"
+  },
+  {
+   "id": "assets/card-4.jpg",
+   "medium": "file",
+   "path": "assets/card-4.jpg",
+   "file": null,
+   "line": null,
+   "width": 832,
+   "height": 468,
+   "pivot": "n/a (DOM/CSS placement)",
+   "category": "ui_panel",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "src/ui.js",
+    "sw.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "Canva menu art"
+  },
+  {
+   "id": "assets/card-5.jpg",
+   "medium": "file",
+   "path": "assets/card-5.jpg",
+   "file": null,
+   "line": null,
+   "width": 832,
+   "height": 468,
+   "pivot": "n/a (DOM/CSS placement)",
+   "category": "ui_panel",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "src/ui.js",
+    "sw.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "Canva menu art"
+  },
+  {
+   "id": "assets/card-6.jpg",
+   "medium": "file",
+   "path": "assets/card-6.jpg",
+   "file": null,
+   "line": null,
+   "width": 832,
+   "height": 468,
+   "pivot": "n/a (DOM/CSS placement)",
+   "category": "ui_panel",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "src/ui.js",
+    "sw.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "Canva menu art"
+  },
+  {
+   "id": "assets/icon-192.png",
+   "medium": "file",
+   "path": "assets/icon-192.png",
+   "file": null,
+   "line": null,
+   "width": 192,
+   "height": 192,
+   "pivot": "n/a (DOM/CSS placement)",
+   "category": "ui_icon",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "manifest.webmanifest",
+    "sw.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "PWA icon (generated)"
+  },
+  {
+   "id": "assets/icon-512.png",
+   "medium": "file",
+   "path": "assets/icon-512.png",
+   "file": null,
+   "line": null,
+   "width": 512,
+   "height": 512,
+   "pivot": "n/a (DOM/CSS placement)",
+   "category": "ui_icon",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "manifest.webmanifest",
+    "sw.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "PWA icon (generated)"
+  },
+  {
+   "id": "assets/menu-bg.jpg",
+   "medium": "file",
+   "path": "assets/menu-bg.jpg",
+   "file": null,
+   "line": null,
+   "width": 1600,
+   "height": 900,
+   "pivot": "n/a (DOM/CSS placement)",
+   "category": "ui_panel",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "style.css",
+    "sw.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "Canva menu art"
+  },
+  {
+   "id": "src/background.js::drawPalmSil",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 242,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "background_layer",
+   "clip": "PalmSil",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/boss.js::drawGullKing",
+   "medium": "procedural",
+   "path": "src/boss.js",
+   "file": "src/boss.js",
+   "line": 328,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "boss_anim",
+   "clip": "gullking",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/boss.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "ocean-drive"
+   ],
+   "tier": "P0",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/boss.js::drawRatKing",
+   "medium": "procedural",
+   "path": "src/boss.js",
+   "file": "src/boss.js",
+   "line": 392,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "boss_anim",
+   "clip": "ratking",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/boss.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "brickell-ascent"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/boss.js::drawIguanodon",
+   "medium": "procedural",
+   "path": "src/boss.js",
+   "file": "src/boss.js",
+   "line": 457,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "boss_anim",
+   "clip": "iguanodon",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/boss.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "wynwood-walls"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/boss.js::drawPinataBull",
+   "medium": "procedural",
+   "path": "src/boss.js",
+   "file": "src/boss.js",
+   "line": 512,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "boss_anim",
+   "clip": "pinatabull",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/boss.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "little-havana"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/boss.js::drawKingCrab",
+   "medium": "procedural",
+   "path": "src/boss.js",
+   "file": "src/boss.js",
+   "line": 566,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "boss_anim",
+   "clip": "kingcrab",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/boss.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "skyway-mile-zero"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/boss.js::drawSnapper",
+   "medium": "procedural",
+   "path": "src/boss.js",
+   "file": "src/boss.js",
+   "line": 629,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "boss_anim",
+   "clip": "snapper",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/boss.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "river-of-grass"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/enemies.js::drawGull",
+   "medium": "procedural",
+   "path": "src/enemies.js",
+   "file": "src/enemies.js",
+   "line": 234,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "enemy_anim",
+   "clip": "gull",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/enemies.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "ocean-drive"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": ""
+  },
+  {
+   "id": "src/enemies.js::drawRat",
+   "medium": "procedural",
+   "path": "src/enemies.js",
+   "file": "src/enemies.js",
+   "line": 350,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "enemy_anim",
+   "clip": "rat",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/enemies.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "brickell-ascent"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/enemies.js::drawIguana",
+   "medium": "procedural",
+   "path": "src/enemies.js",
+   "file": "src/enemies.js",
+   "line": 396,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "enemy_anim",
+   "clip": "iguana",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/enemies.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "wynwood-walls"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/enemies.js::drawImp",
+   "medium": "procedural",
+   "path": "src/enemies.js",
+   "file": "src/enemies.js",
+   "line": 445,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "enemy_anim",
+   "clip": "imp",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/enemies.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "little-havana"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/enemies.js::drawCrab",
+   "medium": "procedural",
+   "path": "src/enemies.js",
+   "file": "src/enemies.js",
+   "line": 492,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "enemy_anim",
+   "clip": "crab",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/enemies.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "skyway-mile-zero"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/enemies.js::drawSnake",
+   "medium": "procedural",
+   "path": "src/enemies.js",
+   "file": "src/enemies.js",
+   "line": 554,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "enemy_anim",
+   "clip": "snake",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/enemies.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "river-of-grass"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::renderBuilding",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 986,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "Building",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "integrated",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawBlock",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1298,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "tileset",
+   "clip": "Block",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawBackdrop",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1402,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "tileset",
+   "clip": "Backdrop",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
+  },
+  {
+   "id": "src/level.js::drawSteel",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1599,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "Steel",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawShutterWall",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1624,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "ShutterWall",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawCrateBlock",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1645,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "CrateBlock",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawContainer",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1661,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "Container",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawMural",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1683,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Mural",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawHook",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1719,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Hook",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawPlatform",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1762,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Platform",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "integrated",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawCable",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1965,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Cable",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "integrated",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawVent",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 1997,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Vent",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "integrated",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawThermal",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2024,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Thermal",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
+  },
+  {
+   "id": "src/level.js::drawWireHazard",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2069,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "WireHazard",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
+  },
+  {
+   "id": "src/level.js::drawShiny",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2111,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Shiny",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
+  },
+  {
+   "id": "src/level.js::drawPickup",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2154,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Pickup",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
+  },
+  {
+   "id": "src/level.js::drawPerch",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2195,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Perch",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
+  },
+  {
+   "id": "src/level.js::drawGoal",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2232,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Goal",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
+  },
+  {
+   "id": "src/level.js::drawPalm",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2304,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "palm",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "brickell-ascent",
+    "hallways",
+    "little-havana",
+    "ocean-drive",
+    "wynwood-walls"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawCar",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2380,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "car",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "brickell-ascent",
+    "hallways",
+    "little-havana",
+    "ocean-drive",
+    "skyway-mile-zero",
+    "wynwood-walls"
+   ],
+   "tier": "P0",
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
+  },
+  {
+   "id": "src/level.js::drawGrass",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2406,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "grass",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "ocean-drive"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawLamp",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2420,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "lamp",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "brickell-ascent",
+    "hallways",
+    "little-havana",
+    "rookery",
+    "skyway-mile-zero",
+    "wynwood-walls"
+   ],
+   "tier": "P1",
+   "status": "integrated",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawMast",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2452,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "mast",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "hallways",
+    "wynwood-walls"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawBigPipe",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2486,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "bigpipe",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "brickell-ascent",
+    "hallways",
+    "rookery",
+    "wynwood-walls"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawSewerWater",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2504,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "tileset",
+   "clip": "sewerwater",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "brickell-ascent",
+    "hallways"
+   ],
+   "tier": "P1",
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
+  },
+  {
+   "id": "src/level.js::drawTimedHazard",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2534,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "TimedHazard",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawWater",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2665,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "tileset",
+   "clip": "Water",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "conformed",
+   "note": "meets master style as-is (batch 02 review)"
+  },
+  {
+   "id": "src/level.js::drawRail",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2692,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Rail",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawWind",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2757,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Wind",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawLilyPad",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2780,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "LilyPad",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawCage",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2815,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Cage",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawThornVine",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2871,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "ThornVine",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawGrateBeam",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2904,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "grate",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "brickell-ascent",
+    "hallways"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawFence",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2931,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "Fence",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawCart",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2958,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "Cart",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawConcrete",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 2982,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "Concrete",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawBarge",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3012,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Barge",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawTrunk",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3040,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "Trunk",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawCanopy",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3077,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "Canopy",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawRoot",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3097,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "Root",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawTheaterFacade",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3116,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "TheaterFacade",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawLanternString",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3208,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "lantern",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "hallways",
+    "little-havana",
+    "rookery"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawRooster",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3243,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "rooster",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "hallways",
+    "little-havana"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawPergola",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3312,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "pergola",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "little-havana"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawPylon",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3350,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "pylon",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "hallways",
+    "skyway-mile-zero"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawRadioMast",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3370,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "radiomast",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "skyway-mile-zero"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawOsprey",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3421,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "osprey",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "skyway-mile-zero"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawTruck",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3483,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "truck",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "hallways",
+    "skyway-mile-zero"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawReeds",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3517,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "reed",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "hallways",
+    "river-of-grass"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawBoardwalk",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3539,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "boardwalk",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "hallways",
+    "river-of-grass"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawFlock",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3563,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "flock",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "hallways",
+    "river-of-grass"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawArchLegs",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3585,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "archlegs",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "skyway-mile-zero"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawBargeCrane",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3606,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "crane",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "skyway-mile-zero"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawPinata",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3625,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Pinata",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawExitDoor",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3683,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "ExitDoor",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawShopStall",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3797,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "ShopStall",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawPuzzleSwitch",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3878,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "PuzzleSwitch",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawPuzzleDisplay",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3905,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "PuzzleDisplay",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawBeam",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3942,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Beam",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawCurio",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 3996,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Curio",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawCurioIcon",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 4023,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "CurioIcon",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawSpecimen",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 4180,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "specimen",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "ufo"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawLandmark",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 4263,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "Landmark",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawMiamiTower",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 4272,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "MiamiTower",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawWynwoodGate",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 4331,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_static",
+   "clip": "WynwoodGate",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawStiltHouse",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 4367,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "StiltHouse",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawCruiseShip",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 4415,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "CruiseShip",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawSharkValleyTower",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 4465,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "SharkValleyTower",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/level.js::drawFreedomTower",
+   "medium": "procedural",
+   "path": "src/level.js",
+   "file": "src/level.js",
+   "line": 4516,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "prop_animated",
+   "clip": "FreedomTower",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": ""
+  },
+  {
+   "id": "src/player.js::drawWing",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": 916,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined origin (x, y args)",
+   "category": "player_anim",
+   "clip": "Wing",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": ""
+  },
+  {
+   "id": "src/background.js::draw",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 288,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "sky:dusk",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "pending",
+   "note": "dusk sky palette: gradient, stars, sun/moon, clouds, haze bands"
+  },
+  {
+   "id": "src/background.js::draw",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 288,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "sky:dawn",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "pending",
+   "note": "dawn sky palette: gradient, stars, sun/moon, clouds, haze bands"
+  },
+  {
+   "id": "src/background.js::draw",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 288,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "sky:night",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "pending",
+   "note": "night sky palette: gradient, stars, sun/moon, clouds, haze bands"
+  },
+  {
+   "id": "src/background.js::draw",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 288,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "sky:storm",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "pending",
+   "note": "storm sky palette: gradient, stars, sun/moon, clouds, haze bands"
+  },
+  {
+   "id": "src/background.js::drawLayer",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 511,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "city:far",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "pending",
+   "note": "city skyline silhouette band (parallax)"
+  },
+  {
+   "id": "src/background.js::drawLayer",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 511,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "glades:far",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "river-of-grass"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "everglades silhouette band (parallax)"
+  },
+  {
+   "id": "src/background.js::drawLayer",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 511,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "city:mid",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "pending",
+   "note": "city skyline silhouette band (parallax)"
+  },
+  {
+   "id": "src/background.js::drawLayer",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 511,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "glades:mid",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "river-of-grass"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "everglades silhouette band (parallax)"
+  },
+  {
+   "id": "src/background.js::drawLayer",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 511,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "city:near",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P0",
+   "status": "pending",
+   "note": "city skyline silhouette band (parallax)"
+  },
+  {
+   "id": "src/background.js::drawLayer",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 511,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "glades:near",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "river-of-grass"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "everglades silhouette band (parallax)"
+  },
+  {
+   "id": "src/background.js::foreground",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 529,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "background_layer",
+   "clip": "foreground-occluders",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "near-camera parallax fringe, city + glades variants"
+  },
+  {
+   "id": "src/background.js::rain",
+   "medium": "procedural",
+   "path": "src/background.js",
+   "file": "src/background.js",
+   "line": 587,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "vfx_frames",
+   "clip": "rain-overlay",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/background.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "skyway-mile-zero"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "storm rain streaks"
+  },
+  {
+   "id": "src/particles.js::burst",
+   "medium": "procedural",
+   "path": "src/particles.js",
+   "file": "src/particles.js",
+   "line": 36,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "vfx_frames",
+   "clip": "burst",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/particles.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "radial spark burst (collect, impacts, boss hits)"
+  },
+  {
+   "id": "src/particles.js::feathers",
+   "medium": "procedural",
+   "path": "src/particles.js",
+   "file": "src/particles.js",
+   "line": 50,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "vfx_frames",
+   "clip": "feathers",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/particles.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "crow feather puffs"
+  },
+  {
+   "id": "src/particles.js::dust",
+   "medium": "procedural",
+   "path": "src/particles.js",
+   "file": "src/particles.js",
+   "line": 65,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "vfx_frames",
+   "clip": "dust",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/particles.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "landing dust"
+  },
+  {
+   "id": "src/particles.js::trail",
+   "medium": "procedural",
+   "path": "src/particles.js",
+   "file": "src/particles.js",
+   "line": 78,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "vfx_frames",
+   "clip": "trail",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/particles.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "drifting trail motes (vents, curios)"
+  },
+  {
+   "id": "src/fx.js::lighting",
+   "medium": "procedural",
+   "path": "src/fx.js",
+   "file": "src/fx.js",
+   "line": 118,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "vfx_frames",
+   "clip": "lighting",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/fx.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "dynamic lightmap composite"
+  },
+  {
+   "id": "src/fx.js::bloom",
+   "medium": "procedural",
+   "path": "src/fx.js",
+   "file": "src/fx.js",
+   "line": 149,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "vfx_frames",
+   "clip": "bloom",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/fx.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "neon bloom"
+  },
+  {
+   "id": "src/fx.js::grain",
+   "medium": "procedural",
+   "path": "src/fx.js",
+   "file": "src/fx.js",
+   "line": 90,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "vfx_frames",
+   "clip": "grain",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/fx.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "film grain"
+  },
+  {
+   "id": "src/fx.js::chroma",
+   "medium": "procedural",
+   "path": "src/fx.js",
+   "file": "src/fx.js",
+   "line": 62,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "vfx_frames",
+   "clip": "chroma",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/fx.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "chromatic hit pulse"
+  },
+  {
+   "id": "src/fx.js::grade",
+   "medium": "procedural",
+   "path": "src/fx.js",
+   "file": "src/fx.js",
+   "line": 172,
+   "width": null,
+   "height": null,
+   "pivot": "code-defined",
+   "category": "vfx_frames",
+   "clip": "grade",
+   "frames": null,
+   "timing": "continuous (code-driven, no frames)",
+   "usage_refs": [
+    "src/fx.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "shared"
+   ],
+   "tier": "P1",
+   "status": "pending",
+   "note": "per-district color grade"
+  },
+  {
+   "id": "src/player.js::clip:idle",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "idle",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:run",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "run",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:hop",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "hop",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:flap",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "flap",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:glide",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "glide",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:swoop",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "swoop",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:roll",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "roll",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:grind",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "grind",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:hook-hang",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "hook-hang",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:wall-grip",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "wall-grip",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:flight",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "flight",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "src/player.js::clip:death",
+   "medium": "procedural",
+   "path": "src/player.js",
+   "file": "src/player.js",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "player center (x, y), h/w in code",
+   "category": "player_anim",
+   "clip": "death",
+   "frames": null,
+   "timing": "continuous (state machine, no frames)",
+   "usage_refs": [
+    "src/player.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P0",
+   "status": "integrated",
+   "note": "crow body/wing pose blend for this state"
+  },
+  {
+   "id": "index.html::inline-svg-icons",
+   "medium": "svg-inline",
+   "path": "index.html",
+   "file": "index.html",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "n/a",
+   "category": "ui_icon",
+   "clip": null,
+   "frames": 9,
+   "timing": null,
+   "usage_refs": [
+    "index.html"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "9 inline SVG glyphs (HUD shiny, mute, pause, touch pad, favicon)"
+  },
+  {
+   "id": "style.css::screens-and-hud",
+   "medium": "css",
+   "path": "style.css",
+   "file": "style.css",
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "n/a",
+   "category": "ui_panel",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "index.html"
+   ],
+   "dead": false,
+   "biomes": [
+    "menu"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "all menus/HUD are DOM+CSS; no panel images anywhere"
+  },
+  {
+   "id": "font-stack",
+   "medium": "system-font",
+   "path": "-",
+   "file": null,
+   "line": null,
+   "width": null,
+   "height": null,
+   "pivot": "n/a",
+   "category": "font/text",
+   "clip": null,
+   "frames": null,
+   "timing": null,
+   "usage_refs": [
+    "style.css",
+    "src/level.js"
+   ],
+   "dead": false,
+   "biomes": [
+    "all"
+   ],
+   "tier": "P2",
+   "status": "pending",
+   "note": "\"Segoe UI\", system-ui - no font files shipped"
+  }
+ ]
+}
