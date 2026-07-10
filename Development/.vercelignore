@@ -1,0 +1,7 @@
+# Keep the deploy to the playable game: index.html, style.css, src/.
+# Everything below is development tooling that lives in the repo but
+# has no business being served from the public URL.
+ads
+docs
+tools
+prototype-v0.html
