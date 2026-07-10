@@ -1043,7 +1043,33 @@ function renderBuilding(b, groundY) {
           ctx.fillStyle = 'rgba(0,0,0,0.4)';
           ctx.fillRect(wx, wy + 9, 15, 2);
         }
+        // sill catches the sky; grime washes down from some of them
+        ctx.fillStyle = 'rgba(255,255,255,0.07)';
+        ctx.fillRect(wx - 1.5, wy + 21, 18, 1.6);
+        if (rand() < 0.22) {
+          const gg = ctx.createLinearGradient(0, wy + 22, 0, wy + 33);
+          gg.addColorStop(0, 'rgba(0,0,0,0.18)');
+          gg.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = gg;
+          ctx.fillRect(wx + 1, wy + 22, 13, 11);
+        }
+        // the odd window unit humming under a sill
+        if (rand() < 0.1) {
+          ctx.fillStyle = `hsl(${hue}, 8%, 13%)`;
+          ctx.fillRect(wx + 2, wy + 14, 11, 8);
+          ctx.fillStyle = 'rgba(0,0,0,0.5)';
+          ctx.beginPath();
+          ctx.arc(wx + 7.5, wy + 18, 2.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
+    }
+    // floor ledges: a shadow line under every window row
+    for (let wy = 30; wy < b.h - 26; wy += 34) {
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillRect(0, wy + 24, b.w, 2.4);
+      ctx.fillStyle = 'rgba(255,255,255,0.035)';
+      ctx.fillRect(0, wy + 22.8, b.w, 1.2);
     }
     ctx.globalCompositeOperation = 'lighter';
     for (const [hx, hy, lh] of halos) {
@@ -1071,6 +1097,20 @@ function renderBuilding(b, groundY) {
   // parapet
   ctx.fillStyle = `hsl(${hue}, 24%, 24%)`;
   ctx.fillRect(-4, -2, b.w + 8, 12);
+
+  // deco crown: a chevron frieze under the parapet
+  if (b.style === 'deco') {
+    ctx.strokeStyle = `hsla(${hue}, 42%, 42%, 0.55)`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const cw = 14;
+    for (let cx2 = 8; cx2 + cw < b.w - 8; cx2 += cw) {
+      ctx.moveTo(cx2, 24);
+      ctx.lineTo(cx2 + cw / 2, 17);
+      ctx.lineTo(cx2 + cw, 24);
+    }
+    ctx.stroke();
+  }
 
   // neon trim: parapet edge + corners, layered for glow
   const neon = `hsl(${hue}, 95%, 64%)`;
@@ -1300,6 +1340,32 @@ function drawBlock(ctx, s, t, player) {
     ctx.ellipse(s.x + rand() * s.w, s.y + rand() * s.h, 12 + rand() * 18, 7 + rand() * 10, 0, 0, Math.PI * 2);
     ctx.fill();
   }
+
+  // per-brick tonal variation, snapped to the mortar grid (bounded count)
+  const tones = Math.max(3, (s.w * s.h) / 9000);
+  for (let i = 0; i < tones; i++) {
+    const trow = Math.floor(rand() * (s.h / 18));
+    const tcol = Math.floor(rand() * (s.w / 32));
+    const bx = s.x + tcol * 32 + ((trow % 2) * 16) + 8;
+    const by = s.y + trow * 18 + 2;
+    if (bx + 24 > s.x + s.w || by + 14 > s.y + s.h) continue;
+    ctx.fillStyle = rand() < 0.5 ? 'rgba(255,255,255,0.035)' : 'rgba(8,5,12,0.16)';
+    ctx.fillRect(bx, by, 24, 14);
+  }
+
+  // the drains stay damp: a wet sheen creeping up from the base
+  if (s.h > 60) {
+    const damp = ctx.createLinearGradient(0, s.y + s.h - 44, 0, s.y + s.h);
+    damp.addColorStop(0, 'rgba(20,40,44,0)');
+    damp.addColorStop(1, 'rgba(20,40,44,0.3)');
+    ctx.fillStyle = damp;
+    ctx.fillRect(s.x, s.y + s.h - 44, s.w, 44);
+  }
+
+  // ink edge holds the block together against busy neighbors
+  ctx.strokeStyle = 'rgba(6,4,12,0.55)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(s.x + 0.75, s.y + 0.75, s.w - 1.5, s.h - 1.5);
 
   // top highlight
   ctx.fillStyle = 'rgba(255,255,255,0.06)';
@@ -2255,19 +2321,54 @@ function drawPalm(ctx, x, baseY, h, lean, t) {
     ctx.lineTo(x + (topX - x) * u + 4, baseY - h * u - 2);
     ctx.stroke();
   }
-  ctx.strokeStyle = '#1e2b2a';
+  // fronds: filled leaf shapes with midribs, drooping under their own weight
   for (let i = 0; i < 7; i++) {
     const a = -Math.PI / 2 + (i - 3) * 0.44 + sway * 0.01;
     const len = h * 0.52;
-    ctx.lineWidth = 4;
+    const ex = topX + Math.cos(a) * len;
+    const ey = topY + Math.sin(a) * len + len * 0.3;
+    const mx = topX + Math.cos(a) * len * 0.55;
+    const my = topY + Math.sin(a) * len * 0.55 - 6;
+    ctx.fillStyle = i % 2 ? '#1b2927' : '#213430';
     ctx.beginPath();
     ctx.moveTo(topX, topY);
+    ctx.quadraticCurveTo(mx, my - 4, ex, ey);
+    ctx.quadraticCurveTo(mx + 2, my + 8, topX, topY + 3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(9,15,13,0.6)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(topX, topY);
+    ctx.quadraticCurveTo(mx, my, ex, ey);
+    ctx.stroke();
+  }
+  // dusk light catches the upper fronds
+  ctx.strokeStyle = 'rgba(255,110,180,0.16)';
+  ctx.lineWidth = 1.6;
+  for (const i of [2, 3]) {
+    const a = -Math.PI / 2 + (i - 3) * 0.44 + sway * 0.01;
+    const len = h * 0.52;
+    ctx.beginPath();
+    ctx.moveTo(topX, topY - 1);
     ctx.quadraticCurveTo(
-      topX + Math.cos(a) * len * 0.6, topY + Math.sin(a) * len * 0.6 - 6,
-      topX + Math.cos(a) * len, topY + Math.sin(a) * len + len * 0.3
+      topX + Math.cos(a) * len * 0.55, topY + Math.sin(a) * len * 0.55 - 8,
+      topX + Math.cos(a) * len, topY + Math.sin(a) * len + len * 0.28
     );
     ctx.stroke();
   }
+  // coconut cluster at the crown
+  ctx.fillStyle = '#241a24';
+  for (const [ox, oy] of [[-4, 4], [3, 5], [0, 8]]) {
+    ctx.beginPath();
+    ctx.arc(topX + ox, topY + oy, 3.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = 'rgba(255,110,180,0.25)';
+  ctx.beginPath();
+  ctx.arc(topX - 5, topY + 3, 1.1, 0, Math.PI * 2);
+  ctx.fill();
+  // trunk rim on the light side
   ctx.strokeStyle = 'rgba(255,110,180,0.2)';
   ctx.lineWidth = 2;
   ctx.beginPath();

@@ -751,6 +751,16 @@ export class Player {
     const WING_FAR = '#131019';
     const WING_NEAR = '#1f1c2b';
 
+    // ink silhouette: one containment pass under the main mass, so the crow
+    // stays hand-inked and pops off busy environment art
+    ctx.fillStyle = 'rgba(6,4,12,0.7)';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 16.2, 11.7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(11, -8, 8.8, 0, Math.PI * 2);
+    ctx.fill();
+
     // tail fan
     ctx.fillStyle = BODY;
     ctx.save();
@@ -761,6 +771,15 @@ export class Player {
       ctx.quadraticCurveTo(-20, i * 3.6 - 2, -27, i * 5 + (this.gliding ? 2 : 0));
       ctx.quadraticCurveTo(-19, i * 3 + 3, -9, 3);
       ctx.fill();
+    }
+    // feather separation lines through the fan
+    ctx.strokeStyle = 'rgba(6,4,12,0.5)';
+    ctx.lineWidth = 1;
+    for (let i = -1; i <= 1; i++) {
+      ctx.beginPath();
+      ctx.moveTo(-10, 0);
+      ctx.quadraticCurveTo(-19, i * 3.4, -26, i * 5 + (this.gliding ? 2 : 0));
+      ctx.stroke();
     }
     ctx.restore();
 
@@ -777,11 +796,27 @@ export class Player {
     ctx.ellipse(0, 0, 15, 10.5, 0, 0, Math.PI * 2);
     ctx.fill();
 
+    // chest feather scallops on the lower front
+    ctx.strokeStyle = 'rgba(72,66,100,0.5)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.arc(5 - i * 3.6, 4.4 + i * 1.2, 3.1, Math.PI * 0.15, Math.PI * 0.85);
+      ctx.stroke();
+    }
+
     // iridescent sheen that slowly cycles hue
     ctx.strokeStyle = `hsla(${(t * 34) % 360}, 80%, 70%, 0.28)`;
     ctx.lineWidth = 1.6;
     ctx.beginPath();
     ctx.ellipse(0, -2.5, 11, 6.5, -0.12, Math.PI * 1.15, Math.PI * 1.85);
+    ctx.stroke();
+
+    // rim light along the back: ambient violet, reads in every district
+    ctx.strokeStyle = 'rgba(169,143,255,0.4)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 14.4, 10, 0, Math.PI * 1.04, Math.PI * 1.6);
     ctx.stroke();
 
     // head
@@ -803,6 +838,16 @@ export class Player {
     ctx.beginPath();
     ctx.moveTo(17, -9.5);
     ctx.lineTo(25, -7.2);
+    ctx.stroke();
+    // beak-tip glint and a crown rim to match the back
+    ctx.fillStyle = 'rgba(255,209,102,0.55)';
+    ctx.beginPath();
+    ctx.arc(24.6, -7.6, 0.9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(169,143,255,0.35)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(11, -8, 7.1, Math.PI * 1.15, Math.PI * 1.72);
     ctx.stroke();
 
     // eye (glowing, expressive)
@@ -879,6 +924,21 @@ function drawWing(ctx, sx, sy, len, angle, bend, color) {
   ctx.quadraticCurveTo(len * 0.62, len * 0.34, 4, len * 0.24);
   ctx.closePath();
   ctx.fill();
+  // covert layer: a darker inner wing gives the shape a second value
+  ctx.fillStyle = 'rgba(6,4,12,0.32)';
+  ctx.beginPath();
+  ctx.moveTo(1, 1);
+  ctx.quadraticCurveTo(len * 0.32, -len * 0.17 - bend * 5, len * 0.6, bend * 8 + len * 0.03);
+  ctx.quadraticCurveTo(len * 0.4, len * 0.24, 4, len * 0.2);
+  ctx.closePath();
+  ctx.fill();
+  // rim light along the leading edge
+  ctx.strokeStyle = 'rgba(169,143,255,0.3)';
+  ctx.lineWidth = 1.1;
+  ctx.beginPath();
+  ctx.moveTo(2, -0.5);
+  ctx.quadraticCurveTo(len * 0.4, -len * 0.27 - bend * 8, len * 0.96, bend * 12);
+  ctx.stroke();
   // feather hint
   ctx.strokeStyle = 'rgba(169,143,255,0.22)';
   ctx.lineWidth = 1;

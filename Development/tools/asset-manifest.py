@@ -303,7 +303,18 @@ def main():
     })
 
     # ---------------------------------------------------------------- outputs
+    # statuses are lifecycle state owned by the pipeline, not the crawler:
+    # re-crawling must never reset them
     manifest_path = os.path.join(ASSETS, 'manifest.json')
+    if os.path.exists(manifest_path):
+        try:
+            prev = {r['id']: r.get('status', 'pending')
+                    for r in json.load(open(manifest_path, encoding='utf-8')).get('rows', [])}
+            for r in rows:
+                if r['id'] in prev:
+                    r['status'] = prev[r['id']]
+        except (ValueError, KeyError):
+            pass  # unreadable previous manifest: start statuses fresh
     with open(manifest_path, 'w', encoding='utf-8') as f:
         json.dump({'generated_by': 'tools/asset-manifest.py', 'rows': rows}, f, indent=1)
 

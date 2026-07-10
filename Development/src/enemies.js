@@ -237,33 +237,56 @@ function drawGull(ctx, e, t) {
   ctx.scale(e.facing, 1);
   const diving = e.state === 'dive';
   const flap = diving ? -0.5 : Math.sin(t * (e.state === 'aim' ? 22 : 9) + e.phase) * 0.8;
-  // wings
-  ctx.strokeStyle = '#d8d2c2';
-  ctx.lineWidth = 5;
-  ctx.lineCap = 'round';
+  // far wing: a filled shape with separated grey primaries, not a stick
+  ctx.fillStyle = '#b9b2a0';
   ctx.beginPath();
-  ctx.moveTo(-2, -2);
-  ctx.quadraticCurveTo(-10, -6 - flap * 8, -20, -4 - flap * 14);
-  ctx.moveTo(2, -2);
-  ctx.quadraticCurveTo(8, -6 - flap * 8, 16, -4 - flap * 12);
-  ctx.stroke();
-  // grey wingtips
-  ctx.strokeStyle = '#8a8272';
-  ctx.lineWidth = 3.4;
-  ctx.beginPath();
-  ctx.moveTo(-20, -4 - flap * 14);
+  ctx.moveTo(-2, -3);
+  ctx.quadraticCurveTo(-11, -7 - flap * 8, -20, -4 - flap * 14);
   ctx.lineTo(-26, -2 - flap * 16);
-  ctx.stroke();
-  // body
+  ctx.quadraticCurveTo(-12, 1 - flap * 3, -1, 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#7d7565';
+  ctx.beginPath();
+  ctx.moveTo(-19, -4.5 - flap * 14);
+  ctx.lineTo(-27.5, -1.5 - flap * 16.5);
+  ctx.lineTo(-17, -1 - flap * 11);
+  ctx.closePath();
+  ctx.fill();
+  // ink silhouette under the main mass
+  ctx.fillStyle = 'rgba(6,4,12,0.45)';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 14, 9, diving ? 0.35 : 0.05, 0, Math.PI * 2);
+  ctx.fill();
+  // body: three values, grey mantle over the back
   const g = ctx.createLinearGradient(0, -8, 0, 8);
-  g.addColorStop(0, '#f0ece0');
-  g.addColorStop(1, '#b8b2a2');
+  g.addColorStop(0, '#f4f0e4');
+  g.addColorStop(0.55, '#ddd6c4');
+  g.addColorStop(1, '#a8a292');
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(0, 0, 13, 8, diving ? 0.35 : 0.05, 0, Math.PI * 2);
   ctx.fill();
+  ctx.fillStyle = 'rgba(150,142,124,0.55)';
+  ctx.beginPath();
+  ctx.ellipse(-3, -3.5, 8, 3.4, diving ? 0.35 : 0.08, Math.PI, Math.PI * 2);
+  ctx.fill();
+  // tail wedge with a dark band
+  ctx.fillStyle = '#ddd6c4';
+  ctx.beginPath();
+  ctx.moveTo(-11, -2);
+  ctx.lineTo(-19, 1 + flap * 2);
+  ctx.lineTo(-11, 3.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#55503f';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.moveTo(-18, 0.4 + flap * 2);
+  ctx.lineTo(-15.5, 2.2);
+  ctx.stroke();
   // head + beak
-  ctx.fillStyle = '#f0ece0';
+  ctx.fillStyle = '#f4f0e4';
   ctx.beginPath();
   ctx.arc(10, -5, 5.5, 0, Math.PI * 2);
   ctx.fill();
@@ -273,11 +296,39 @@ function drawGull(ctx, e, t) {
   ctx.lineTo(21, -4);
   ctx.lineTo(14, -2.5);
   ctx.fill();
-  // eye: red while hunting
+  // gonys spot on the lower bill
+  ctx.fillStyle = '#c9503c';
+  ctx.beginPath();
+  ctx.arc(17.6, -3.6, 0.8, 0, Math.PI * 2);
+  ctx.fill();
+  // near wing: lighter fill over the body
+  ctx.fillStyle = '#eee8d8';
+  ctx.beginPath();
+  ctx.moveTo(2, -3);
+  ctx.quadraticCurveTo(9, -7 - flap * 8, 16, -4 - flap * 12);
+  ctx.lineTo(21, -2 - flap * 13.5);
+  ctx.quadraticCurveTo(10, 1 - flap * 3, 3, 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#8a8272';
+  ctx.beginPath();
+  ctx.moveTo(15.5, -4.5 - flap * 12);
+  ctx.lineTo(22, -1.5 - flap * 14);
+  ctx.lineTo(14, -1 - flap * 9);
+  ctx.closePath();
+  ctx.fill();
+  // eye: red while hunting, with a ring
   ctx.fillStyle = e.state === 'aim' || diving ? '#e83c4b' : '#191325';
   ctx.beginPath();
   ctx.arc(11, -5.5, 1.7, 0, Math.PI * 2);
   ctx.fill();
+  if (e.state === 'aim' || diving) {
+    ctx.strokeStyle = 'rgba(232,60,75,0.5)';
+    ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    ctx.arc(11, -5.5, 2.7, 0, Math.PI * 2);
+    ctx.stroke();
+  }
   ctx.restore();
   // telegraph
   if (e.state === 'aim') {
