@@ -23,8 +23,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "PWA icon (generated)"
+   "status": "conformed",
+   "note": "PWA icon (generated) \u00b7 generated this cycle to master palette"
   },
   {
    "id": "assets/card-1.jpg",
@@ -48,8 +48,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/card-2.jpg",
@@ -73,8 +73,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/card-3.jpg",
@@ -98,8 +98,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/card-4.jpg",
@@ -123,8 +123,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/card-5.jpg",
@@ -148,8 +148,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/card-6.jpg",
@@ -173,8 +173,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "assets/icon-192.png",
@@ -198,8 +198,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "PWA icon (generated)"
+   "status": "conformed",
+   "note": "PWA icon (generated) \u00b7 generated this cycle to master palette"
   },
   {
    "id": "assets/icon-512.png",
@@ -223,8 +223,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "PWA icon (generated)"
+   "status": "conformed",
+   "note": "PWA icon (generated) \u00b7 generated this cycle to master palette"
   },
   {
    "id": "assets/menu-bg.jpg",
@@ -248,8 +248,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "Canva menu art"
+   "status": "conformed",
+   "note": "Canva menu art \u00b7 production Canva menu art, kept"
   },
   {
    "id": "src/background.js::drawPalmSil",
@@ -272,8 +272,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/boss.js::drawGullKing",
@@ -296,7 +296,7 @@
     "ocean-drive"
    ],
    "tier": "P0",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -304,7 +304,7 @@
    "medium": "procedural",
    "path": "src/boss.js",
    "file": "src/boss.js",
-   "line": 392,
+   "line": 431,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -320,7 +320,7 @@
     "brickell-ascent"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -328,7 +328,7 @@
    "medium": "procedural",
    "path": "src/boss.js",
    "file": "src/boss.js",
-   "line": 457,
+   "line": 515,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -344,7 +344,7 @@
     "wynwood-walls"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -352,7 +352,7 @@
    "medium": "procedural",
    "path": "src/boss.js",
    "file": "src/boss.js",
-   "line": 512,
+   "line": 599,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -368,7 +368,7 @@
     "little-havana"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -376,7 +376,7 @@
    "medium": "procedural",
    "path": "src/boss.js",
    "file": "src/boss.js",
-   "line": 566,
+   "line": 668,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -392,7 +392,7 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -400,7 +400,7 @@
    "medium": "procedural",
    "path": "src/boss.js",
    "file": "src/boss.js",
-   "line": 629,
+   "line": 758,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -416,7 +416,7 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -464,7 +464,7 @@
     "brickell-ascent"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -472,7 +472,7 @@
    "medium": "procedural",
    "path": "src/enemies.js",
    "file": "src/enemies.js",
-   "line": 396,
+   "line": 427,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -488,7 +488,7 @@
     "wynwood-walls"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -496,7 +496,7 @@
    "medium": "procedural",
    "path": "src/enemies.js",
    "file": "src/enemies.js",
-   "line": 445,
+   "line": 498,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -512,7 +512,7 @@
     "little-havana"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -520,7 +520,7 @@
    "medium": "procedural",
    "path": "src/enemies.js",
    "file": "src/enemies.js",
-   "line": 492,
+   "line": 566,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -536,7 +536,7 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -544,7 +544,7 @@
    "medium": "procedural",
    "path": "src/enemies.js",
    "file": "src/enemies.js",
-   "line": 554,
+   "line": 654,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -560,7 +560,7 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -633,7 +633,7 @@
    ],
    "tier": "P0",
    "status": "conformed",
-   "note": "meets master style as-is (batch 02 review)"
+   "note": ""
   },
   {
    "id": "src/level.js::drawSteel",
@@ -656,7 +656,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -680,7 +680,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -704,7 +704,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -728,7 +728,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -752,8 +752,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 05 review)"
   },
   {
    "id": "src/level.js::drawHook",
@@ -776,8 +776,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawPlatform",
@@ -808,7 +808,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 1965,
+   "line": 2075,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -832,7 +832,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 1997,
+   "line": 2114,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -856,7 +856,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2024,
+   "line": 2151,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -873,14 +873,14 @@
    ],
    "tier": "P2",
    "status": "conformed",
-   "note": "meets master style as-is (batch 02 review)"
+   "note": ""
   },
   {
    "id": "src/level.js::drawWireHazard",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2069,
+   "line": 2196,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -897,14 +897,14 @@
    ],
    "tier": "P2",
    "status": "conformed",
-   "note": "meets master style as-is (batch 02 review)"
+   "note": ""
   },
   {
    "id": "src/level.js::drawShiny",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2111,
+   "line": 2238,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -921,14 +921,14 @@
    ],
    "tier": "P2",
    "status": "conformed",
-   "note": "meets master style as-is (batch 02 review)"
+   "note": ""
   },
   {
    "id": "src/level.js::drawPickup",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2154,
+   "line": 2281,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -945,14 +945,14 @@
    ],
    "tier": "P2",
    "status": "conformed",
-   "note": "meets master style as-is (batch 02 review)"
+   "note": ""
   },
   {
    "id": "src/level.js::drawPerch",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2195,
+   "line": 2322,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -969,14 +969,14 @@
    ],
    "tier": "P2",
    "status": "conformed",
-   "note": "meets master style as-is (batch 02 review)"
+   "note": ""
   },
   {
    "id": "src/level.js::drawGoal",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2232,
+   "line": 2359,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -993,14 +993,14 @@
    ],
    "tier": "P2",
    "status": "conformed",
-   "note": "meets master style as-is (batch 02 review)"
+   "note": ""
   },
   {
    "id": "src/level.js::drawPalm",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2304,
+   "line": 2431,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1028,7 +1028,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2380,
+   "line": 2507,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1050,14 +1050,14 @@
    ],
    "tier": "P0",
    "status": "conformed",
-   "note": "meets master style as-is (batch 02 review)"
+   "note": ""
   },
   {
    "id": "src/level.js::drawGrass",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2406,
+   "line": 2533,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1081,7 +1081,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2420,
+   "line": 2555,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1110,7 +1110,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2452,
+   "line": 2608,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1127,7 +1127,7 @@
     "wynwood-walls"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1135,7 +1135,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2486,
+   "line": 2642,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1154,7 +1154,7 @@
     "wynwood-walls"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1162,7 +1162,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2504,
+   "line": 2660,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1180,14 +1180,14 @@
    ],
    "tier": "P1",
    "status": "conformed",
-   "note": "meets master style as-is (batch 02 review)"
+   "note": ""
   },
   {
    "id": "src/level.js::drawTimedHazard",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2534,
+   "line": 2690,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1203,15 +1203,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawWater",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2665,
+   "line": 2821,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1228,14 +1228,14 @@
    ],
    "tier": "P0",
    "status": "conformed",
-   "note": "meets master style as-is (batch 02 review)"
+   "note": ""
   },
   {
    "id": "src/level.js::drawRail",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2692,
+   "line": 2848,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1251,15 +1251,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawWind",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2757,
+   "line": 2913,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1275,15 +1275,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawLilyPad",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2780,
+   "line": 2936,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1299,15 +1299,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawCage",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2815,
+   "line": 2971,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1323,15 +1323,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawThornVine",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2871,
+   "line": 3027,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1347,15 +1347,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawGrateBeam",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2904,
+   "line": 3060,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1372,15 +1372,15 @@
     "hallways"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawFence",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2931,
+   "line": 3087,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1396,15 +1396,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 05 review)"
   },
   {
    "id": "src/level.js::drawCart",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2958,
+   "line": 3114,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1420,7 +1420,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1428,7 +1428,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 2982,
+   "line": 3138,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1444,15 +1444,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 05 review)"
   },
   {
    "id": "src/level.js::drawBarge",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3012,
+   "line": 3168,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1468,7 +1468,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1476,7 +1476,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3040,
+   "line": 3196,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1492,7 +1492,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1500,7 +1500,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3077,
+   "line": 3233,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1516,7 +1516,7 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1524,7 +1524,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3097,
+   "line": 3253,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1540,15 +1540,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 05 review)"
   },
   {
    "id": "src/level.js::drawTheaterFacade",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3116,
+   "line": 3272,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1564,15 +1564,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 05 review)"
   },
   {
    "id": "src/level.js::drawLanternString",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3208,
+   "line": 3364,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1590,15 +1590,15 @@
     "rookery"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawRooster",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3243,
+   "line": 3399,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1615,7 +1615,7 @@
     "little-havana"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1623,7 +1623,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3312,
+   "line": 3468,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1639,7 +1639,7 @@
     "little-havana"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1647,7 +1647,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3350,
+   "line": 3506,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1664,7 +1664,7 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1672,7 +1672,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3370,
+   "line": 3526,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1688,15 +1688,15 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawOsprey",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3421,
+   "line": 3577,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1712,15 +1712,15 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawTruck",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3483,
+   "line": 3639,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1737,7 +1737,7 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1745,7 +1745,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3517,
+   "line": 3673,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1762,7 +1762,7 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1770,7 +1770,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3539,
+   "line": 3695,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1787,7 +1787,7 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1795,7 +1795,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3563,
+   "line": 3719,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1812,15 +1812,15 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawArchLegs",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3585,
+   "line": 3741,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1836,7 +1836,7 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1844,7 +1844,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3606,
+   "line": 3762,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1860,7 +1860,7 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
+   "status": "integrated",
    "note": ""
   },
   {
@@ -1868,7 +1868,7 @@
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3625,
+   "line": 3781,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1884,15 +1884,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "meets master style as-is (batch 04 review)"
   },
   {
    "id": "src/level.js::drawExitDoor",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3683,
+   "line": 3839,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1908,15 +1908,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "authored to master style this cycle (hub rework)"
   },
   {
    "id": "src/level.js::drawShopStall",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3797,
+   "line": 3953,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1932,15 +1932,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "authored to master style this cycle (hub rework)"
   },
   {
    "id": "src/level.js::drawPuzzleSwitch",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3878,
+   "line": 4034,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1956,15 +1956,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawPuzzleDisplay",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3905,
+   "line": 4061,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -1980,15 +1980,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawBeam",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3942,
+   "line": 4098,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2004,15 +2004,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawCurio",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 3996,
+   "line": 4152,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2028,15 +2028,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawCurioIcon",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 4023,
+   "line": 4179,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2052,15 +2052,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawSpecimen",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 4180,
+   "line": 4336,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2076,15 +2076,15 @@
     "ufo"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawLandmark",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 4263,
+   "line": 4419,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2100,15 +2100,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawMiamiTower",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 4272,
+   "line": 4428,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2124,15 +2124,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawWynwoodGate",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 4331,
+   "line": 4487,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2148,15 +2148,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawStiltHouse",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 4367,
+   "line": 4523,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2172,15 +2172,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawCruiseShip",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 4415,
+   "line": 4571,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2196,15 +2196,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawSharkValleyTower",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 4465,
+   "line": 4621,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2220,15 +2220,15 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/level.js::drawFreedomTower",
    "medium": "procedural",
    "path": "src/level.js",
    "file": "src/level.js",
-   "line": 4516,
+   "line": 4672,
    "width": null,
    "height": null,
    "pivot": "code-defined origin (x, y args)",
@@ -2244,8 +2244,8 @@
     "shared"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": ""
+   "status": "conformed",
+   "note": "batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/player.js::drawWing",
@@ -2292,8 +2292,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "dusk sky palette: gradient, stars, sun/moon, clouds, haze bands"
+   "status": "conformed",
+   "note": "dusk sky palette: gradient, stars, sun/moon, clouds, haze bands \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::draw",
@@ -2316,8 +2316,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "dawn sky palette: gradient, stars, sun/moon, clouds, haze bands"
+   "status": "conformed",
+   "note": "dawn sky palette: gradient, stars, sun/moon, clouds, haze bands \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::draw",
@@ -2340,8 +2340,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "night sky palette: gradient, stars, sun/moon, clouds, haze bands"
+   "status": "conformed",
+   "note": "night sky palette: gradient, stars, sun/moon, clouds, haze bands \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::draw",
@@ -2364,8 +2364,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "storm sky palette: gradient, stars, sun/moon, clouds, haze bands"
+   "status": "conformed",
+   "note": "storm sky palette: gradient, stars, sun/moon, clouds, haze bands \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2388,8 +2388,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "city skyline silhouette band (parallax)"
+   "status": "conformed",
+   "note": "city skyline silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2412,8 +2412,8 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "everglades silhouette band (parallax)"
+   "status": "conformed",
+   "note": "everglades silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2436,8 +2436,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "city skyline silhouette band (parallax)"
+   "status": "conformed",
+   "note": "city skyline silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2460,8 +2460,8 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "everglades silhouette band (parallax)"
+   "status": "conformed",
+   "note": "everglades silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2484,8 +2484,8 @@
     "shared"
    ],
    "tier": "P0",
-   "status": "pending",
-   "note": "city skyline silhouette band (parallax)"
+   "status": "conformed",
+   "note": "city skyline silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::drawLayer",
@@ -2508,8 +2508,8 @@
     "river-of-grass"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "everglades silhouette band (parallax)"
+   "status": "conformed",
+   "note": "everglades silhouette band (parallax) \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::foreground",
@@ -2532,8 +2532,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "near-camera parallax fringe, city + glades variants"
+   "status": "conformed",
+   "note": "near-camera parallax fringe, city + glades variants \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/background.js::rain",
@@ -2556,8 +2556,8 @@
     "skyway-mile-zero"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "storm rain streaks"
+   "status": "conformed",
+   "note": "storm rain streaks \u00b7 Phase B reference: graphics-overhaul output already at target"
   },
   {
    "id": "src/particles.js::burst",
@@ -2580,8 +2580,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "radial spark burst (collect, impacts, boss hits)"
+   "status": "conformed",
+   "note": "radial spark burst (collect, impacts, boss hits) \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/particles.js::feathers",
@@ -2604,8 +2604,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "crow feather puffs"
+   "status": "conformed",
+   "note": "crow feather puffs \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/particles.js::dust",
@@ -2628,8 +2628,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "landing dust"
+   "status": "conformed",
+   "note": "landing dust \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/particles.js::trail",
@@ -2652,8 +2652,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "drifting trail motes (vents, curios)"
+   "status": "conformed",
+   "note": "drifting trail motes (vents, curios) \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/fx.js::lighting",
@@ -2676,8 +2676,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "dynamic lightmap composite"
+   "status": "conformed",
+   "note": "dynamic lightmap composite \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/fx.js::bloom",
@@ -2700,8 +2700,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "neon bloom"
+   "status": "conformed",
+   "note": "neon bloom \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/fx.js::grain",
@@ -2724,8 +2724,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "film grain"
+   "status": "conformed",
+   "note": "film grain \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/fx.js::chroma",
@@ -2748,8 +2748,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "chromatic hit pulse"
+   "status": "conformed",
+   "note": "chromatic hit pulse \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/fx.js::grade",
@@ -2772,8 +2772,8 @@
     "shared"
    ],
    "tier": "P1",
-   "status": "pending",
-   "note": "per-district color grade"
+   "status": "conformed",
+   "note": "per-district color grade \u00b7 batch 06 framed review: meets master style as-is"
   },
   {
    "id": "src/player.js::clip:idle",
@@ -3084,8 +3084,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "9 inline SVG glyphs (HUD shiny, mute, pause, touch pad, favicon)"
+   "status": "conformed",
+   "note": "9 inline SVG glyphs (HUD shiny, mute, pause, touch pad, favicon) \u00b7 DOM/CSS UI reworked to master style this cycle (city map, shop)"
   },
   {
    "id": "style.css::screens-and-hud",
@@ -3108,8 +3108,8 @@
     "menu"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "all menus/HUD are DOM+CSS; no panel images anywhere"
+   "status": "conformed",
+   "note": "all menus/HUD are DOM+CSS; no panel images anywhere \u00b7 DOM/CSS UI reworked to master style this cycle (city map, shop)"
   },
   {
    "id": "font-stack",
@@ -3133,8 +3133,8 @@
     "all"
    ],
    "tier": "P2",
-   "status": "pending",
-   "note": "\"Segoe UI\", system-ui - no font files shipped"
+   "status": "conformed",
+   "note": "\"Segoe UI\", system-ui - no font files shipped \u00b7 DOM/CSS UI reworked to master style this cycle (city map, shop)"
   }
  ]
 }

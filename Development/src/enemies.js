@@ -359,15 +359,33 @@ function drawRat(ctx, e, t) {
   ctx.moveTo(-10, 2);
   ctx.quadraticCurveTo(-20, 4 - scurry, -26, -2 + scurry);
   ctx.stroke();
-  // body
+  // ink silhouette under the main mass
+  ctx.fillStyle = 'rgba(6,4,12,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(1, -0.5, 13.4, 8, 0.12, 0, Math.PI * 2);
+  ctx.fill();
+  // body: three values of drain-grime grey
   const g = ctx.createLinearGradient(0, -8, 0, 6);
-  g.addColorStop(0, '#6a5f70');
-  g.addColorStop(1, '#453c4d');
+  g.addColorStop(0, '#75687c');
+  g.addColorStop(0.5, '#5a4f64');
+  g.addColorStop(1, '#3d3446');
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(0, 0, 12, 7 + scurry * 0.3, 0.1, 0, Math.PI * 2);
   ctx.fill();
+  // matted fur ticks along the flank
+  ctx.strokeStyle = 'rgba(28,20,34,0.5)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-7, -3);
+  ctx.lineTo(-4.4, -1.2);
+  ctx.moveTo(-1.5, -5);
+  ctx.lineTo(1, -3.2);
+  ctx.moveTo(-4, 3);
+  ctx.lineTo(-1.5, 4.6);
+  ctx.stroke();
   // head + snout
+  ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(10, -2, 6, 4.5, 0.25, 0, Math.PI * 2);
   ctx.fill();
@@ -375,6 +393,19 @@ function drawRat(ctx, e, t) {
   ctx.beginPath();
   ctx.arc(6, -7, 2.6, 0, Math.PI * 2); // ear
   ctx.fill();
+  ctx.fillStyle = '#4a3f54';
+  ctx.beginPath();
+  ctx.arc(6.4, -6.8, 1.3, 0, Math.PI * 2); // inner ear
+  ctx.fill();
+  // whiskers
+  ctx.strokeStyle = 'rgba(220,210,230,0.35)';
+  ctx.lineWidth = 0.7;
+  ctx.beginPath();
+  ctx.moveTo(14, -1.5);
+  ctx.lineTo(19, -2.6);
+  ctx.moveTo(14, -0.5);
+  ctx.lineTo(19, 0.6);
+  ctx.stroke();
   // eye: gleams when hunting
   ctx.fillStyle = e.state === 'charge' || e.state === 'aim' ? '#e83c4b' : '#191325';
   ctx.beginPath();
@@ -406,15 +437,28 @@ function drawIguana(ctx, e, t) {
   ctx.moveTo(-10, 0);
   ctx.quadraticCurveTo(-22, -2 + Math.sin(t * 2 + e.phase) * 3, -32, 4);
   ctx.stroke();
-  // body
+  // ink silhouette under the main mass
+  ctx.fillStyle = 'rgba(6,4,12,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(1.5, -0.5, 15, 7.4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // body: three sun-warmed greens
   const g = ctx.createLinearGradient(0, -8, 0, 8);
-  g.addColorStop(0, '#5e9e50');
-  g.addColorStop(1, '#33602e');
+  g.addColorStop(0, '#6cae5c');
+  g.addColorStop(0.5, '#4c8442');
+  g.addColorStop(1, '#2c5228');
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(0, 0, 14, 6.5, 0, 0, Math.PI * 2);
   ctx.fill();
-  // spines
+  // scale speckles along the flank
+  ctx.fillStyle = 'rgba(160,210,130,0.35)';
+  for (const [sx2, sy2] of [[-7, -1], [-3, 2], [2, -2], [6, 1]]) {
+    ctx.beginPath();
+    ctx.arc(sx2, sy2, 0.9, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // spines with an inked base
   ctx.fillStyle = '#8ec26e';
   for (let i = -2; i <= 2; i++) {
     ctx.beginPath();
@@ -423,12 +467,21 @@ function drawIguana(ctx, e, t) {
     ctx.lineTo(i * 5 + 2, -5);
     ctx.fill();
   }
-  // head + dewlap
-  ctx.fillStyle = '#5e9e50';
+  ctx.strokeStyle = 'rgba(30,50,26,0.55)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-12, -4.6);
+  ctx.lineTo(12, -4.6);
+  ctx.stroke();
+  // head + dewlap (lit from above)
+  ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(13, -2, 6, 4.5, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = '#e8a13c';
+  const dg = ctx.createLinearGradient(0, 2, 0, 9);
+  dg.addColorStop(0, '#f2b654');
+  dg.addColorStop(1, '#c07f22');
+  ctx.fillStyle = dg;
   ctx.beginPath();
   ctx.moveTo(11, 2);
   ctx.quadraticCurveTo(13, 9, 16, 2);
@@ -447,13 +500,29 @@ function drawImp(ctx, e, t) {
   ctx.translate(e.x, e.y);
   ctx.scale(e.facing, 1);
   ctx.rotate(Math.sin(t * 9 + e.phase) * 0.14);
-  // fringed papier-mache body in party stripes
-  const stripes = ['#ff4fa3', '#ffd166', '#35e0e0'];
+  // ink silhouette under the papier-mache
+  ctx.fillStyle = 'rgba(6,4,12,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(0, -1, 12, 9.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // fringed papier-mache body in party stripes, each band shaded and
+  // finished with a torn paper fringe
+  const stripes = [['#ff4fa3', '#c23a80'], ['#ffd166', '#cfa03e'], ['#35e0e0', '#22a3a3']];
   for (let i = 0; i < 3; i++) {
-    ctx.fillStyle = stripes[i];
+    const bg2 = ctx.createLinearGradient(0, -8 + i * 3, 0, i * 3);
+    bg2.addColorStop(0, stripes[i][0]);
+    bg2.addColorStop(1, stripes[i][1]);
+    ctx.fillStyle = bg2;
     ctx.beginPath();
     ctx.ellipse(0, -4 + i * 3, 11 - i * 1.4, 4.2, 0, 0, Math.PI * 2);
     ctx.fill();
+    ctx.strokeStyle = 'rgba(6,4,12,0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([1.6, 1.8]);
+    ctx.beginPath();
+    ctx.ellipse(0, -4 + i * 3, 11 - i * 1.4, 4.2, 0, Math.PI * 0.15, Math.PI * 0.85);
+    ctx.stroke();
+    ctx.setLineDash([]);
   }
   // stubby legs
   ctx.strokeStyle = '#c9366f';
@@ -477,7 +546,12 @@ function drawImp(ctx, e, t) {
   ctx.lineTo(9, -18);
   ctx.lineTo(11, -13);
   ctx.fill();
-  // googly eye
+  // googly eye with a paper ring
+  ctx.strokeStyle = 'rgba(6,4,12,0.4)';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.arc(11.6, -9.6, 2.6, 0, Math.PI * 2);
+  ctx.stroke();
   ctx.fillStyle = '#f4f0ff';
   ctx.beginPath();
   ctx.arc(11.6, -9.6, 2, 0, Math.PI * 2);
@@ -506,10 +580,16 @@ function drawCrab(ctx, e, t) {
     ctx.lineTo(s * 16, 8 - skit * s);
   }
   ctx.stroke();
-  // shell
+  // ink silhouette under the shell
+  ctx.fillStyle = 'rgba(6,4,12,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(0, -2, 12.2, 8.4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // storm-wet shell: three values and a rain sheen
   const g = ctx.createLinearGradient(0, -8, 0, 6);
-  g.addColorStop(0, '#e86a4d');
-  g.addColorStop(1, '#a83a28');
+  g.addColorStop(0, '#f07a5a');
+  g.addColorStop(0.5, '#c74e36');
+  g.addColorStop(1, '#93321f');
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.ellipse(0, -2, 11, 7.5, 0, 0, Math.PI * 2);
@@ -519,10 +599,25 @@ function drawCrab(ctx, e, t) {
   ctx.beginPath();
   ctx.arc(0, -3, 7, Math.PI * 1.15, Math.PI * 1.85);
   ctx.stroke();
-  // claws
-  ctx.fillStyle = '#e86a4d';
+  ctx.strokeStyle = 'rgba(190,235,255,0.35)';
+  ctx.lineWidth = 1.1;
+  ctx.beginPath();
+  ctx.arc(-1, -4, 8.6, Math.PI * 1.2, Math.PI * 1.6);
+  ctx.stroke();
+  // shell speckles
+  ctx.fillStyle = 'rgba(240,236,224,0.3)';
+  for (const [bx2, by2] of [[-4, -5], [3, -6], [5, -1]]) {
+    ctx.beginPath();
+    ctx.arc(bx2, by2, 0.9, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // claws with inked pincer splits
   for (const s of [-1, 1]) {
     const cy = clawUp ? -13 : -6;
+    const cg = ctx.createLinearGradient(0, cy - 3.4, 0, cy + 3.4);
+    cg.addColorStop(0, '#f07a5a');
+    cg.addColorStop(1, '#a83a28');
+    ctx.fillStyle = cg;
     ctx.beginPath();
     ctx.ellipse(s * 11, cy, 4.4, 3.4, s * 0.4, 0, Math.PI * 2);
     ctx.fill();
@@ -531,6 +626,11 @@ function drawCrab(ctx, e, t) {
     ctx.beginPath();
     ctx.moveTo(s * 13, cy - 2.4);
     ctx.lineTo(s * 15, cy);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(6,4,12,0.45)';
+    ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    ctx.ellipse(s * 11, cy, 4.4, 3.4, s * 0.4, 0, Math.PI * 2);
     ctx.stroke();
   }
   // eyestalks
@@ -557,6 +657,11 @@ function drawSnake(ctx, e, t) {
   ctx.scale(e.facing, 1);
   const striking = e.state === 'dive';
   const rearing = e.state === 'aim';
+  // ink pool under the coil
+  ctx.fillStyle = 'rgba(6,4,12,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(-4, 3, 13, 7, 0, 0, Math.PI * 2);
+  ctx.fill();
   // coil
   ctx.strokeStyle = '#3a3328';
   ctx.lineWidth = 6;
@@ -566,17 +671,44 @@ function drawSnake(ctx, e, t) {
     ctx.ellipse(-4, 4 - i * 2, 11 - i * 2.6, 4.5 - i, 0, 0, Math.PI * (striking ? 1.2 : 2));
     ctx.stroke();
   }
+  // crossband markings over the coil
+  ctx.strokeStyle = 'rgba(96,84,60,0.55)';
+  ctx.lineWidth = 2;
+  for (const [bx2, by2] of [[-12, 3], [-6, 6.5], [1, 5], [5, 2]]) {
+    ctx.beginPath();
+    ctx.moveTo(bx2, by2 - 2.4);
+    ctx.lineTo(bx2 + 1.4, by2 + 2.4);
+    ctx.stroke();
+  }
   // neck + head
   const headY = rearing ? -18 : striking ? -8 : -10;
   const headX = striking ? 14 : 4;
+  ctx.strokeStyle = '#3a3328';
+  ctx.lineWidth = 6;
   ctx.beginPath();
   ctx.moveTo(-2, 0);
   ctx.quadraticCurveTo(0, headY + 6, headX, headY);
   ctx.stroke();
-  ctx.fillStyle = '#3a3328';
+  const hgr = ctx.createLinearGradient(headX - 3, headY - 4, headX + 3, headY + 4);
+  hgr.addColorStop(0, '#4c4434');
+  hgr.addColorStop(1, '#2c2820');
+  ctx.fillStyle = hgr;
   ctx.beginPath();
   ctx.ellipse(headX + 3, headY, 5.5, 3.6, striking ? 0 : -0.3, 0, Math.PI * 2);
   ctx.fill();
+  // flickering forked tongue while it sizes you up
+  if (rearing && Math.sin(t * 14 + e.phase) > 0.2) {
+    ctx.strokeStyle = '#e83c4b';
+    ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    ctx.moveTo(headX + 8, headY);
+    ctx.lineTo(headX + 12, headY - 1);
+    ctx.moveTo(headX + 12, headY - 1);
+    ctx.lineTo(headX + 14, headY - 2.6);
+    ctx.moveTo(headX + 12, headY - 1);
+    ctx.lineTo(headX + 14, headY + 0.4);
+    ctx.stroke();
+  }
   // the white mouth that names it
   if (striking || rearing) {
     ctx.fillStyle = '#f0ece0';
