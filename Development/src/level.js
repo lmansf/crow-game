@@ -4593,6 +4593,11 @@ function drawCurio(ctx, c, t, hasGun) {
 }
 
 function drawCurioIcon(ctx, type, t) {
+  const painted = sprites.get('curio-' + type);
+  if (painted) {
+    drawSprite(ctx, painted, 0, -6, 26);
+    return;
+  }
   switch (type) {
     case 'flamingo':
       ctx.strokeStyle = '#ff8ab5';

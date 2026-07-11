@@ -11,6 +11,13 @@
 
 import { audio } from './audio.js';
 import { particles } from './particles.js';
+import { sprites, drawSprite } from './sprites.js';
+
+// painted-sprite draw widths per boss (art faces right)
+const SPRITE_W = {
+  gullking: 100, ratking: 120, iguanodon: 118, pinatabull: 130,
+  kingcrab: 122, snapper: 138, heron: 120,
+};
 
 const BODY_H = {
   gullking: 26,
@@ -286,7 +293,13 @@ export class Boss {
     }
     if (e.hitT > 0 && Math.sin(t * 50) > 0) ctx.globalAlpha = 0.55;
     const stunned = e.state === 'stun';
-    switch (this.type) {
+    const painted = sprites.get('boss-' + this.type);
+    if (painted) {
+      drawSprite(ctx, painted, 0, -6, SPRITE_W[this.type] || 110, {
+        flip: e.facing < 0,
+        rot: stunned ? 0.14 : Math.sin(t * 2.2) * 0.03,
+      });
+    } else switch (this.type) {
       case 'ratking': drawRatKing(ctx, e, t, stunned); break;
       case 'iguanodon': drawIguanodon(ctx, e, t, stunned); break;
       case 'pinatabull': drawPinataBull(ctx, e, t, stunned); break;

@@ -7,10 +7,16 @@ pass), with **90s-style Easter eggs** scattered through the game. Scope for
 now: characters, abilities, enemies, and reused objects — backdrops,
 landscapes, and level design come later.
 
-## How it works (already shipped, default off)
+**Status 2026-07-11: painted is the DEFAULT look.** The anchor set (crow,
+gull, shiny, feather, gate arch, perch) shipped; the bestiary, all seven
+bosses, and the twelve curios are hooked and waiting on their images.
+`?art=procedural` reverts (persists), `?art=painted` returns. Fail-soft
+everywhere: a missing image just leaves that renderer procedural.
 
-- `src/sprites.js` — opt-in painted-sprite layer. Load the game with
-  `?art=painted` to enable (persists; `?art=procedural` reverts). Every
+## How it works
+
+- `src/sprites.js` — the painted-sprite layer, on by default
+  (`?art=procedural` reverts, persists; `?art=painted` returns). Every
   hooked renderer falls back to its procedural drawing when the toggle is
   off **or the image file is missing** — absent art can never break the game.
 - Hooked so far (the anchor set): grounded crow (`crow-idle`), vice gull
@@ -41,23 +47,35 @@ export as PNG (2048px wide, highest quality), drop the file into
 `Development/assets/sprites-raw/`, describe the crops in `slices.json`,
 run `node tools/make-sprites.js`, and test with `?art=painted`.
 
-## Generated candidates awaiting review
+## Shipped sheets
 
-Anchor sheet 1 — creatures (crow perched facing right + gull facing left,
-flat pale background, crisp edges, no baked glow):
+- Anchor creatures (crow facing right + gull facing left): relayed via
+  Drive 2026-07-10, sliced, in game (`drive-relay-1.jpg`).
+- Anchor objects (shiny, feather, arch, perch): same day
+  (`drive-relay-2.jpg`).
 
-- https://www.canva.com/d/B75e3HAypyxtRyn
-- https://www.canva.com/d/ekcOkf12qHvb31s
-- https://www.canva.com/d/JkBVKNzKE21XuIh
-- https://www.canva.com/d/rMUlf1Q08vD5Z8G
+## Production sheets awaiting the Drive relay
 
-Anchor sheet 2 — objects (gold shard, luminous feather, glowing arch,
-pink perch, in a row on flat pale background):
+Generated + exported 2026-07-11. To land them: open each design in Canva
+(links below), Share → Download → JPG, then **Save to Google Drive** from
+the phone; the next session pulls them from Drive, slices via
+`slices.json`, and the already-shipped hooks light up with no code changes.
 
-- https://www.canva.com/d/BipOBVhSP7otixX
-- https://www.canva.com/d/NZMfABVao2kCh-W
-- https://www.canva.com/d/t1REC-p6lF6eja0
-- https://www.canva.com/d/GHDvIfoxCDxUyB_
+1. **Bestiary** — rat, iguana, imp, crab, snake in a row, facing right:
+   https://www.canva.com/d/2IMqmUusQmD9KG0 (design DAHPEt6brT0)
+2. **Bosses 1** — gull king, rat king, iguanodon:
+   https://www.canva.com/d/yDJLMNF1Qb4Jvno (design DAHPEsl-5f8)
+3. **Bosses 2** — piñata bull, king crab, snapper, night heron:
+   https://www.canva.com/d/tvkV2JnT_yl35E1 (design DAHPEm8FTMg)
+4. **Curios** — 12 ray-gun collectibles in a 4×3 grid:
+   https://www.canva.com/d/om-xXD7LEiC49x4 (design DAHPEjBuV6s)
+
+Sprite ids the hooks expect: `rat iguana imp crab snake`,
+`boss-gullking boss-ratking boss-iguanodon boss-pinatabull boss-kingcrab
+boss-snapper boss-heron`, and `curio-<type>` for
+`flamingo cone duck dish bucket record maraca cafecito propeller token
+egg shell`. Draw widths live in the hooks (enemies 34–64, bosses 100–138,
+curios 26); export at 1600×2000 JPG q60 so the relay stays light.
 
 ## Prompt recipe (keep for every future sheet)
 
