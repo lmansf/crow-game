@@ -555,6 +555,12 @@ export class Level {
       }
     }
 
+    // out-of-world kill floor: no gap should exist, but falling past the
+    // bottom must never softlock a run
+    if (player.dead <= 0 && player.y > this.height + 600) {
+      player.die(game);
+    }
+
     // timed hazards: sparkler fountains, lightning coils, gator jaws
     for (const h of this.timedHazards) {
       const st = timedState(h, t);
@@ -620,12 +626,16 @@ export class Level {
     }
 
     // flag-doors: sealed until their save flag flips (the Magpie's map
-    // fragments open the harbor gate live, mid-run)
+    // fragments open the harbor gate live, mid-run). The fanfare only plays
+    // if the door is actually on screen - a purchase 10k px away opens it
+    // silently.
     for (const s of this.flagDoors) {
       if (!s.off && save.getFlag(s.lock)) {
         s.off = true;
-        audio.smash();
-        particles.burst(s.x + s.w / 2, s.y + s.h / 2, { count: 18, color: '#9ce0ff', speed: 220, life: 0.55, size: 2.2 });
+        if (s.x + s.w > ex0 && s.x < ex1) {
+          audio.smash();
+          particles.burst(s.x + s.w / 2, s.y + s.h / 2, { count: 18, color: '#9ce0ff', speed: 220, life: 0.55, size: 2.2 });
+        }
       }
     }
 

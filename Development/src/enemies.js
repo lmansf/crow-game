@@ -243,7 +243,7 @@ function drawGull(ctx, e, t) {
   if (painted) {
     drawSprite(ctx, painted, 0, -2, 52, { flip: true, rot: diving ? 0.3 : flap * 0.1 });
     ctx.restore();
-    telegraph(ctx, e, t, -26);
+    telegraph(ctx, e, t, -22); // same height the procedural gull was tuned to
     return;
   }
   // far wing: a filled shape with separated grey primaries, not a stick

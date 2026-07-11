@@ -85,8 +85,16 @@ function mirror(data) {
     a.x0 = nx0;
   }
   if (d.goal) pt(d.goal);
-  if (d.skyMix) { const a = mx(d.skyMix.x0), b = mx(d.skyMix.x1); d.skyMix.x0 = b; d.skyMix.x1 = a; }
-  if (typeof d.beachEnd === 'number') d.beachEnd = mx(d.beachEnd);
+  if (d.skyMix) {
+    // the content at old x1 lands at new x0, so the skies swap ends too
+    const a = mx(d.skyMix.x0), b = mx(d.skyMix.x1);
+    d.skyMix.x0 = b; d.skyMix.x1 = a;
+    const from = d.skyMix.from; d.skyMix.from = d.skyMix.to; d.skyMix.to = from;
+  }
+  // beachEnd means "sand west of this line" - a mirrored beach would need
+  // sand on the east side, which the renderer can't express; drop it rather
+  // than paint sand over the street
+  if (typeof d.beachEnd === 'number') delete d.beachEnd;
   return d;
 }
 
@@ -262,7 +270,9 @@ function compose() {
     groundSegments: [{ x: 0, w: 130 }, { x: 770, w: 130 }],
     waters: [{ x: 130, y: GY + 36, w: 640, h: WORLD_H - GY - 36 }],
     extraSolids: [
-      { x: 44, y: GY - 420, w: 46, h: 420, kind: 'steel', lock: 'frag:the-sleeping-port' },
+      // the Government Cut storm gate: tall enough that no mid-game kit can
+      // fly over it - the Magpie's PORT fragment is the only way through
+      { x: 44, y: GY - 1420, w: 46, h: 1420, kind: 'steel', lock: 'frag:the-sleeping-port' },
     ],
     platforms: [
       { x: 240, y: GY - 40, w: 70, type: 'ledge' },
@@ -270,7 +280,10 @@ function compose() {
       { x: 620, y: GY - 40, w: 70, type: 'ledge' },
     ],
     decor: [{ type: 'lamp', x: 100 }, { type: 'flock', x: 450, y: GY - 700, count: 5 }],
-    hints: [{ x: 450, y: GY - 160, text: 'government cut: the buoys mind the channel' }],
+    hints: [
+      { x: 450, y: GY - 160, text: 'government cut: the buoys mind the channel' },
+      { x: 210, y: GY - 240, text: 'the storm gate answers to the PORT FRAGMENT' },
+    ],
     shinies: [[275, GY - 110], [465, GY - 140], [655, GY - 110]],
   });
 
@@ -370,8 +383,11 @@ function compose() {
     underground: true,
     thickness: 400,
   });
-  // thin the street above the market to a roof, and punch the roost well
-  splitSlab(rk.x - 60, rk.x + rk.w + 60, 120);
+  // thin the street above the market to a roof, and punch the roost well.
+  // The thinned range matches the market exactly: past either end the
+  // street stays full-depth earth, so the market's open ends are walls,
+  // not bottomless shafts.
+  splitSlab(rk.x, rk.x + rk.w, 120);
   const wellX = rk.x + 1220; // drops in between the market's gates
   splitSlab(wellX, wellX + 120, 0);
   W.extraSolids.push(
