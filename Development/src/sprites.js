@@ -1,20 +1,29 @@
 // Painted-sprite layer: swaps select procedural renderers for hand-painted
-// images (the Canva/Ori-style art direction) when enabled. Strictly opt-in
-// and fail-soft: with the toggle off, or an image missing, every renderer
-// falls back to its procedural drawing - the shipped game never breaks on
-// absent art.
+// images (the Canva/Ori-style art direction). Painted is the default look
+// and strictly fail-soft: any missing image leaves that renderer on its
+// procedural drawing - the shipped game never breaks on absent art.
 //
-// Toggle: load with ?art=painted (persists), ?art=procedural to revert.
-// Assets: assets/sprites/<id>.png, produced by tools/make-sprites.js from
-// raw Canva exports. Catalog and pose/size spec: docs/painted-sprites.md.
+// Toggle: load with ?art=procedural to revert (persists), ?art=painted to
+// return. Assets: assets/sprites/<id>.png, produced by
+// tools/make-sprites.js from raw Canva exports. Catalog and pose/size
+// spec: docs/painted-sprites.md.
 
 const CATALOG = [
   'crow-idle',        // grounded crow, profile facing right, wings folded
-  'gull',             // vice gull, profile, wings mid-flap
+  'gull',             // vice gull, profile, wings mid-flap (art faces left)
   'shiny',            // golden shard
   'pickup-feather',   // glowing ability feather
   'gate-arch',        // flyway/zone door arch
   'perch',            // checkpoint roost
+  // bestiary (art faces right; the engine mirrors by facing)
+  'rat', 'iguana', 'imp', 'crab', 'snake',
+  // the seven district bosses
+  'boss-gullking', 'boss-ratking', 'boss-iguanodon', 'boss-pinatabull',
+  'boss-kingcrab', 'boss-snapper', 'boss-heron',
+  // the ray gun's curios
+  'curio-flamingo', 'curio-cone', 'curio-duck', 'curio-dish',
+  'curio-bucket', 'curio-record', 'curio-maraca', 'curio-cafecito',
+  'curio-propeller', 'curio-token', 'curio-egg', 'curio-shell',
 ];
 
 export const sprites = {
@@ -27,9 +36,9 @@ export const sprites = {
 
 export function initSprites() {
   const q = new URLSearchParams(location.search).get('art');
-  if (q === 'painted') localStorage.setItem('crow-art', 'painted');
-  else if (q === 'procedural') localStorage.removeItem('crow-art');
-  if (localStorage.getItem('crow-art') !== 'painted') return;
+  if (q === 'painted') localStorage.removeItem('crow-art');
+  else if (q === 'procedural') localStorage.setItem('crow-art', 'procedural');
+  if (localStorage.getItem('crow-art') === 'procedural') return;
   sprites.on = true;
   for (const id of CATALOG) {
     const img = new Image();

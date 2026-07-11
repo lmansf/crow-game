@@ -361,6 +361,13 @@ function drawRat(ctx, e, t) {
   ctx.translate(e.x, e.y);
   ctx.scale(e.facing, 1);
   const scurry = Math.sin(t * (e.state === 'charge' ? 34 : 18) + e.phase) * 1.4;
+  const painted = sprites.get('rat');
+  if (painted) {
+    drawSprite(ctx, painted, 0, -4, 48, { rot: scurry * 0.03 });
+    ctx.restore();
+    telegraph(ctx, e, t, -22);
+    return;
+  }
   // tail
   ctx.strokeStyle = '#8d7f92';
   ctx.lineWidth = 2;
@@ -439,6 +446,13 @@ function drawIguana(ctx, e, t) {
   ctx.scale(e.facing, 1);
   const rear = e.state === 'aim' ? -0.35 : 0;
   ctx.rotate(rear);
+  const painted = sprites.get('iguana');
+  if (painted) {
+    drawSprite(ctx, painted, 0, -4, 64);
+    ctx.restore();
+    telegraph(ctx, e, t);
+    return;
+  }
   // tail with stripes
   ctx.strokeStyle = '#3e6e3a';
   ctx.lineWidth = 4;
@@ -509,6 +523,12 @@ function drawImp(ctx, e, t) {
   ctx.translate(e.x, e.y);
   ctx.scale(e.facing, 1);
   ctx.rotate(Math.sin(t * 9 + e.phase) * 0.14);
+  const painted = sprites.get('imp');
+  if (painted) {
+    drawSprite(ctx, painted, 0, -2, 34);
+    ctx.restore();
+    return;
+  }
   // ink silhouette under the papier-mache
   ctx.fillStyle = 'rgba(6,4,12,0.5)';
   ctx.beginPath();
@@ -576,6 +596,13 @@ function drawCrab(ctx, e, t) {
   ctx.save();
   ctx.translate(e.x, e.y);
   const clawUp = e.state === 'aim' || e.state === 'dive';
+  const painted = sprites.get('crab');
+  if (painted) {
+    drawSprite(ctx, painted, 0, -2 + Math.sin(t * 16 + e.phase) * 0.8, 40, { rot: clawUp ? -0.08 : 0 });
+    ctx.restore();
+    telegraph(ctx, e, t, -20);
+    return;
+  }
   // legs
   ctx.strokeStyle = '#b8503a';
   ctx.lineWidth = 2.2;
@@ -666,6 +693,13 @@ function drawSnake(ctx, e, t) {
   ctx.scale(e.facing, 1);
   const striking = e.state === 'dive';
   const rearing = e.state === 'aim';
+  const painted = sprites.get('snake');
+  if (painted) {
+    drawSprite(ctx, painted, 0, rearing || striking ? -8 : -3, 40, { rot: striking ? 0.12 : 0 });
+    ctx.restore();
+    telegraph(ctx, e, t, -30);
+    return;
+  }
   // ink pool under the coil
   ctx.fillStyle = 'rgba(6,4,12,0.5)';
   ctx.beginPath();
