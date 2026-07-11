@@ -38,4 +38,11 @@ export const SHOP_ITEMS = [
     desc: 'the river of grass, and the way home',
     price: 120,
   },
+  {
+    flag: 'frag:the-sleeping-port',
+    levelId: 'the-sleeping-port',
+    name: 'PORT FRAGMENT',
+    desc: '"my masterpiece, dear. the docks after the last horn."',
+    price: 150,
+  },
 ];

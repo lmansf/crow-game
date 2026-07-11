@@ -16,6 +16,7 @@ const MAP_SPOTS = {
   'little-havana': { x: 57, y: 24 },
   'skyway-mile-zero': { x: 72, y: 56 },
   'river-of-grass': { x: 89, y: 26 },
+  'the-sleeping-port': { x: 81, y: 78 },
   'the-rookery': { x: 49, y: 92 },
 };
 
@@ -60,7 +61,8 @@ export class UI {
     $('btn-restart').addEventListener('click', () => {
       audio.ui();
       game.togglePause(false);
-      game.launchLevel(game.levelId);
+      const r = game.lastLaunch || { id: game.levelId, opts: {} };
+      game.launchLevel(r.id, r.opts);
     });
     $('btn-quit').addEventListener('click', () => {
       audio.ui();
@@ -69,7 +71,8 @@ export class UI {
     $('btn-replay').addEventListener('click', () => {
       audio.ui();
       this.show(null);
-      game.launchLevel(game.levelId);
+      const r = game.lastLaunch || { id: game.levelId, opts: {} };
+      game.launchLevel(r.id, r.opts);
     });
     $('btn-next').addEventListener('click', () => {
       if (!this.nextLevelId) return;
@@ -90,6 +93,29 @@ export class UI {
     $('btn-mute').classList.toggle('muted', save.muted);
 
     input.onMute = () => $('btn-mute').click();
+
+    // ↑↑↓↓←→←→BA on the title screen: the old ways still work
+    const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+    let kProgress = 0;
+    addEventListener('keydown', (e) => {
+      if ($('screen-title').classList.contains('hidden')) { kProgress = 0; return; }
+      kProgress = e.code === KONAMI[kProgress] ? kProgress + 1 : (e.code === KONAMI[0] ? 1 : 0);
+      if (kProgress < KONAMI.length) return;
+      kProgress = 0;
+      if (!save.getFlag('konami')) {
+        save.setFlag('konami');
+        save.addWallet(100);
+      }
+      audio.unlock();
+      audio.power();
+      const tag = document.querySelector('#screen-title .tagline');
+      const original = tag.textContent;
+      tag.textContent = save.getFlag('konami-again')
+        ? 'the Magpie says once was generous'
+        : '30 lives? have 100 shinies. the old ways still work';
+      save.setFlag('konami-again');
+      setTimeout(() => { tag.textContent = original; }, 4200);
+    });
   }
 
   show(name) {
@@ -116,11 +142,14 @@ export class UI {
 
     const districts = spots.filter((l) => !l.hub).sort((a, b) => a.district - b.district);
     const hub = spots.find((l) => l.hub);
+    // the walking route only threads districts a hallway actually reaches;
+    // flyway-only places (the port) hang off the Rookery alone
+    const walked = districts.filter((l) => !l.flyOnly);
     let svg = '<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">';
-    for (let i = 0; i < districts.length - 1; i++) {
-      const a = MAP_SPOTS[districts[i].id];
-      const b = MAP_SPOTS[districts[i + 1].id];
-      const on = revealed(districts[i]) && revealed(districts[i + 1]);
+    for (let i = 0; i < walked.length - 1; i++) {
+      const a = MAP_SPOTS[walked[i].id];
+      const b = MAP_SPOTS[walked[i + 1].id];
+      const on = revealed(walked[i]) && revealed(walked[i + 1]);
       svg += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="route${on ? ' on' : ''}"/>`;
     }
     for (const d of districts) {
@@ -140,14 +169,16 @@ export class UI {
       node.className = `map-node${lvl.hub ? ' hub' : ''}${known ? '' : ' unknown'}`;
       node.style.left = spot.x + '%';
       node.style.top = spot.y + '%';
-      const art = known && !lvl.hub ? ` style="background-image:url('assets/card-${lvl.district}.jpg')"` : '';
+      const hasCard = known && !lvl.hub && lvl.district <= 6;
+      const art = hasCard ? ` style="background-image:url('assets/card-${lvl.district}.jpg')"` : '';
       const meta = lvl.hub
         ? (known ? 'flyway gates · the Magpie' : 'rumors of a market under the city')
         : !known ? 'fragment sold at the Rookery'
-        : stats ? `${stats.bestShinies}/${stats.shinyTotal} shinies · best ${fmtTime(stats.bestTimeMs)}`
+        : stats && stats.bestTimeMs != null ? `${stats.bestShinies}/${stats.shinyTotal} shinies · best ${fmtTime(stats.bestTimeMs)}`
+        : stats?.completed ? 'sign lit on the big map'
         : lvl.blurb;
       node.innerHTML = `
-        <span class="dot"${art}>${lvl.hub ? '✦' : known ? '' : '?'}</span>
+        <span class="dot"${art}>${lvl.hub ? '✦' : !known ? '?' : lvl.flyOnly ? '⚓' : ''}</span>
         <span class="label">${known ? lvl.name : 'UNCHARTED'}</span>
         <span class="meta">${meta}</span>`;
       if (known) {

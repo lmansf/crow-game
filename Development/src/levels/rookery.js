@@ -9,8 +9,9 @@ function line(x0, y, x1, n) {
   return pts;
 }
 
-// gate x-positions west to east, matching the city's own order
-const GATE = { OD: 250, BRI: 600, WYN: 950, HAV: 1650, SKY: 2000, GLA: 2350 };
+// gate x-positions west to east, matching the city's own order; the port
+// flyway hangs past the Glades gate at the market's dark end
+const GATE = { OD: 250, BRI: 600, WYN: 950, HAV: 1650, SKY: 2000, GLA: 2350, PORT: 2700 };
 
 export default {
   id: 'the-rookery',
@@ -33,7 +34,7 @@ export default {
   ],
   outro: [],
 
-  width: 2600,
+  width: 2950,
   height: 900,
   groundY: 700,
   spawn: { x: 1300, y: 670 },
@@ -47,6 +48,7 @@ export default {
     'little-havana': { x: GATE.HAV + 105, y: 664 },
     'skyway-mile-zero': { x: GATE.SKY + 105, y: 664 },
     'river-of-grass': { x: GATE.GLA + 105, y: 664 },
+    'the-sleeping-port': { x: GATE.PORT + 105, y: 664 },
   },
 
   // the six flyways. Ocean Drive is the free one; the rest open with the
@@ -58,6 +60,7 @@ export default {
     { x: GATE.HAV, y: 540, w: 70, h: 160, to: 'little-havana', entry: 'hub', label: 'CALLE OCHO', linger: true, vdir: -1, lock: 'frag:little-havana' },
     { x: GATE.SKY, y: 540, w: 70, h: 160, to: 'skyway-mile-zero', entry: 'hub', label: 'THE SKYWAY', linger: true, vdir: -1, lock: 'frag:skyway-mile-zero' },
     { x: GATE.GLA, y: 540, w: 70, h: 160, to: 'river-of-grass', entry: 'hub', label: 'THE GLADES', linger: true, vdir: -1, lock: 'frag:river-of-grass' },
+    { x: GATE.PORT, y: 540, w: 70, h: 160, to: 'the-sleeping-port', entry: 'hub', label: 'THE PORT', linger: true, vdir: -1, lock: 'frag:the-sleeping-port' },
   ],
 
   shop: { x: 1300, y: 700 },
@@ -75,10 +78,10 @@ export default {
   pickups: [],
   checkpoints: [],
 
-  backdrops: [{ x: 0, y: 0, w: 2600, h: 700 }],
+  backdrops: [{ x: 0, y: 0, w: 2950, h: 700 }],
   darkZones: [
     {
-      x: 0, y: 0, w: 2600, h: 700,
+      x: 0, y: 0, w: 2950, h: 700,
       lights: [
         { x: GATE.OD + 35, y: 610, r: 210 },
         { x: GATE.BRI + 35, y: 610, r: 210 },
@@ -86,6 +89,7 @@ export default {
         { x: GATE.HAV + 35, y: 610, r: 210 },
         { x: GATE.SKY + 35, y: 610, r: 210 },
         { x: GATE.GLA + 35, y: 610, r: 210 },
+        { x: GATE.PORT + 35, y: 610, r: 210 },
         { x: 1300, y: 560, r: 300 },
         { x: 1300, y: 300, r: 240 },
       ],
@@ -93,15 +97,16 @@ export default {
   ],
 
   decor: [
-    { type: 'bigpipe', x: 100, y: 340, w: 2400 },
+    { type: 'bigpipe', x: 100, y: 340, w: 2750 },
     { type: 'lantern', x: 1060, y: 420, w: 480 },
     { type: 'lantern', x: 380, y: 440, w: 420 },
     { type: 'lantern', x: 1760, y: 440, w: 420 },
     { type: 'lamp', x: 470 },
     { type: 'lamp', x: 1870 },
+    { type: 'lamp', x: 2540 },
   ],
 
-  shinies: [...line(420, 640, 1120, 4), ...line(1480, 640, 2180, 4)],
+  shinies: [...line(420, 640, 1120, 4), ...line(1480, 640, 2180, 4), [2560, 640]],
 
   hints: [
     { x: 1300, y: 600, text: 'the Magpie sells map fragments: each one opens a flyway gate' },

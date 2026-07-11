@@ -19,6 +19,7 @@ const BODY_H = {
   pinatabull: 38,
   kingcrab: 32,
   snapper: 34,
+  heron: 36,
 };
 
 export class Boss {
@@ -67,6 +68,7 @@ export class Boss {
       pinatabull: ['PINATA TORO', 'leap the charge, then strike from above'],
       kingcrab: ['THE KING CRAB', 'leap the scuttle, then strike from above'],
       snapper: ['THE ANCIENT SNAPPER', 'leap the charge, then strike its shell'],
+      heron: ['THE NIGHT HERON', 'dodge the dive, then strike from above'],
     };
     const [title, sub] = lines[this.type] || ['THE BEAST', 'strike from above'];
     game.ui.toast(title, sub);
@@ -290,6 +292,7 @@ export class Boss {
       case 'pinatabull': drawPinataBull(ctx, e, t, stunned); break;
       case 'kingcrab': drawKingCrab(ctx, e, t, stunned); break;
       case 'snapper': drawSnapper(ctx, e, t, stunned); break;
+      case 'heron': drawHeron(ctx, e, t, stunned); break;
       default: drawGullKing(ctx, e, t, stunned);
     }
     ctx.restore();
@@ -413,6 +416,115 @@ function drawGullKing(ctx, e, t, stunned) {
   ctx.fillStyle = e.state === 'aim' || e.state === 'dive' ? '#e83c4b' : '#191325';
   ctx.beginPath();
   ctx.arc(12, -6.5, 2, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawHeron(ctx, e, t, stunned) {
+  const S = 3.2;
+  ctx.scale(e.facing * S, S);
+  if (stunned) ctx.rotate(0.5);
+  const flap = e.state === 'dive' ? -0.55 : stunned ? 0.85 : Math.sin(t * (e.state === 'aim' ? 18 : 5.5)) * 0.6;
+  // far wing: broad slate shape with darker ragged primaries
+  ctx.fillStyle = '#6b7890';
+  ctx.beginPath();
+  ctx.moveTo(-2, -3);
+  ctx.quadraticCurveTo(-12, -8 - flap * 9, -23, -4 - flap * 15);
+  ctx.lineTo(-30, -1.5 - flap * 17);
+  ctx.quadraticCurveTo(-13, 1.5 - flap * 3, -1, 2.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#39445a';
+  ctx.beginPath();
+  ctx.moveTo(-22, -4.5 - flap * 15);
+  ctx.lineTo(-31.5, -1 - flap * 17.5);
+  ctx.lineTo(-19, -1 - flap * 12);
+  ctx.closePath();
+  ctx.fill();
+  // ink silhouette under the main mass
+  ctx.fillStyle = 'rgba(6,4,12,0.45)';
+  ctx.beginPath();
+  ctx.ellipse(0.5, 0, 15.2, 9.6, 0.05, 0, Math.PI * 2);
+  ctx.fill();
+  // body: three moonlit slate values, pale breast
+  const g = ctx.createLinearGradient(0, -9, 0, 9);
+  g.addColorStop(0, '#9aa6ba');
+  g.addColorStop(0.55, '#6b7890');
+  g.addColorStop(1, '#414d64');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 14, 8.5, 0.05, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(232,236,244,0.55)';
+  ctx.beginPath();
+  ctx.ellipse(4, 3.5, 6.5, 3.4, 0.15, 0, Math.PI);
+  ctx.fill();
+  // stilt legs trailing behind in flight
+  ctx.strokeStyle = '#c9a03e';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(-6, 6);
+  ctx.lineTo(-16, 8.5 + flap * 2);
+  ctx.moveTo(-3, 7);
+  ctx.lineTo(-13, 10 + flap * 2);
+  ctx.stroke();
+  // the S-neck up to the head
+  ctx.strokeStyle = '#8a95a8';
+  ctx.lineWidth = 4.6;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(7, -4);
+  ctx.quadraticCurveTo(14, -8, 12.5, -15);
+  ctx.stroke();
+  ctx.fillStyle = '#8a95a8';
+  ctx.beginPath();
+  ctx.ellipse(13, -16, 5.6, 4, -0.1, 0, Math.PI * 2);
+  ctx.fill();
+  // black cap and the long white plume trailing off it
+  ctx.fillStyle = '#232c3e';
+  ctx.beginPath();
+  ctx.ellipse(12.5, -18.2, 5, 2.2, -0.1, Math.PI, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#f0f2f6';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(9, -19);
+  ctx.quadraticCurveTo(2, -22 - flap * 2, -4, -20.5 - flap * 3);
+  ctx.stroke();
+  // dagger beak with an ink underline
+  ctx.fillStyle = '#2c2620';
+  ctx.beginPath();
+  ctx.moveTo(17.5, -17.5);
+  ctx.lineTo(29, -15.6);
+  ctx.lineTo(17.5, -13.8);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(240,242,246,0.3)';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.moveTo(18.5, -16.8);
+  ctx.lineTo(27, -15.7);
+  ctx.stroke();
+  crown(ctx, 9, -21.5);
+  // near wing over the body
+  ctx.fillStyle = '#aeb8c8';
+  ctx.beginPath();
+  ctx.moveTo(2, -3);
+  ctx.quadraticCurveTo(9, -8 - flap * 9, 18, -4 - flap * 13);
+  ctx.lineTo(23, -1.5 - flap * 14.5);
+  ctx.quadraticCurveTo(11, 1.5 - flap * 3, 3, 2.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#5e6a80';
+  ctx.beginPath();
+  ctx.moveTo(17.5, -4.5 - flap * 13);
+  ctx.lineTo(24, -1 - flap * 15);
+  ctx.lineTo(16, -0.5 - flap * 10);
+  ctx.closePath();
+  ctx.fill();
+  // eye: hunting red
+  ctx.fillStyle = e.state === 'aim' || e.state === 'dive' ? '#e83c4b' : '#f2b654';
+  ctx.beginPath();
+  ctx.arc(14, -16.4, 1.6, 0, Math.PI * 2);
   ctx.fill();
 }
 

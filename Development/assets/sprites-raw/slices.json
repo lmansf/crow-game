@@ -1,0 +1,12 @@
+{
+  "drive-relay-1.jpg": [
+    { "id": "crow-idle", "crop": [0, 1296, 830, 504], "width": 144, "erase": [[730, 0, 100, 34]] },
+    { "id": "gull", "crop": [830, 1296, 770, 504], "width": 156, "erase": [[0, 0, 40, 34]] }
+  ],
+  "drive-relay-2.jpg": [
+    { "id": "shiny", "crop": [270, 250, 420, 730], "width": 64 },
+    { "id": "pickup-feather", "crop": [920, 240, 510, 730], "width": 96 },
+    { "id": "gate-arch", "crop": [170, 1180, 710, 590], "width": 512 },
+    { "id": "perch", "crop": [1070, 1230, 250, 580], "width": 128 }
+  ]
+}

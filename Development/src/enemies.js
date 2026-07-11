@@ -4,6 +4,7 @@
 
 import { audio } from './audio.js';
 import { particles } from './particles.js';
+import { sprites, drawSprite } from './sprites.js';
 
 const RESPAWN = 14;
 
@@ -237,6 +238,14 @@ function drawGull(ctx, e, t) {
   ctx.scale(e.facing, 1);
   const diving = e.state === 'dive';
   const flap = diving ? -0.5 : Math.sin(t * (e.state === 'aim' ? 22 : 9) + e.phase) * 0.8;
+  // painted-sprite path (art faces left; the facing scale expects right)
+  const painted = sprites.get('gull');
+  if (painted) {
+    drawSprite(ctx, painted, 0, -2, 52, { flip: true, rot: diving ? 0.3 : flap * 0.1 });
+    ctx.restore();
+    telegraph(ctx, e, t, -22); // same height the procedural gull was tuned to
+    return;
+  }
   // far wing: a filled shape with separated grey primaries, not a stick
   ctx.fillStyle = '#b9b2a0';
   ctx.beginPath();

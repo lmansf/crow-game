@@ -1,0 +1,6 @@
+{
+  "creatures-test.png": [
+    { "id": "crow-idle", "crop": [80, 100, 420, 340], "width": 128 },
+    { "id": "gull", "crop": [560, 100, 420, 340], "width": 128 }
+  ]
+}

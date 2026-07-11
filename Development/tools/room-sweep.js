@@ -20,7 +20,8 @@ if (!OUT) {
 const LEVELS = [
   'ocean-drive', 'hall-drain', 'brickell-ascent', 'hall-glideway',
   'wynwood-walls', 'hall-underpass', 'little-havana', 'hall-toll',
-  'skyway-mile-zero', 'hall-causeway', 'river-of-grass', 'ufo', 'the-rookery',
+  'skyway-mile-zero', 'hall-causeway', 'river-of-grass', 'the-sleeping-port',
+  'ufo', 'the-rookery',
 ];
 const SPOTS = [0.18, 0.5, 0.82];
 

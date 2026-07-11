@@ -5,6 +5,7 @@
 import { input } from './input.js';
 import { audio } from './audio.js';
 import { particles } from './particles.js';
+import { sprites, drawSprite } from './sprites.js';
 
 const G = 2300;
 const MOVE = 345;
@@ -746,6 +747,18 @@ export class Player {
     ctx.translate(0, bob);
     ctx.scale(2 - squash, squash);
 
+    // painted-sprite path: grounded poses swap to the hand-painted crow when
+    // the art toggle is on and the image exists; airborne poses (which need
+    // the animated wings) stay procedural until their sheets land
+    const painted = this.grounded ? sprites.get('crow-idle') : null;
+    if (painted) {
+      drawSprite(ctx, painted, 0, -2, 48);
+      ctx.restore();
+      ctx.globalAlpha = 1;
+      this.drawStaminaRing(ctx, t);
+      return;
+    }
+
     const BODY = '#191722';
     const BODY_HI = '#262336';
     const WING_FAR = '#131019';
@@ -893,8 +906,11 @@ export class Player {
 
     ctx.restore();
     ctx.globalAlpha = 1;
+    this.drawStaminaRing(ctx, t);
+  }
 
-    // stamina ring while True Flight is spent (refills on any perch)
+  // stamina ring while True Flight is spent (refills on any perch)
+  drawStaminaRing(ctx, t) {
     if (this.abilities.flight && this.stamina < STAMINA_MAX - 0.03) {
       const k = Math.max(0, this.stamina / STAMINA_MAX);
       const low = k < 0.3;

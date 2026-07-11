@@ -29,21 +29,23 @@ A presentation layer on top adds trauma-based camera shake, a chromatic hit puls
 - **District 4 - Little Havana Nights**: a midnight festival on Calle Ocho, crossed on grindable light lines, ending at EL GALLO DE ORO above the theater (three caged songbirds hide along the way).
 - **District 5 - Skyway Mile Zero**: a storm-lashed triple-decker interchange over a flooded canal, crossed by riding gust rivers, ending at the MILE 0 arch.
 - **District 6 - River of Grass**: the Everglades finale from night into dawn, where the flock grants True Flight, ending at THE NEST. Finishing it unlocks Flight in every district.
+- **District 7 - The Sleeping Port** (epilogue): PortMiami at three in the morning — container-yard climbs, a customs-scanner combo, a hook-and-rail gantry quay over open harbor water, and a cargo ship whose foredeck belongs to the Night Heron. No hallway reaches it: enter through the Rookery's seventh flyway (the Magpie's 150✦ fragment) or press on past THE NEST. Ends at BON VOYAGE, atop the bridge castle.
 
 Each district also features a recognizable piece of real Miami: the Colony Hotel's blue neon blade and a South Beach lifeguard tower (D1), the Freedom Tower and Miami Tower (D2), the Wynwood Walls gate (D3), the Tower Theater fin and Domino Park (D4), the Stiltsville shacks (D5), and the Shark Valley observation tower (D6).
 
 The title screen and the city map's district nodes are dressed with a uniform synthwave art set (`Development/assets/`), generated in Canva to the game's palette; in-game rendering stays fully procedural.
 
-### One connected world
+### One world, no doors
 
-The six districts are stitched into a single mega map by five short, themed connector hallways with glowing zone doors at both ends: the Storm Drain Mouth (D1-D2), the Glide-Way (D2-D3, dusk turns to dawn as you cross), the Painted Underpass (D3-D4), the Toll Ramp (D4-D5, the rain starts halfway), and the Last Causeway (D5-D6).
-Crossing a seam never fades to black: the outgoing view and the incoming zone tile edge-to-edge and slide together as one short camera pan (a dissolve for the tractor beam), your momentum carries across, and every ability you have earned walks through with you - the city plays as one continuous place.
-The complete screen's NEXT button follows the same path.
+The whole city is **one continuous map** (`src/levels/world.js`): every district, every connector hallway, the Sleeping Port, and the Rookery share a single coordinate space along one street line - about 57,000 pixels from the harbor cranes to the river of grass, with no zone doors and no loads. Walking east out of Ocean Drive simply *is* the Storm Drain Mouth; the drain's far end opens into a culvert that drops you into the Brickell sewers; the Glide-Way hangs as a real catwalk above a sleeping Midtown street (falling off is a detour, not a death); Little Havana is mirrored so Calle Ocho reads west-to-east; and the Rookery market sits physically under Wynwood, reachable down an open roost well punched through the street.
+Connective rooms fill the old seams - Government Cut (harbor water between the port and the beach, behind a gate the Magpie's PORT fragment unseals mid-run), the drain drop, the Midtown understreet - so the city feels like a larger place rather than a series of rooms.
+Each district keeps its own sky, light, grade, weather, and ambience, cross-faded as you cross the joins; crossing into a district announces its name once. District signs now complete **inline**: the sign lights, the run is saved, and the city keeps flowing - only THE NEST in the Everglades rolls the credits. The flyway network still works as fast travel (a camera pan, same map), and the UFO keeps its tractor-beam portal.
+Add `?world=0` to fall back to the classic chained zones (five themed hallways with camera-pan seam crossings); `?world=1` returns to the big map. Both persist.
 
 ### The Rookery (hub) and the Magpie's shop
 
 Beneath the city sits **THE ROOKERY**, a crow-run night market and the world's hub. Every district hides a low flyway gate near its start (the first one is sunk into the Ocean Drive dune); stand inside a gate and hold still for a beat, and the flyway carries you down to the market. From the Rookery, six gates lead back out - one per district.
-Only the Ocean Drive gate starts open. The **Magpie's stall** in the middle of the market sells **map fragments** for shinies (every shiny you collect anywhere also lands in a persistent wallet): each fragment charts a district on the city map *and* unseals its Rookery gate, so shinies buy early access and fast travel across the whole city.
+Only the Ocean Drive gate starts open. The **Magpie's stall** in the middle of the market sells **map fragments** for shinies (every shiny you collect anywhere also lands in a persistent wallet): each fragment charts a district on the city map *and* unseals its Rookery gate, so shinies buy early access and fast travel across the whole city. The seventh gate — THE PORT, at the market's dark end — is the only road to District 7.
 
 ### One city map
 

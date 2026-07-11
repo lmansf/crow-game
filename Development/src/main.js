@@ -2,6 +2,7 @@
 // States: menus (DOM screens) -> playing -> outro -> complete.
 
 import { initInput, input } from './input.js';
+import { initSprites } from './sprites.js';
 import { audio } from './audio.js';
 import { save } from './save.js';
 import { particles } from './particles.js';
@@ -12,6 +13,7 @@ import { gfx } from './gfx.js';
 import { Player } from './player.js';
 import { Level } from './level.js';
 import { getLevelData } from './levels/index.js';
+import { WORLD_SEGMENTS, worldOn, initWorldToggle } from './levels/world.js';
 import { UI } from './ui.js';
 
 const STEP = 1 / 120;
@@ -49,6 +51,22 @@ const game = {
   },
 
   launchLevel(id, opts = {}) {
+    // remember the pre-remap request so Restart/Replay can reproduce this
+    // exact launch (in world mode this.levelId becomes 'miami', which alone
+    // can't recreate the district entry or its carried kit)
+    this.lastLaunch = { id, opts: { entry: opts.entry, carry: opts.carry } };
+    // one-world mode: every district lives inside the composed 'miami' map,
+    // so launching a district means arriving at its spot in the big map,
+    // carrying the kit that district's own itinerary would have granted
+    if (worldOn() && WORLD_SEGMENTS.has(id)) {
+      const seg = getLevelData(id);
+      const world = getLevelData('miami');
+      const entry = opts.entry && world.entries[opts.entry] ? opts.entry : id;
+      const carry = { ...(opts.carry || {}) };
+      for (const a of seg?.initialAbilities || []) carry[a] = true;
+      opts = { ...opts, entry, carry };
+      id = 'miami';
+    }
     const data = getLevelData(id);
     if (!data) return;
     this.levelId = id;
@@ -98,16 +116,20 @@ const game = {
       ...(data.initialAbilities || []),
       ...Object.keys(opts.carry || {}).filter((a) => opts.carry[a]),
       ...data.pickups.map((p) => p.ability),
-      ...(data.boss ? [data.boss.drops] : []),
+      ...(data.bosses || (data.boss ? [data.boss] : [])).map((b) => b.drops),
       ...(this.player.abilities.raygun ? ['raygun'] : []),
       ...(this.player.abilities.flight ? ['flight'] : []),
     ])];
     this.ui.buildAbilitySlots(abilityOrder, this.player.abilities);
-    if (opts.entry) {
-      // a completed district's sign stays lit and never replays its outro
-      if (this.level.goal && save.getLevel(id)?.completed) {
-        this.level.goal.reached = true;
-        this.level.goal.lit = 1;
+    if (opts.entry || data.world) {
+      // a completed district's sign stays lit and never replays its outro -
+      // but the finale stays touchable so the ending can always be replayed
+      for (const g of this.level.goals) {
+        if (g.final) continue;
+        if (save.getLevel(g.district || id)?.completed) {
+          g.reached = true;
+          g.lit = 1;
+        }
       }
     }
   },
@@ -116,6 +138,23 @@ const game = {
   // city reads as one continuous place - no fade, no loading beat
   beginExit(exit) {
     if (this.pan || this.mode !== 'play') return;
+    // in-world warps (the flyway network): same map, new spot, same pan
+    if (exit.warp) {
+      const snap = document.createElement('canvas');
+      snap.width = canvas.width;
+      snap.height = canvas.height;
+      snap.getContext('2d').drawImage(canvas, 0, 0);
+      audio.glide(false);
+      this.player.x = exit.tx;
+      this.player.y = exit.ty;
+      this.player.vx = 0;
+      this.player.vy = 0;
+      this.checkpoint = { x: exit.tx, y: exit.ty };
+      camera.snapTo(this.player.x, this.player.y, this.level);
+      this.pan = { snap, t: 0, dur: 0.55, dx: exit.dir || 0, dy: exit.vdir || 0 };
+      input.locked = true;
+      return;
+    }
     const carry = { ...this.player.abilities };
     const momentum = { vx: this.player.vx, facing: this.player.facing };
     const snap = document.createElement('canvas');
@@ -188,10 +227,26 @@ const game = {
   onRespawn() {
     camera.snapTo(this.player.x, this.player.y, this.level);
     this.flash(0.15);
-    this.level.boss?.reset();
+    for (const b of this.level.bosses) b.reset();
   },
 
-  beginOutro() {
+  beginOutro(goal) {
+    const g = goal || this.level.goals[0];
+    this.outroGoal = g;
+    // one-world: a district sign lights up in place and the city keeps
+    // moving - only the final sign (the Everglades) rolls credits
+    if (g && this.level.data.world && !g.final) {
+      save.markCompleted(g.district);
+      audio.goal();
+      this.hitstop(0.2);
+      camera.shake?.(5, 0.3);
+      particles.burst(g.x, g.y - 180, {
+        count: 26, color: '#ff4fa3', speed: 260, life: 0.8, size: 2.4, gravity: 200,
+      });
+      const cd = g.completeData || {};
+      this.ui.toast(`${(cd.name || g.district).toUpperCase()} COMPLETE`, 'the sign stays lit - the city rolls on');
+      return;
+    }
     this.mode = 'outro';
     this.outroT = 0;
     input.locked = true;
@@ -202,10 +257,16 @@ const game = {
   finishLevel() {
     this.mode = 'complete';
     const data = this.level.data;
+    const cd = this.outroGoal?.completeData;
+    // the world's ending belongs to the district whose sign was reached
+    const shown = data.world && cd
+      ? { ...data, id: cd.id, name: cd.name, completeHeading: cd.completeHeading, outro: cd.outro || [], goal: this.outroGoal }
+      : data;
     const timeMs = Math.round(this.runTime * 1000);
-    save.recordRun(data.id, this.shinies, this.level.shinyTotal, timeMs);
-    const stats = save.getLevel(data.id);
-    this.ui.showComplete(data, this.shinies, this.level.shinyTotal, timeMs, stats);
+    save.recordRun(data.world ? 'miami' : data.id, this.shinies, this.level.shinyTotal, timeMs);
+    if (data.world && this.outroGoal?.district) save.markCompleted(this.outroGoal.district);
+    const stats = save.getLevel(data.world ? 'miami' : data.id);
+    this.ui.showComplete(shown, this.shinies, this.level.shinyTotal, timeMs, stats);
   },
 };
 
@@ -287,7 +348,7 @@ function frame(now) {
 function updateOutro(dt) {
   game.outroT += dt;
   const level = game.level;
-  const goal = level.goal;
+  const goal = game.outroGoal || level.goals[0];
   goal.lit = Math.min(1, Math.max(goal.lit, (game.outroT - 0.5) / 2.2));
 
   // letter tick sounds as the sign lights
@@ -303,7 +364,7 @@ function updateOutro(dt) {
   p.vy += 2300 * dt;
   p.y += p.vy * dt;
   p.x += p.vx * dt;
-  const roofY = level.goal.y;
+  const roofY = goal.y;
   if (p.y > roofY - p.h / 2) {
     p.y = roofY - p.h / 2;
     p.vy = 0;
@@ -331,11 +392,16 @@ function render() {
   const cssH = canvas.height / dpr;
 
   const inWorld = game.level && game.mode !== 'menu';
+  // mood knobs come from the district under the camera (one-world map)
+  // or the level itself (classic zones)
+  const env = inWorld
+    ? game.level.env(camera.x + camera.viewW / 2, camera.y + camera.viewH / 2)
+    : null;
   background.draw(
     ctx, camera, cssW, cssH, game.time,
     inWorld ? game.level.groundY : 1500,
     inWorld ? game.level.skyMood(game.player) : 'dusk',
-    inWorld ? game.level.data.horizon || 'city' : 'city'
+    inWorld ? env.horizon : 'city'
   );
 
   if (inWorld) {
@@ -347,18 +413,18 @@ function render() {
     particles.draw(ctx);
     game.player.draw(ctx);
     ctx.restore();
-    fx.lighting(ctx, camera, cssW, cssH, game.level.data.ambient, game.level.getLights(camera, game.time, game.player));
+    fx.lighting(ctx, camera, cssW, cssH, env.ambient, game.level.getLights(camera, game.time, game.player));
     game.level.drawDarkness(ctx, camera, game.player, cssW, cssH);
-    fx.grade(ctx, cssW, cssH, game.level.data.grade);
+    fx.grade(ctx, cssW, cssH, env.grade);
     if (gfx.foreground && fx.quality >= 1) {
-      background.foreground(ctx, camera, cssW, cssH, game.level.data.horizon || 'city');
+      background.foreground(ctx, camera, cssW, cssH, env.horizon);
     }
-    if (game.level.data.weather === 'rain') {
+    if (env.weather === 'rain') {
       background.rain(ctx, camera, cssW, cssH, game.time);
     }
     if (gfx.chroma) fx.chroma(ctx, canvas, cssW, cssH);
   }
-  fx.bloom(ctx, canvas, cssW, cssH, inWorld ? game.level.data.bloom ?? 0.34 : 0.3);
+  fx.bloom(ctx, canvas, cssW, cssH, inWorld ? env.bloom ?? 0.34 : 0.3);
   if (gfx.grain) fx.grain(ctx, cssW, cssH);
 
   // vignette
@@ -399,6 +465,8 @@ function render() {
 
 gfx.init();
 fx.cap = gfx.fxCap;
+initSprites();
+initWorldToggle();
 initInput();
 game.camera = camera;
 game.ui = new UI(game);

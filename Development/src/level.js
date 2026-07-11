@@ -5,6 +5,7 @@ import { audio } from './audio.js';
 import { gfx } from './gfx.js';
 import { particles } from './particles.js';
 import { save } from './save.js';
+import { sprites, drawSprite } from './sprites.js';
 import { ABILITIES } from './abilities.js';
 import { Enemies } from './enemies.js';
 import { Boss } from './boss.js';
@@ -56,19 +57,38 @@ export class Level {
 
     // ---- collision ----
     this.solids = [];
-    // ground: full slab by default, or thin segmented slabs (holes = manholes)
-    this.groundSegs = data.groundSegments || [{ x: 0, w: data.width }];
-    const thickness = data.groundThickness || this.height - this.groundY + 400;
+    // ground: full slab by default, or thin segmented slabs (holes = manholes).
+    // In the composed one-world map each segment carries its own street line,
+    // thickness, style, and beach extent.
+    this.groundSegs = (data.groundSegments || [{ x: 0, w: data.width }]).map((s) => ({ ...s }));
+    const defaultThickness = data.groundThickness || this.height - this.groundY + 400;
     for (const seg of this.groundSegs) {
-      this.solids.push({ x: seg.x, y: this.groundY, w: seg.w, h: thickness });
+      seg.gy = seg.gy ?? this.groundY;
+      seg.thickness = seg.thickness ?? defaultThickness;
+      if (seg.style === undefined) seg.style = data.groundStyle;
+      if (seg.beachEnd === undefined && data.beachEnd) seg.beachEnd = data.beachEnd;
+      this.solids.push({ x: seg.x, y: seg.gy, w: seg.w, h: seg.thickness });
     }
     for (const b of data.buildings) {
-      this.solids.push({ x: b.x, y: this.groundY - b.h, w: b.w, h: b.h, building: b });
+      const bgy = b.gy ?? this.groundY;
+      this.solids.push({ x: b.x, y: bgy - b.h, w: b.w, h: b.h, building: b });
     }
-    // hand-placed structure blocks (sewer masonry, shafts, breakable bulkheads)
+    // hand-placed structure blocks (sewer masonry, shafts, breakable
+    // bulkheads, and flag-doors that stand until a save flag opens them)
+    this.flagDoors = [];
     for (const s of data.extraSolids || []) {
-      this.solids.push({ ...s });
+      const sol = { ...s };
+      this.solids.push(sol);
+      if (sol.lock) {
+        sol.off = !!save.getFlag(sol.lock);
+        this.flagDoors.push(sol);
+      }
     }
+    // the world's ambience regions (single-zone levels have none)
+    this.regions = data.regions || null;
+    this.surfaceRegions = this.regions
+      ? this.regions.filter((r) => !r.underground).sort((a, b) => a.x0 - b.x0)
+      : null;
     this.oneWays = [];
     for (const p of data.platforms) {
       const rect = { x: p.x, y: p.y, w: p.w, h: 14, plat: p };
@@ -105,7 +125,10 @@ export class Level {
     this.winds = (data.winds || []).map((w) => ({ ...w }));
     this.waters = (data.waters || []).map((w) => ({ ...w }));
     this.timedHazards = (data.timedHazards || []).map((h) => ({ ...h, period: h.period || 2.5, offset: h.offset || 0 }));
-    this.cages = (data.cages || []).map((c, i) => ({ ...c, i, opened: !!save.getFlag(`cage:${data.id}:${i}`) }));
+    this.cages = (data.cages || []).map((c, i) => {
+      const key = c.flagKey || `cage:${data.id}:${i}`;
+      return { ...c, i, key, opened: !!save.getFlag(key) };
+    });
     this.landmarks = (data.landmarks || []).map((l) => ({ ...l }));
 
     // mega-map plumbing: doors to neighbouring zones, and named arrival spots
@@ -115,23 +138,25 @@ export class Level {
     // tractor beams, and the ray gun's curios (already-lifted ones stay gone)
     this.beams = (data.beams || []).map((b) => ({ ...b }));
     this.curios = (data.curios || [])
-      .map((c, i) => ({ ...c, i, ox: c.x, oy: c.y, got: false, t: 0, phase: Math.random() * 6 }))
-      .filter((c) => !save.getFlag(`curio:${data.id}:${c.i}`));
+      .map((c, i) => ({ ...c, i, key: c.flagKey || `curio:${data.id}:${i}`, ox: c.x, oy: c.y, got: false, t: 0, phase: Math.random() * 6 }))
+      .filter((c) => !save.getFlag(c.key));
 
-    // critters, boss, and the district puzzle
+    // critters, bosses, and the district puzzles (the one-world map carries
+    // one of each per district; classic zones carry at most one)
     this.enemies = new Enemies(data);
-    this.boss = data.boss ? new Boss(data.boss, this) : null;
-    this.puzzle = null;
-    if (data.puzzle) {
-      this.puzzle = {
-        switches: data.puzzle.switches.map((s) => ({ ...s, lit: false, cool: 0, touching: false })),
-        order: data.puzzle.order,
-        display: data.puzzle.display,
+    this.bosses = (data.bosses || (data.boss ? [data.boss] : [])).map((b) => new Boss(b, this));
+    this.puzzles = [];
+    for (const pd of data.puzzles || (data.puzzle ? [data.puzzle] : [])) {
+      const pz = {
+        switches: pd.switches.map((s) => ({ ...s, lit: false, cool: 0, touching: false })),
+        order: pd.order,
+        display: pd.display,
         progress: 0,
         solved: false,
-        door: { ...data.puzzle.door, kind: data.puzzle.door.kind || 'steel' },
+        door: { ...pd.door, kind: pd.door.kind || 'steel' },
       };
-      this.solids.push(this.puzzle.door);
+      this.solids.push(pz.door);
+      this.puzzles.push(pz);
     }
 
     this.shinies = data.shinies.map(([x, y], i) => ({ x, y, ox: x, oy: y, got: false, phase: i * 0.7 }));
@@ -139,14 +164,14 @@ export class Level {
 
     this.pickups = data.pickups.map((p) => ({ ...p, got: false, phase: Math.random() * 6 }));
     this.checkpoints = data.checkpoints.map((c) => ({ ...c, active: false }));
-    // connector hallways have no goal sign at all
-    this.goal = data.goal ? { ...data.goal, lit: 0, reached: false } : null;
+    // connector hallways have no goal sign at all; the world has one per district
+    this.goals = (data.goals || (data.goal ? [data.goal] : [])).map((g) => ({ ...g, lit: 0, reached: false }));
     this.decor = data.decor || [];
     this.hints = data.hints || [];
 
-    // pre-render building facades
+    // pre-render building facades (each on its own street line in the world)
     for (const b of data.buildings) {
-      b.cache = renderBuilding(b, this.groundY);
+      b.cache = renderBuilding(b, b.gy ?? this.groundY);
     }
   }
 
@@ -159,7 +184,7 @@ export class Level {
       if ((!b.sign && !b.blade) || b.x + b.w < x0 || b.x > x1) continue;
       out.push({
         x: b.blade ? b.x + b.w * 0.16 : b.x + b.w / 2,
-        y: this.groundY - b.h + (b.blade ? 130 : b.signY ?? 44),
+        y: (b.gy ?? this.groundY) - b.h + (b.blade ? 130 : b.signY ?? 44),
         r: Math.max(160, b.w * 0.55),
         color: `hsla(${b.hue}, 90%, 70%, 0.55)`,
       });
@@ -237,14 +262,14 @@ export class Level {
         out.push({ x: c.x, y: c.y - 8, r: 60, color: 'rgba(125,255,106,0.4)' });
       }
     }
-    if (this.puzzle) {
-      for (const s of this.puzzle.switches) {
+    for (const pz of this.puzzles) {
+      for (const s of pz.switches) {
         if (s.x < x0 || s.x > x1) continue;
         out.push({ x: s.x, y: s.y, r: 90, color: `hsla(${s.hue}, 90%, 65%, ${s.lit ? 0.55 : 0.25})` });
       }
     }
-    const g = this.goal;
-    if (g && g.x > x0 && g.x < x1) {
+    for (const g of this.goals) {
+      if (g.x < x0 || g.x > x1) continue;
       out.push({
         x: g.x,
         y: g.y - 110,
@@ -258,9 +283,39 @@ export class Level {
     return out;
   }
 
+  // Which of the world's districts owns this point. Underground regions
+  // (the Rookery) claim their vertical band first; otherwise the surface
+  // district containing x wins. Single-zone levels have no regions.
+  regionAt(x, y) {
+    if (!this.regions) return null;
+    for (const r of this.regions) {
+      if (r.underground && x >= r.x0 && x <= r.x1 && y >= r.uy0 && y <= r.uy1) return r;
+    }
+    for (const r of this.surfaceRegions) {
+      if (x >= r.x0 && x < r.x1) return r;
+    }
+    return this.surfaceRegions[x < this.surfaceRegions[0].x0 ? 0 : this.surfaceRegions.length - 1];
+  }
+
+  // The frame's mood knobs - lighting tint, grade, bloom, horizon, weather -
+  // from the district under the camera, or the level's own in classic zones.
+  env(x, y) {
+    const d = this.data;
+    const r = this.regionAt(x, y);
+    if (!r) {
+      return {
+        ambient: d.ambient, grade: d.grade, bloom: d.bloom ?? 0.34,
+        horizon: d.horizon || 'city', weather: d.weather || null,
+      };
+    }
+    return { ambient: r.ambient, grade: r.grade, bloom: r.bloom, horizon: r.horizon, weather: r.weather };
+  }
+
   // Sparse drifting ambience particles per district, density tiered by gfx.
   ambience(dt, cam) {
-    const kind = this.data.ambience;
+    const reg = this.regionAt(cam.x + cam.viewW / 2, cam.y + cam.viewH / 2);
+    const kind = reg ? reg.ambience : this.data.ambience;
+    const gy = reg ? reg.gy : this.groundY;
     if (!kind) return;
     const rate = (kind === 'petals' ? 5 : kind === 'motes' ? 4 : kind === 'sparks' ? 6 : 3) * gfx.ambientScale;
     if (Math.random() > dt * rate) return;
@@ -274,7 +329,7 @@ export class Level {
       return;
     }
     if (kind === 'fireflies') {
-      particles.burst(x, this.groundY - 16 - Math.random() * 220, {
+      particles.burst(x, gy - 16 - Math.random() * 220, {
         count: 1, color: 'rgba(210,255,140,0.75)', speed: 14, life: 2.6, size: 1.8, gravity: -6,
       });
     } else if (kind === 'petals') {
@@ -290,8 +345,7 @@ export class Level {
   }
 
   // Sequence puzzle: hit the neon pads in the order the display shows.
-  updatePuzzle(dt, player, game, t) {
-    const pz = this.puzzle;
+  updatePuzzle(pz, dt, player, game, t) {
     for (let i = 0; i < pz.switches.length; i++) {
       const s = pz.switches[i];
       if (s.cool > 0) s.cool -= dt;
@@ -324,8 +378,31 @@ export class Level {
   }
 
   // The sky mood for this frame: a fixed name, or a mix that tracks the
-  // player across the map (District 6 flies from night into dawn).
+  // player across the map (District 6 flies from night into dawn). In the
+  // one-world map the sky belongs to the district underfoot, cross-faded
+  // near the joins so the horizon never snaps.
   skyMood(player) {
+    if (this.surfaceRegions && player) {
+      const x = player.x;
+      const rs = this.surfaceRegions;
+      let i = rs.findIndex((r) => x < r.x1);
+      if (i < 0) i = rs.length - 1;
+      const r = rs[i];
+      const mix = r.skyMix;
+      if (mix) {
+        const span = mix.x1 - mix.x0;
+        const k = span ? Math.max(0, Math.min(1, (x - mix.x0) / span)) : 0;
+        return { from: mix.from, to: mix.to, k };
+      }
+      const BLEND = 480;
+      if (i + 1 < rs.length && r.x1 - x < BLEND && rs[i + 1].sky !== r.sky) {
+        return { from: r.sky, to: rs[i + 1].sky, k: (1 - (r.x1 - x) / BLEND) * 0.5 };
+      }
+      if (i > 0 && x - r.x0 < BLEND && rs[i - 1].sky !== r.sky) {
+        return { from: rs[i - 1].sky, to: r.sky, k: 0.5 + ((x - r.x0) / BLEND) * 0.5 };
+      }
+      return r.sky;
+    }
     const mix = this.data.skyMix;
     if (mix && player) {
       const span = mix.x1 - mix.x0;
@@ -444,20 +521,23 @@ export class Level {
       }
     }
 
-    // goal
-    if (this.goal && !this.goal.reached && player.dead <= 0) {
-      const g = this.goal;
-      if (Math.abs(player.x - g.x) < 110 && player.y > g.y - 190 && player.y < g.y + 30) {
+    // goals (the world carries one lit sign per district)
+    for (const g of this.goals) {
+      if (!g.reached && player.dead <= 0 &&
+          Math.abs(player.x - g.x) < 110 && player.y > g.y - 190 && player.y < g.y + 30) {
         g.reached = true;
-        game.beginOutro();
+        game.beginOutro(g);
       }
-    }
-    if (this.goal && this.goal.reached) {
-      this.goal.lit = Math.min(1, this.goal.lit + dt * 0.45);
+      if (g.reached) g.lit = Math.min(1, g.lit + dt * 0.45);
     }
 
-    // vent steam / thermal shimmer
+    // vent steam / thermal shimmer (emit only near the camera - the world
+    // carries every district's vents at once)
+    const cam = game.camera;
+    const ex0 = cam ? cam.x - 300 : -Infinity;
+    const ex1 = cam ? cam.x + cam.viewW + 300 : Infinity;
     for (const v of this.vents) {
+      if (v.x + v.w < ex0 || v.x > ex1) continue;
       if (Math.random() < 0.5) {
         const col = v.soarOnly ? 'rgba(255,190,140,0.13)' : 'rgba(180,200,230,0.16)';
         particles.trail(v.x + Math.random() * v.w, v.base - Math.random() * (v.base - v.top) * 0.5, col);
@@ -466,12 +546,19 @@ export class Level {
 
     // dripping ceilings in the dark
     for (const z of this.darkZones) {
+      if (z.x + z.w < ex0 || z.x > ex1) continue;
       if (Math.random() < dt * 5) {
         particles.burst(z.x + Math.random() * z.w, z.y + 8, {
           count: 1, color: 'rgba(150,210,230,0.5)', speed: 20,
           angle: Math.PI / 2, spread: 0.1, life: 0.9, size: 1.6, gravity: 600, glow: false,
         });
       }
+    }
+
+    // out-of-world kill floor: no gap should exist, but falling past the
+    // bottom must never softlock a run
+    if (player.dead <= 0 && player.y > this.height + 600) {
+      player.die(game);
     }
 
     // timed hazards: sparkler fountains, lightning coils, gator jaws
@@ -514,7 +601,7 @@ export class Level {
           if (Math.random() < 0.5) particles.trail(c.x, c.y, 'rgba(125,255,106,0.7)');
           if (d2 < 30 * 30) {
             c.got = true;
-            save.setFlag(`curio:${this.data.id}:${c.i}`);
+            save.setFlag(c.key);
             const n = (save.getFlag('curios') || 0) + 1;
             save.setFlag('curios', n);
             audio.collect();
@@ -531,10 +618,43 @@ export class Level {
       }
     }
 
-    // critters, boss, puzzle
+    // critters, bosses, puzzles
     this.enemies.update(dt, player, game, t);
-    if (this.boss) this.boss.update(dt, player, game, t);
-    if (this.puzzle && !this.puzzle.solved) this.updatePuzzle(dt, player, game, t);
+    for (const b of this.bosses) b.update(dt, player, game, t);
+    for (const pz of this.puzzles) {
+      if (!pz.solved) this.updatePuzzle(pz, dt, player, game, t);
+    }
+
+    // flag-doors: sealed until their save flag flips (the Magpie's map
+    // fragments open the harbor gate live, mid-run). The fanfare only plays
+    // if the door is actually on screen - a purchase 10k px away opens it
+    // silently.
+    for (const s of this.flagDoors) {
+      if (!s.off && save.getFlag(s.lock)) {
+        s.off = true;
+        if (s.x + s.w > ex0 && s.x < ex1) {
+          audio.smash();
+          particles.burst(s.x + s.w / 2, s.y + s.h / 2, { count: 18, color: '#9ce0ff', speed: 220, life: 0.55, size: 2.2 });
+        }
+      }
+    }
+
+    // crossing into a district announces it (one-world map only)
+    if (this.regions && player.dead <= 0) {
+      const r = this.regionAt(player.x, player.y);
+      if (r && r !== this._region) {
+        this._region = r;
+        const isDistrict = r.name && (r.underground || Number.isInteger(r.district));
+        if (isDistrict) {
+          save.setFlag(`seen:${r.id}`);
+          if (!this._announced) this._announced = new Set();
+          if (!this._announced.has(r.id)) {
+            this._announced.add(r.id);
+            game.ui.toast(r.name.toUpperCase(), r.underground ? 'the hub under everything' : `district ${r.district}`);
+          }
+        }
+      }
+    }
 
     // zone doors: edge doors trip on contact; mid-level flyway gates ask for
     // a short deliberate linger so passing traffic never falls through them
@@ -581,7 +701,7 @@ export class Level {
       const dy = player.y - c.y;
       if (dx * dx + dy * dy < 46 * 46) {
         c.opened = true;
-        save.setFlag(`cage:${this.data.id}:${c.i}`);
+        save.setFlag(c.key);
         game.songbirds = (game.songbirds || 0) + 1;
         audio.perch();
         particles.feathers(c.x, c.y - 6, 4, 0);
@@ -605,7 +725,7 @@ export class Level {
     // background landmarks: behind the playfield, in front of the sky
     for (const lm of this.landmarks) {
       if (lm.x + (lm.w || 400) < x0 - 200 || lm.x > x1 + 200) continue;
-      drawLandmark(ctx, lm, t, this.groundY);
+      drawLandmark(ctx, lm, t, lm.gy ?? this.groundY);
     }
 
     this.drawGround(ctx, cam, x0, x1);
@@ -621,13 +741,14 @@ export class Level {
       const b = s.building;
       if (!b) continue;
       if (b.x + b.w < x0 || b.x > x1) continue;
-      ctx.drawImage(b.cache, b.x - 12, this.groundY - b.h - 12);
+      const bgy = b.gy ?? this.groundY;
+      ctx.drawImage(b.cache, b.x - 12, bgy - b.h - 12);
       // animated broken-tube flicker on flagged signs
       if (b.flicker && b.signY !== undefined) {
         const on = Math.sin(t * 9 + b.x) > -0.2 && Math.sin(t * 2.3) > -0.6;
         if (!on) {
           ctx.fillStyle = 'rgba(10,6,18,0.72)';
-          ctx.fillRect(b.x + 8, this.groundY - b.h + b.signY - 20, b.w - 16, 42);
+          ctx.fillRect(b.x + 8, bgy - b.h + b.signY - 20, b.w - 16, 42);
         }
       }
     }
@@ -649,9 +770,9 @@ export class Level {
     }
 
     // puzzle furniture
-    if (this.puzzle) {
-      drawPuzzleDisplay(ctx, this.puzzle, t);
-      for (const s of this.puzzle.switches) drawPuzzleSwitch(ctx, s, t);
+    for (const pz of this.puzzles) {
+      drawPuzzleDisplay(ctx, pz, t);
+      for (const s of pz.switches) drawPuzzleSwitch(ctx, s, t);
     }
 
     // decor in front of buildings
@@ -662,22 +783,22 @@ export class Level {
       else if (d.type === 'grass') drawGrass(ctx, d.x, d.y || this.groundY, t);
       else if (d.type === 'lamp') drawLamp(ctx, d.x, d.y || this.groundY);
       else if (d.type === 'bigpipe') drawBigPipe(ctx, d);
-      else if (d.type === 'mast') drawMast(ctx, d, this.groundY);
+      else if (d.type === 'mast') drawMast(ctx, d, d.gy ?? this.groundY);
       else if (d.type === 'sewerwater') drawSewerWater(ctx, d, t);
       else if (d.type === 'grate') drawGrateBeam(ctx, d, t);
       else if (d.type === 'lantern') drawLanternString(ctx, d, t);
       else if (d.type === 'rooster') drawRooster(ctx, d.x, d.y || this.groundY);
-      else if (d.type === 'pergola') drawPergola(ctx, d, this.groundY);
+      else if (d.type === 'pergola') drawPergola(ctx, d, d.gy ?? this.groundY);
       else if (d.type === 'pylon') drawPylon(ctx, d);
       else if (d.type === 'radiomast') drawRadioMast(ctx, d, t);
       else if (d.type === 'osprey') drawOsprey(ctx, d, t);
       else if (d.type === 'truck') drawTruck(ctx, d.x, d.y, d.hue || 210, t);
       else if (d.type === 'reed') drawReeds(ctx, d.x, d.y || this.groundY, t);
-      else if (d.type === 'boardwalk') drawBoardwalk(ctx, d, this.groundY);
+      else if (d.type === 'boardwalk') drawBoardwalk(ctx, d, d.gy ?? this.groundY);
       else if (d.type === 'flock') drawFlock(ctx, d, t);
-      else if (d.type === 'archlegs') drawArchLegs(ctx, d, this.groundY);
+      else if (d.type === 'archlegs') drawArchLegs(ctx, d, d.gy ?? this.groundY);
       else if (d.type === 'crane') drawBargeCrane(ctx, d, t);
-      else if (d.type === 'specimen') drawSpecimen(ctx, d, this.groundY, t);
+      else if (d.type === 'specimen') drawSpecimen(ctx, d, d.gy ?? this.groundY, t);
     }
 
     // platforms
@@ -787,111 +908,128 @@ export class Level {
       drawPickup(ctx, p, t);
     }
 
-    // critters and the boss
+    // critters and the bosses (the world carries seven; only draw the near one)
     this.enemies.draw(ctx, cam, t);
-    if (this.boss) this.boss.draw(ctx, t);
+    for (const b of this.bosses) {
+      if (b.x < x0 - 500 || b.x > x1 + 500) continue;
+      b.draw(ctx, t);
+    }
 
-    // goal sign
-    if (this.goal) drawGoal(ctx, this.goal, t);
+    // goal signs
+    for (const g of this.goals) {
+      if (g.x < x0 - 400 || g.x > x1 + 400) continue;
+      drawGoal(ctx, g, t);
+    }
   }
 
   drawGround(ctx, cam, x0, x1) {
-    if (this.data.groundStyle === 'marsh') {
-      this.drawMarsh(ctx, cam, x0, x1);
-      return;
-    }
-    const gy = this.groundY;
-    const beachEnd = this.data.beachEnd || 0;
-    const thick = this.data.groundThickness;
-    const depth = thick || cam.viewH + 200;
-
     for (const seg of this.groundSegs) {
       const sx = Math.max(x0, seg.x);
       const ex = Math.min(x1, seg.x + seg.w);
       if (ex <= sx) continue;
-
-      // asphalt with a subtle top sheen
-      const ag = ctx.createLinearGradient(0, gy, 0, gy + 130);
-      ag.addColorStop(0, '#332a4d');
-      ag.addColorStop(1, '#1e1832');
-      ctx.fillStyle = ag;
-      ctx.fillRect(sx, gy, ex - sx, depth);
-      if (thick) {
-        // slab underside lip over the tunnels below
-        ctx.fillStyle = '#0e0914';
-        ctx.fillRect(sx, gy + thick - 8, ex - sx, 8);
-      }
-      // sidewalk band
-      const wx = Math.max(sx, beachEnd);
-      if (ex > wx) {
-        ctx.fillStyle = '#3d3358';
-        ctx.fillRect(wx, gy, ex - wx, 14);
-        ctx.fillStyle = 'rgba(255,110,180,0.2)';
-        ctx.fillRect(wx, gy, ex - wx, 3);
-        // lane dashes
-        ctx.fillStyle = 'rgba(230,220,250,0.16)';
-        for (let lx = Math.max(Math.floor(sx / 90) * 90, beachEnd); lx < ex; lx += 90) {
-          ctx.fillRect(lx, gy + 56, 38, 5);
-        }
-        // crosswalks
-        ctx.fillStyle = 'rgba(230,220,250,0.08)';
-        for (let cw = Math.max(Math.floor(sx / 760) * 760, beachEnd); cw < ex; cw += 760) {
-          for (let i = 0; i < 5; i++) ctx.fillRect(cw + i * 16, gy + 18, 9, 30);
-        }
-        // manhole covers
-        for (let mx = Math.max(Math.floor(sx / 470) * 470 + 230, beachEnd); mx < ex; mx += 470) {
-          ctx.fillStyle = 'rgba(0,0,0,0.3)';
-          ctx.beginPath();
-          ctx.ellipse(mx, gy + 40, 15, 5, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = 'rgba(255,255,255,0.07)';
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-        }
-      }
+      if (seg.style === 'marsh') this.drawMarshSeg(ctx, cam, seg, sx, ex);
+      else this.drawStreetSeg(ctx, cam, seg, sx, ex);
     }
 
-    // wet-street neon reflections below each building sign
+    // wet-street neon reflections below each building sign (clamped to the
+    // asphalt: sand east of a beach line stays clean of street glow)
     ctx.globalCompositeOperation = 'lighter';
     for (const b of this.data.buildings) {
       if (b.x + b.w < x0 || b.x > x1 || b.style === 'spire') continue;
+      const gy = b.gy ?? this.groundY;
+      const seg = this.groundSegs.find((s) => b.x >= s.x && b.x < s.x + s.w);
+      const rx = Math.max(b.x - 30, seg?.beachEnd || 0);
+      const rw = b.x + b.w + 30 - rx;
+      if (rw <= 0) continue;
       const rg = ctx.createLinearGradient(0, gy + 8, 0, gy + 116);
       rg.addColorStop(0, `hsla(${b.hue}, 90%, 60%, 0.12)`);
       rg.addColorStop(1, `hsla(${b.hue}, 90%, 60%, 0)`);
       ctx.fillStyle = rg;
-      ctx.fillRect(b.x - 30, gy + 8, b.w + 60, Math.min(108, depth - 12));
+      ctx.fillRect(rx, gy + 8, rw, 108);
     }
     ctx.globalCompositeOperation = 'source-over';
+  }
 
-    // beach sand
-    if (beachEnd > 0 && x0 < beachEnd) {
+  // One street slab: asphalt, sidewalk furniture, and - west of the
+  // segment's beach line - sand instead. The fill reaches 300px past the
+  // level floor: on tiny portrait viewports the camera can show up to
+  // 150px below level height.
+  drawStreetSeg(ctx, cam, seg, sx, ex) {
+    const gy = seg.gy;
+    const beachEnd = seg.beachEnd || 0;
+    const thick = seg.thickness;
+    const depth = Math.min(thick, this.height - gy + 300);
+    // only true tunnel slabs (explicitly thinner than the level bottom)
+    // get an underside lip
+    const tunnelSlab = thick < this.height - gy;
+
+    // asphalt with a subtle top sheen
+    const ag = ctx.createLinearGradient(0, gy, 0, gy + 130);
+    ag.addColorStop(0, '#332a4d');
+    ag.addColorStop(1, '#1e1832');
+    ctx.fillStyle = ag;
+    ctx.fillRect(sx, gy, ex - sx, depth);
+    if (tunnelSlab) {
+      // slab underside lip over the tunnels below
+      ctx.fillStyle = '#0e0914';
+      ctx.fillRect(sx, gy + depth - 8, ex - sx, 8);
+    }
+    // sidewalk band
+    const wx = Math.max(sx, beachEnd);
+    if (ex > wx) {
+      ctx.fillStyle = '#3d3358';
+      ctx.fillRect(wx, gy, ex - wx, 14);
+      ctx.fillStyle = 'rgba(255,110,180,0.2)';
+      ctx.fillRect(wx, gy, ex - wx, 3);
+      // lane dashes
+      ctx.fillStyle = 'rgba(230,220,250,0.16)';
+      for (let lx = Math.max(Math.floor(sx / 90) * 90, beachEnd); lx < ex; lx += 90) {
+        ctx.fillRect(lx, gy + 56, 38, 5);
+      }
+      // crosswalks
+      ctx.fillStyle = 'rgba(230,220,250,0.08)';
+      for (let cw = Math.max(Math.floor(sx / 760) * 760, beachEnd); cw < ex; cw += 760) {
+        for (let i = 0; i < 5; i++) ctx.fillRect(cw + i * 16, gy + 18, 9, 30);
+      }
+      // manhole covers
+      for (let mx = Math.max(Math.floor(sx / 470) * 470 + 230, beachEnd); mx < ex; mx += 470) {
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.beginPath();
+        ctx.ellipse(mx, gy + 40, 15, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+    }
+
+    // beach sand over the asphalt west of the beach line
+    if (beachEnd > 0 && sx < beachEnd) {
+      const bx1 = Math.min(beachEnd, ex);
       const sg = ctx.createLinearGradient(0, gy, 0, gy + 140);
       sg.addColorStop(0, '#8a6f70');
       sg.addColorStop(1, '#544054');
       ctx.fillStyle = sg;
-      ctx.fillRect(x0, gy, Math.min(beachEnd, x1) - x0, depth);
+      ctx.fillRect(sx, gy, bx1 - sx, depth);
       ctx.fillStyle = 'rgba(255,190,150,0.22)';
-      ctx.fillRect(x0, gy, Math.min(beachEnd, x1) - x0, 4);
+      ctx.fillRect(sx, gy, bx1 - sx, 4);
       ctx.fillStyle = 'rgba(255,230,210,0.3)';
-      for (let sx = 40; sx < beachEnd; sx += 113) {
-        if (sx > x0 && sx < x1) ctx.fillRect(sx, gy + 26 + (sx % 37), 4, 2);
+      for (let tx = Math.floor(sx / 113) * 113 + 40; tx < bx1; tx += 113) {
+        if (tx > sx) ctx.fillRect(tx, gy + 26 + (tx % 37), 4, 2);
       }
       // sand speckle
       ctx.fillStyle = 'rgba(255,235,205,0.1)';
-      for (let px = Math.max(0, Math.floor(x0 / 17) * 17); px < Math.min(beachEnd, x1); px += 17) {
+      for (let px = Math.max(0, Math.floor(sx / 17) * 17); px < bx1; px += 17) {
         ctx.fillRect(px + ((px * 7919) % 13), gy + 8 + ((px * 104729) % 96), 2, 2);
       }
     }
   }
 
   // Everglades hummocks: peat banks capped with sawgrass fringe.
-  drawMarsh(ctx, cam, x0, x1) {
-    const gy = this.groundY;
-    const depth = cam.viewH + 240;
-    for (const seg of this.groundSegs) {
-      const sx = Math.max(x0, seg.x);
-      const ex = Math.min(x1, seg.x + seg.w);
-      if (ex <= sx) continue;
+  drawMarshSeg(ctx, cam, seg, sx, ex) {
+    const gy = seg.gy;
+    const depth = Math.min(seg.thickness, this.height - gy + 300);
+    {
       const pg = ctx.createLinearGradient(0, gy, 0, gy + 180);
       pg.addColorStop(0, '#31402a');
       pg.addColorStop(0.12, '#26301f');
@@ -2325,21 +2463,26 @@ function drawShiny(ctx, s, t) {
   ctx.fill();
   ctx.globalCompositeOperation = 'source-over';
   ctx.scale(0.35 + sway * 0.65, 1);
-  ctx.fillStyle = '#ffd166';
-  ctx.beginPath();
-  ctx.moveTo(0, -8);
-  ctx.lineTo(6.5, 0);
-  ctx.lineTo(0, 8);
-  ctx.lineTo(-6.5, 0);
-  ctx.closePath();
-  ctx.fill();
-  ctx.fillStyle = '#fff3d0';
-  ctx.beginPath();
-  ctx.moveTo(0, -8);
-  ctx.lineTo(6.5, 0);
-  ctx.lineTo(-6.5, 0);
-  ctx.closePath();
-  ctx.fill();
+  const paintedShiny = sprites.get('shiny');
+  if (paintedShiny) {
+    drawSprite(ctx, paintedShiny, 0, 0, 15);
+  } else {
+    ctx.fillStyle = '#ffd166';
+    ctx.beginPath();
+    ctx.moveTo(0, -8);
+    ctx.lineTo(6.5, 0);
+    ctx.lineTo(0, 8);
+    ctx.lineTo(-6.5, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#fff3d0';
+    ctx.beginPath();
+    ctx.moveTo(0, -8);
+    ctx.lineTo(6.5, 0);
+    ctx.lineTo(-6.5, 0);
+    ctx.closePath();
+    ctx.fill();
+  }
   ctx.restore();
   if (Math.sin(t * 3.1 + s.phase * 2) > 0.93) {
     ctx.strokeStyle = 'rgba(255,240,200,0.85)';
@@ -2375,19 +2518,24 @@ function drawPickup(ctx, p, t) {
   ctx.stroke();
   ctx.globalAlpha = 1;
   ctx.rotate(Math.sin(t * 1.5 + p.phase) * 0.25);
-  ctx.fillStyle = info.color;
-  ctx.beginPath();
-  ctx.moveTo(-10, 8);
-  ctx.quadraticCurveTo(-10, -10, 12, -12);
-  ctx.quadraticCurveTo(8, 2, -4, 9);
-  ctx.closePath();
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(11,6,20,0.85)';
-  ctx.lineWidth = 1.4;
-  ctx.beginPath();
-  ctx.moveTo(-8, 8);
-  ctx.lineTo(10, -10);
-  ctx.stroke();
+  const paintedFeather = sprites.get('pickup-feather');
+  if (paintedFeather) {
+    drawSprite(ctx, paintedFeather, 0, 0, 30);
+  } else {
+    ctx.fillStyle = info.color;
+    ctx.beginPath();
+    ctx.moveTo(-10, 8);
+    ctx.quadraticCurveTo(-10, -10, 12, -12);
+    ctx.quadraticCurveTo(8, 2, -4, 9);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(11,6,20,0.85)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(-8, 8);
+    ctx.lineTo(10, -10);
+    ctx.stroke();
+  }
   ctx.restore();
   if (Math.random() < 0.12) {
     particles.trail(p.x + (Math.random() - 0.5) * 44, y + (Math.random() - 0.5) * 44, info.color + 'aa');
@@ -2396,22 +2544,29 @@ function drawPickup(ctx, p, t) {
 
 function drawPerch(ctx, c, t) {
   const lit = c.active;
-  const col = lit ? '#ff4fa3' : 'rgba(120,110,150,0.9)';
-  ctx.strokeStyle = col;
-  ctx.lineWidth = 3.5;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(c.x, c.y);
-  ctx.lineTo(c.x, c.y - 44);
-  ctx.moveTo(c.x - 17, c.y - 44);
-  ctx.lineTo(c.x + 17, c.y - 44);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(c.x - 17, c.y - 48, 4, Math.PI * 0.5, Math.PI * 1.6);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(c.x + 17, c.y - 48, 4, Math.PI * 1.4, Math.PI * 0.5);
-  ctx.stroke();
+  const paintedPerch = sprites.get('perch');
+  if (paintedPerch) {
+    ctx.globalAlpha = lit ? 1 : 0.62;
+    drawSprite(ctx, paintedPerch, c.x, c.y - 28, 42);
+    ctx.globalAlpha = 1;
+  } else {
+    const col = lit ? '#ff4fa3' : 'rgba(120,110,150,0.9)';
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(c.x, c.y);
+    ctx.lineTo(c.x, c.y - 44);
+    ctx.moveTo(c.x - 17, c.y - 44);
+    ctx.lineTo(c.x + 17, c.y - 44);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(c.x - 17, c.y - 48, 4, Math.PI * 0.5, Math.PI * 1.6);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(c.x + 17, c.y - 48, 4, Math.PI * 1.4, Math.PI * 0.5);
+    ctx.stroke();
+  }
   if (lit) {
     ctx.globalCompositeOperation = 'lighter';
     const g = ctx.createRadialGradient(c.x, c.y - 46, 2, c.x, c.y - 46, 34);
@@ -4086,6 +4241,14 @@ function drawPinata(ctx, hk, t, hasAbility) {
 function drawExitDoor(ctx, e, t, locked) {
   const cx = e.x + e.w / 2;
   const archY = e.y + Math.min(30, e.h * 0.2);
+  // painted-sprite path: the arch art replaces frame + tunnel; the state
+  // layers (lock boards, linger charge, chevrons, label) draw over it
+  const paintedArch = sprites.get('gate-arch');
+  if (paintedArch) {
+    ctx.drawImage(paintedArch, e.x - 14, e.y - 10, e.w + 28, e.h + 10);
+    drawExitDoorState(ctx, e, t, locked, cx, archY);
+    return;
+  }
   // frame
   ctx.fillStyle = '#141021';
   ctx.beginPath();
@@ -4107,6 +4270,12 @@ function drawExitDoor(ctx, e, t, locked) {
   ctx.lineTo(e.x + e.w, e.y + e.h);
   ctx.closePath();
   ctx.fill();
+  drawExitDoorState(ctx, e, t, locked, cx, archY);
+}
+
+// the state layers shared by painted and procedural doors: lock boards,
+// linger charge, glow rim, drifting chevrons, and the destination label
+function drawExitDoorState(ctx, e, t, locked, cx, archY) {
   if (locked) {
     // boarded over: slats and a cold padlock, waiting on a map fragment
     ctx.strokeStyle = 'rgba(150,110,200,0.5)';

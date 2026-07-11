@@ -34,6 +34,15 @@ export const save = {
     return data.levels[id] || null;
   },
 
+  // completion without run stats: the one-world map finishes districts
+  // inline, where a whole-world time or shiny count would pollute the bests
+  markCompleted(id) {
+    const prev = data.levels[id] || {};
+    if (prev.completed) return;
+    data.levels[id] = { ...prev, completed: true };
+    persist();
+  },
+
   recordRun(id, shinies, shinyTotal, timeMs) {
     const prev = data.levels[id] || {};
     data.levels[id] = {
