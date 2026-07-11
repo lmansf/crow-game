@@ -132,7 +132,7 @@ function compose() {
 
   const MERGE_KEYS = ['extraSolids', 'platforms', 'vents', 'hazards', 'pickups',
     'checkpoints', 'hints', 'cables', 'rails', 'winds', 'waters', 'timedHazards',
-    'cages', 'murals', 'hooks', 'backdrops', 'darkZones', 'beams', 'curios', 'enemies'];
+    'murals', 'hooks', 'backdrops', 'darkZones', 'beams', 'enemies'];
 
   function place(id, src, opts = {}) {
     const data = opts.mirror ? mirror(src) : src;
@@ -161,6 +161,14 @@ function compose() {
         if (!skip.has(i)) W[key].push(offsetObj(o, dx, dy));
       });
     }
+    // cages and curios keep their home district's save keys, so freeing a
+    // songbird counts in both the world and the classic zones
+    (data.cages || []).forEach((c, i) => {
+      W.cages.push({ ...offsetObj(c, dx, dy), flagKey: `cage:${id}:${i}` });
+    });
+    (data.curios || []).forEach((c, i) => {
+      W.curios.push({ ...offsetObj(c, dx, dy), flagKey: `curio:${id}:${i}` });
+    });
     for (const d of data.decor || []) {
       const o = offsetObj(d, dx, dy);
       if (o.y === undefined) o.y = segGy; // pin ground decor to this street

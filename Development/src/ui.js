@@ -61,7 +61,8 @@ export class UI {
     $('btn-restart').addEventListener('click', () => {
       audio.ui();
       game.togglePause(false);
-      game.launchLevel(game.levelId);
+      const r = game.lastLaunch || { id: game.levelId, opts: {} };
+      game.launchLevel(r.id, r.opts);
     });
     $('btn-quit').addEventListener('click', () => {
       audio.ui();
@@ -70,7 +71,8 @@ export class UI {
     $('btn-replay').addEventListener('click', () => {
       audio.ui();
       this.show(null);
-      game.launchLevel(game.levelId);
+      const r = game.lastLaunch || { id: game.levelId, opts: {} };
+      game.launchLevel(r.id, r.opts);
     });
     $('btn-next').addEventListener('click', () => {
       if (!this.nextLevelId) return;
@@ -172,7 +174,8 @@ export class UI {
       const meta = lvl.hub
         ? (known ? 'flyway gates · the Magpie' : 'rumors of a market under the city')
         : !known ? 'fragment sold at the Rookery'
-        : stats ? `${stats.bestShinies}/${stats.shinyTotal} shinies · best ${fmtTime(stats.bestTimeMs)}`
+        : stats && stats.bestTimeMs != null ? `${stats.bestShinies}/${stats.shinyTotal} shinies · best ${fmtTime(stats.bestTimeMs)}`
+        : stats?.completed ? 'sign lit on the big map'
         : lvl.blurb;
       node.innerHTML = `
         <span class="dot"${art}>${lvl.hub ? '✦' : !known ? '?' : lvl.flyOnly ? '⚓' : ''}</span>

@@ -51,6 +51,10 @@ const game = {
   },
 
   launchLevel(id, opts = {}) {
+    // remember the pre-remap request so Restart/Replay can reproduce this
+    // exact launch (in world mode this.levelId becomes 'miami', which alone
+    // can't recreate the district entry or its carried kit)
+    this.lastLaunch = { id, opts: { entry: opts.entry, carry: opts.carry } };
     // one-world mode: every district lives inside the composed 'miami' map,
     // so launching a district means arriving at its spot in the big map,
     // carrying the kit that district's own itinerary would have granted
@@ -118,8 +122,10 @@ const game = {
     ])];
     this.ui.buildAbilitySlots(abilityOrder, this.player.abilities);
     if (opts.entry || data.world) {
-      // a completed district's sign stays lit and never replays its outro
+      // a completed district's sign stays lit and never replays its outro -
+      // but the finale stays touchable so the ending can always be replayed
       for (const g of this.level.goals) {
+        if (g.final) continue;
         if (save.getLevel(g.district || id)?.completed) {
           g.reached = true;
           g.lit = 1;

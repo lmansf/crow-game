@@ -53,6 +53,16 @@ const TOLERANCE = 34; // per-channel distance still counted as background
           Math.abs(px[i] - med[0]) < TOLERANCE &&
           Math.abs(px[i + 1] - med[1]) < TOLERANCE &&
           Math.abs(px[i + 2] - med[2]) < TOLERANCE;
+        // optional erase rects (crop-local): paint over stray text/watermarks
+        // with the background color so the flood removes them
+        for (const [ex, ey, ew, eh] of slice.erase || []) {
+          for (let y = Math.max(0, ey); y < Math.min(sh, ey + eh); y++) {
+            for (let x = Math.max(0, ex); x < Math.min(sw, ex + ew); x++) {
+              const i = (y * sw + x) * 4;
+              px[i] = med[0]; px[i + 1] = med[1]; px[i + 2] = med[2];
+            }
+          }
+        }
         // flood fill from every border pixel: only edge-connected background
         // is removed, so bright interior detail survives
         const seen = new Uint8Array(sw * sh);

@@ -125,7 +125,10 @@ export class Level {
     this.winds = (data.winds || []).map((w) => ({ ...w }));
     this.waters = (data.waters || []).map((w) => ({ ...w }));
     this.timedHazards = (data.timedHazards || []).map((h) => ({ ...h, period: h.period || 2.5, offset: h.offset || 0 }));
-    this.cages = (data.cages || []).map((c, i) => ({ ...c, i, opened: !!save.getFlag(`cage:${data.id}:${i}`) }));
+    this.cages = (data.cages || []).map((c, i) => {
+      const key = c.flagKey || `cage:${data.id}:${i}`;
+      return { ...c, i, key, opened: !!save.getFlag(key) };
+    });
     this.landmarks = (data.landmarks || []).map((l) => ({ ...l }));
 
     // mega-map plumbing: doors to neighbouring zones, and named arrival spots
@@ -135,8 +138,8 @@ export class Level {
     // tractor beams, and the ray gun's curios (already-lifted ones stay gone)
     this.beams = (data.beams || []).map((b) => ({ ...b }));
     this.curios = (data.curios || [])
-      .map((c, i) => ({ ...c, i, ox: c.x, oy: c.y, got: false, t: 0, phase: Math.random() * 6 }))
-      .filter((c) => !save.getFlag(`curio:${data.id}:${c.i}`));
+      .map((c, i) => ({ ...c, i, key: c.flagKey || `curio:${data.id}:${i}`, ox: c.x, oy: c.y, got: false, t: 0, phase: Math.random() * 6 }))
+      .filter((c) => !save.getFlag(c.key));
 
     // critters, bosses, and the district puzzles (the one-world map carries
     // one of each per district; classic zones carry at most one)
@@ -528,8 +531,13 @@ export class Level {
       if (g.reached) g.lit = Math.min(1, g.lit + dt * 0.45);
     }
 
-    // vent steam / thermal shimmer
+    // vent steam / thermal shimmer (emit only near the camera - the world
+    // carries every district's vents at once)
+    const cam = game.camera;
+    const ex0 = cam ? cam.x - 300 : -Infinity;
+    const ex1 = cam ? cam.x + cam.viewW + 300 : Infinity;
     for (const v of this.vents) {
+      if (v.x + v.w < ex0 || v.x > ex1) continue;
       if (Math.random() < 0.5) {
         const col = v.soarOnly ? 'rgba(255,190,140,0.13)' : 'rgba(180,200,230,0.16)';
         particles.trail(v.x + Math.random() * v.w, v.base - Math.random() * (v.base - v.top) * 0.5, col);
@@ -538,6 +546,7 @@ export class Level {
 
     // dripping ceilings in the dark
     for (const z of this.darkZones) {
+      if (z.x + z.w < ex0 || z.x > ex1) continue;
       if (Math.random() < dt * 5) {
         particles.burst(z.x + Math.random() * z.w, z.y + 8, {
           count: 1, color: 'rgba(150,210,230,0.5)', speed: 20,
@@ -586,7 +595,7 @@ export class Level {
           if (Math.random() < 0.5) particles.trail(c.x, c.y, 'rgba(125,255,106,0.7)');
           if (d2 < 30 * 30) {
             c.got = true;
-            save.setFlag(`curio:${this.data.id}:${c.i}`);
+            save.setFlag(c.key);
             const n = (save.getFlag('curios') || 0) + 1;
             save.setFlag('curios', n);
             audio.collect();
@@ -682,7 +691,7 @@ export class Level {
       const dy = player.y - c.y;
       if (dx * dx + dy * dy < 46 * 46) {
         c.opened = true;
-        save.setFlag(`cage:${this.data.id}:${c.i}`);
+        save.setFlag(c.key);
         game.songbirds = (game.songbirds || 0) + 1;
         audio.perch();
         particles.feathers(c.x, c.y - 6, 4, 0);
@@ -889,9 +898,12 @@ export class Level {
       drawPickup(ctx, p, t);
     }
 
-    // critters and the bosses
+    // critters and the bosses (the world carries seven; only draw the near one)
     this.enemies.draw(ctx, cam, t);
-    for (const b of this.bosses) b.draw(ctx, t);
+    for (const b of this.bosses) {
+      if (b.x < x0 - 500 || b.x > x1 + 500) continue;
+      b.draw(ctx, t);
+    }
 
     // goal signs
     for (const g of this.goals) {
@@ -909,27 +921,37 @@ export class Level {
       else this.drawStreetSeg(ctx, cam, seg, sx, ex);
     }
 
-    // wet-street neon reflections below each building sign
+    // wet-street neon reflections below each building sign (clamped to the
+    // asphalt: sand east of a beach line stays clean of street glow)
     ctx.globalCompositeOperation = 'lighter';
     for (const b of this.data.buildings) {
       if (b.x + b.w < x0 || b.x > x1 || b.style === 'spire') continue;
       const gy = b.gy ?? this.groundY;
+      const seg = this.groundSegs.find((s) => b.x >= s.x && b.x < s.x + s.w);
+      const rx = Math.max(b.x - 30, seg?.beachEnd || 0);
+      const rw = b.x + b.w + 30 - rx;
+      if (rw <= 0) continue;
       const rg = ctx.createLinearGradient(0, gy + 8, 0, gy + 116);
       rg.addColorStop(0, `hsla(${b.hue}, 90%, 60%, 0.12)`);
       rg.addColorStop(1, `hsla(${b.hue}, 90%, 60%, 0)`);
       ctx.fillStyle = rg;
-      ctx.fillRect(b.x - 30, gy + 8, b.w + 60, 108);
+      ctx.fillRect(rx, gy + 8, rw, 108);
     }
     ctx.globalCompositeOperation = 'source-over';
   }
 
   // One street slab: asphalt, sidewalk furniture, and - west of the
-  // segment's beach line - sand instead.
+  // segment's beach line - sand instead. The fill reaches 300px past the
+  // level floor: on tiny portrait viewports the camera can show up to
+  // 150px below level height.
   drawStreetSeg(ctx, cam, seg, sx, ex) {
     const gy = seg.gy;
     const beachEnd = seg.beachEnd || 0;
     const thick = seg.thickness;
-    const depth = Math.min(thick, this.height - gy + 40);
+    const depth = Math.min(thick, this.height - gy + 300);
+    // only true tunnel slabs (explicitly thinner than the level bottom)
+    // get an underside lip
+    const tunnelSlab = thick < this.height - gy;
 
     // asphalt with a subtle top sheen
     const ag = ctx.createLinearGradient(0, gy, 0, gy + 130);
@@ -937,7 +959,7 @@ export class Level {
     ag.addColorStop(1, '#1e1832');
     ctx.fillStyle = ag;
     ctx.fillRect(sx, gy, ex - sx, depth);
-    if (depth < cam.viewH + 200) {
+    if (tunnelSlab) {
       // slab underside lip over the tunnels below
       ctx.fillStyle = '#0e0914';
       ctx.fillRect(sx, gy + depth - 8, ex - sx, 8);
@@ -996,7 +1018,7 @@ export class Level {
   // Everglades hummocks: peat banks capped with sawgrass fringe.
   drawMarshSeg(ctx, cam, seg, sx, ex) {
     const gy = seg.gy;
-    const depth = Math.min(seg.thickness, this.height - gy + 40);
+    const depth = Math.min(seg.thickness, this.height - gy + 300);
     {
       const pg = ctx.createLinearGradient(0, gy, 0, gy + 180);
       pg.addColorStop(0, '#31402a');
